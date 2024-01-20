@@ -4,8 +4,13 @@ global function OnWeaponPrimaryAttack_lmg
 
 global function OnWeaponActivate_lmg
 global function OnWeaponBulletHit_weapon_lmg
+global function OnProjectileCollision_weapon_lmg
 global function AddCallback_OnPrimaryAttackPlayer_weapon_lmg
 global function AddCallback_OnBulletHit_weapon_lmg
+
+#if SERVER
+global function OnWeaponNpcPrimaryAttack_weapon_lmg
+#endif
 
 const float LMG_SMART_AMMO_TRACKER_TIME = 10.0
 
@@ -19,7 +24,7 @@ void function OnWeaponActivate_lmg( entity weapon )
 
 // Cursed Titanfall callback stuff
 struct {
-    array< void functionref( entity, WeaponBulletHitParams ) > onBulletHitCalbacks_weapon_lmg
+    array< void functionref( ProjectileCollisionParams ) > onBulletHitCalbacks_weapon_lmg
     array< void functionref( entity, WeaponPrimaryAttackParams ) > onPrimaryAttackPlayerCallbacks_weapon_lmg
 } file
 
@@ -29,7 +34,7 @@ void function AddCallback_OnPrimaryAttackPlayer_weapon_lmg( void functionref( en
 	file.onPrimaryAttackPlayerCallbacks_weapon_lmg.append( callback )
 }
 
-void function AddCallback_OnBulletHit_weapon_lmg( void functionref( entity, WeaponBulletHitParams ) callback )
+void function AddCallback_OnBulletHit_weapon_lmg( void functionref( ProjectileCollisionParams ) callback )
 {
     Assert( !file.onBulletHitCalbacks_weapon_lmg.contains( callback ), "Already added " + string( callbackFunc ) + " with AddCallback_OnProjectileCollision_weapon_lmg"  )
 	file.onBulletHitCalbacks_weapon_lmg.append( callback )
@@ -38,13 +43,35 @@ void function AddCallback_OnBulletHit_weapon_lmg( void functionref( entity, Weap
 
 var function OnWeaponPrimaryAttack_lmg( entity weapon, WeaponPrimaryAttackParams attackParams )
 {
-	if ( weapon.GetOwner().IsPlayer() )
+	weapon.EmitWeaponNpcSound( LOUD_WEAPON_AI_SOUND_RADIUS_MP, 0.2 )
+
+	return FireWeaponPlayerAndNPC( weapon, attackParams, true )
+}
+
+void function OnWeaponBulletHit_weapon_lmg( entity weapon, WeaponBulletHitParams hitParams )
+{
+	return
+}
+
+#if SERVER
+var function OnWeaponNpcPrimaryAttack_weapon_lmg( entity weapon, WeaponPrimaryAttackParams attackParams )
+{
+	weapon.EmitWeaponNpcSound( LOUD_WEAPON_AI_SOUND_RADIUS_MP, 0.2 )
+
+	return FireWeaponPlayerAndNPC( weapon, attackParams, false )
+}
+#endif // #if SERVER
+
+var function FireWeaponPlayerAndNPC( entity weapon, WeaponPrimaryAttackParams attackParams, bool isPlayerFired )
+{
+	if ( isPlayerFired )
 	{
 		foreach( callback in file.onPrimaryAttackPlayerCallbacks_weapon_lmg )
 		{
 			callback( weapon, attackParams )
 		}
 	}
+
 	if ( weapon.HasMod( "smart_lock_dev" ) )
 	{
 		int damageFlags = weapon.GetWeaponDamageFlags()
@@ -53,36 +80,48 @@ var function OnWeaponPrimaryAttack_lmg( entity weapon, WeaponPrimaryAttackParams
 	}
 	else
 	{
-		weapon.EmitWeaponNpcSound( LOUD_WEAPON_AI_SOUND_RADIUS_MP, 0.2 )
-		weapon.FireWeaponBullet( attackParams.pos, attackParams.dir, 1, weapon.GetWeaponDamageFlags() )
+		bool shouldCreateProjectile = false
+		if ( IsServer() || weapon.ShouldPredictProjectiles() )
+			shouldCreateProjectile = true
+
+		#if CLIENT
+			if ( !isPlayerFired )
+				shouldCreateProjectile = false
+		#endif
+
+		if ( shouldCreateProjectile )
+		{
+			vector vBoltSpeed = Vector( RandomFloatRange( -1200, 1200 ), 100, 0 )
+			int damageFlags = weapon.GetWeaponDamageFlags()
+			entity nade = weapon.FireWeaponGrenade( attackParams.pos, attackParams.dir, vBoltSpeed, 0.0, damageFlags, damageFlags, isPlayerFired, true, false )
+
+			if ( nade )
+			{
+				#if SERVER
+					Grenade_Init( nade, weapon )
+				#else
+					entity weaponOwner = weapon.GetWeaponOwner()
+					SetTeam( nade, weaponOwner.GetTeam() )
+				#endif
+			}
+		}
 	}
 
 
 }
 
-void function OnWeaponBulletHit_weapon_lmg( entity weapon, WeaponBulletHitParams hitParams )
+void function OnProjectileCollision_weapon_lmg( entity projectile, vector pos, vector normal, entity hitEnt, int hitbox, bool isCritical )
 {
+	ProjectileCollisionParams params
+	params.projectile = projectile
+	params.pos = pos
+	params.normal = normal
+	params.hitEnt = hitEnt
+	params.hitbox = 0
+	params.isCritical = isCritical
 
 	foreach( callback in file.onBulletHitCalbacks_weapon_lmg )
 	{
-		callback( weapon, hitParams )
-	}
-
-	if ( !weapon.HasMod( "smart_lock_dev" ) )
-		return
-
-	entity hitEnt = hitParams.hitEnt //Could be more efficient with this and early return out if the hitEnt is not a player, if only smart_ammo_player_targets_must_be_tracked  is set, which is currently true
-
-	if ( IsValid( hitEnt ) )
-	{
-		weapon.SmartAmmo_TrackEntity( hitEnt, LMG_SMART_AMMO_TRACKER_TIME )
-
-		#if SERVER
-			if ( hitEnt.IsPlayer() &&  !hitEnt.IsTitan() ) //Note that there is a max of 10 status effects, which means that if you theoreteically get hit as a pilot 10 times without somehow dying, you could knock out other status effects like emp slow etc
-			{
-				printt( "Adding status effect" )
-				StatusEffect_AddTimed( hitEnt, eStatusEffect.sonar_detected, 1.0, LMG_SMART_AMMO_TRACKER_TIME, 0.0 )
-			}
-		#endif
+		callback( params )
 	}
 }

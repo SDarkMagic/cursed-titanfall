@@ -25,6 +25,13 @@
             "ServerCallback": {
                 "Before": "Init_Custom_Weapon_Callbacks"
             }
+        },
+        {
+            "Path": "_spitfire_projectile_callback.nut",
+            "RunOn": "MP",
+            "ServerCallback": {
+                "Before": "Init_SpitfireProjectileCollison_Callback"
+            }
         }
     ],
     "Localisation":

@@ -10,6 +10,7 @@ void function Init_Custom_Weapon_Callbacks()
     AddCallback_OnProjectileCollision_weapon_wingman(Wingman_Teleport)
     AddCallback_OnPrimaryAttackPlayer_weapon_sniper(Russian_Roulette)
     AddCallback_OnPrimaryAttackPlayer_weapon_lmg(Thread_PreventCamping)
+	AddCallback_OnProjectileCollision_weapon_grenade_emp(Grenade_Emp_Hack)
     #endif
 }
 
@@ -34,8 +35,8 @@ void function Dash_Player(entity weapon, WeaponPrimaryAttackParams attackParams)
 {
 	printt("Called Dash_Player function")
 	entity player = weapon.GetWeaponOwner()
-	int speedModifier = -500
-	vector viewDirection = Normalize(player.GetViewForward())
+	float speedModifier = -500
+	vector viewDirection = player.GetViewVector()
 	vector appliedVelocity = viewDirection * (speedModifier * weapon.GetWeaponChargeTime()) // Scale the applied velocity based on how long the weapon needs to charge for. Then create apply the speed modifier to the velocity vector to get the applied force.
 
 	player.SetVelocity(player.GetVelocity() + appliedVelocity)
@@ -45,6 +46,7 @@ void function Dash_Player(entity weapon, WeaponPrimaryAttackParams attackParams)
 void function Dash_Player_Threaded( entity weapon, WeaponPrimaryAttackParams attackParams )
 {
 	thread Dash_Player( weapon, attackParams )
+	return
 }
 
 void function Softball_ESmoke( ProjectileCollisionParams params )
@@ -136,5 +138,10 @@ void function PreventCamping( entity weapon, WeaponPrimaryAttackParams attackPar
 void function Thread_PreventCamping( entity weapon, WeaponPrimaryAttackParams attackParams )
 {
     thread PreventCamping(weapon, attackParams)
+}
+
+void function Grenade_Emp_Hack( ProjectileCollisionParams params )
+{
+
 }
 #endif
