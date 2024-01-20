@@ -1,0 +1,12 @@
+WeaponData
+{
+    Mods
+	{
+		is_airborne
+		{
+			"hud_icon"										"rui/titan_loadout/tactical/titan_tactical_hover"
+            "fire_rate"   									"1000.0"
+            "regen_ammo_refill_rate"						"200"
+		}
+	}
+}

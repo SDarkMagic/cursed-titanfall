@@ -1,0 +1,23 @@
+{
+    "Name": "CursedTitanfall.Framework",
+    "Description": "A basic framework that adds several callback registration functions that are utilized by various parts of the mod.",
+    "Version": "1.0.0",
+    "RequiredOnClient": false,
+    "LoadPriority": 3,
+    "ConVars": [],
+    "Scripts":
+    [
+        {
+            "Path": "weapons/mp_weapon_epg.nut",
+            "RunOn": "MP"
+        },
+        {
+            "Path": "weapons/mp_weapon_wingman.nut",
+            "RunOn": "MP"
+        }
+    ],
+    "Localisation":
+    [
+
+    ]
+}

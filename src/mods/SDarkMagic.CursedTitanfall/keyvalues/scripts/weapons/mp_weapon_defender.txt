@@ -1,0 +1,7 @@
+WeaponData
+{
+	// Behavior							"45"
+	"reload_time" 									"5.0"
+	"reloadempty_time"								"5.0"
+	"charge_time" 									"2.5"
+}

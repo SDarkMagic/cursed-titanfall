@@ -1,0 +1,49 @@
+WeaponData
+{
+    "projectile_drift_windiness"					"0.0"
+	"projectile_drift_intensity"					"0.0"
+	"projectile_straight_time_min"					"1.2"
+	"projectile_straight_time_max"					"1.45"
+	"projectile_straight_radius_min"				"0"
+	"projectile_straight_radius_max"				"0"
+	"projectile_launch_speed"						"10000"
+	"projectile_gravity_scale"						"0.0001"
+
+    "projectilemodel" 								"models/dev/empty_model.mdl"
+    "projectile_adjust_to_gun_barrel"				"1"
+    "damage_type" 									"projectile"
+
+    "bolt_hitsize"									"0.0"
+	"bolt_hitsize_grow1_time"						"0.075"
+	"bolt_hitsize_grow1_size"						"1.0"
+	"bolt_hitsize_grow2_time"						"0.18"
+	"bolt_hitsize_grow2_size"						"2.0"
+	"bolt_hitsize_growfinal_lerptime"				"0.18"
+	"bolt_hitsize_growfinal_size"					"3.0"
+	"bolt_speed"                                    "100"
+
+	RUI_CrosshairData
+	{
+		DefaultArgs
+		{
+			adjustedSpread				weapon_spread
+			adsFrac 					player_zoomFrac
+			isSprinting					player_is_sprinting
+			isReloading					weapon_is_reloading
+			teamColor					crosshair_team_color
+			isAmped						weapon_is_amped
+			crosshairMovementX          crosshair_movement_x
+			crosshairMovementY          crosshair_movement_y
+		}
+
+		Crosshair_1
+		{
+			"ui"						"ui/crosshair_wingman_n"
+			"base_spread"				"0"
+			Args
+			{
+				isFiring				weapon_is_firing
+			}
+		}
+	}
+}

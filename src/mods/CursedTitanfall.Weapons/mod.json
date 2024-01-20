@@ -1,0 +1,34 @@
+{
+    "Name": "CursedTitanfall.Weapons",
+    "Description": "Cursed Titanfall module containing changes made to individual weapons and titan abilities.",
+    "Version": "1.0.0",
+    "RequiredOnClient": false,
+    "LoadPriority": 4,
+    "ConVars": [],
+    "Scripts":
+    [
+        {
+            "Path": "weapons/mp_weapon_semipistol.nut",
+            "RunOn": "(CLIENT || SERVER) && MP"
+
+        },
+        {
+            "Path": "weapons/mp_weapon_esaw.nut",
+            "RunOn": "(CLIENT || SERVER) && MP",
+            "ServerCallback": {
+                "Before": "MpWeaponEsaw_Init"
+            }
+        },
+        {
+            "Path": "_weapon_callbacks.nut",
+            "RunOn": "MP",
+            "ServerCallback": {
+                "Before": "Init_Custom_Weapon_Callbacks"
+            }
+        }
+    ],
+    "Localisation":
+    [
+
+    ]
+}

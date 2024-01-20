@@ -1,0 +1,6 @@
+WeaponData
+{
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_weapon_epg_Player"
+	"OnWeaponNpcPrimaryAttack"						"OnWeaponPrimaryAttack_weapon_epg_NPC"
+    "OnProjectileCollision"							"OnProjectileCollision_weapon_epg"
+}

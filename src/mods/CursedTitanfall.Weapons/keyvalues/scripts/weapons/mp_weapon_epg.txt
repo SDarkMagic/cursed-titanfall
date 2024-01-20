@@ -1,0 +1,5 @@
+WeaponData {
+    "projectilemodel" 								"models/creatures/prowler/r2_prowler.mdl"
+    "projectile_trail_effect_0"                     ""
+
+}

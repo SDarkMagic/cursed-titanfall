@@ -1,0 +1,6 @@
+WeaponData
+{
+    "OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_weapon_wingman_Player"
+	"OnWeaponNpcPrimaryAttack"						"OnWeaponPrimaryAttack_weapon_wingman_NPC"
+    "OnProjectileCollision"							"OnProjectileCollision_weapon_wingman"
+}
