@@ -68,6 +68,8 @@ void function Wingman_Teleport( ProjectileCollisionParams params )
 {
     entity projectile = params.projectile
 	entity player = projectile.GetOwner()
+	if ( !player.IsPlayer() )
+		return
     vector spawnOffset = -150 * Normalize(projectile.GetVelocity()) // Move the spawn point back by 150 units of the projectile's velocity vector
 
     player.SetOrigin(params.pos + spawnOffset)

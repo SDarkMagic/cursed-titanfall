@@ -35,6 +35,12 @@ void function SpitfireBulletHit( ProjectileCollisionParams hitParams )
 
     projectile.SetDoesExplode( false )
 
+    if ( !IsValid( player ) )
+		{
+			projectile.Destroy()
+			return
+		}
+
     thread ThermiteBurn( 2.0, player, projectile)
     entity entAttachedTo = projectile.GetParent()
 		if ( !IsValid( entAttachedTo ) )

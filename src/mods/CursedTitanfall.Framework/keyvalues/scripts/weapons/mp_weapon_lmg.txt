@@ -16,7 +16,7 @@ WeaponData
 	"bolt_hitsize_growfinal_size"					"2.0"
 
 	"bolt_gravity_enabled"							"1"
-	"bolt_gravity_amount"							"0.0"
+	"bolt_gravity_amount"							"2.0"
 
 	"bolt_bounce_frac"								"0.000"
 	"projectile_damage_reduction_per_bounce"		"0.0"
