@@ -8,11 +8,6 @@
     "Scripts":
     [
         {
-            "Path": "weapons/mp_weapon_semipistol.nut",
-            "RunOn": "(CLIENT || SERVER) && MP"
-
-        },
-        {
             "Path": "weapons/mp_weapon_esaw.nut",
             "RunOn": "(CLIENT || SERVER) && MP",
             "ServerCallback": {

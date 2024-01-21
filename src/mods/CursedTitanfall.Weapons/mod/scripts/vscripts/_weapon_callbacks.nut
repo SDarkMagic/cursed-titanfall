@@ -11,7 +11,8 @@ void function Init_Custom_Weapon_Callbacks()
     AddCallback_OnPrimaryAttackPlayer_weapon_sniper(Russian_Roulette)
     //AddCallback_OnPrimaryAttackPlayer_weapon_lmg(Thread_PreventCamping)
 
-	AddDamageCallbackSourceID(eDamageSourceId.mp_weapon_grenade_emp, Grenade_Emp_Hack)
+	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_grenade_emp, Grenade_Emp_Hack )
+	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_semipistol, Pistol_Callback )
     #endif
 }
 
@@ -74,15 +75,15 @@ void function Wingman_Teleport( ProjectileCollisionParams params )
     vector spawnOffset = -150 * Normalize(projectile.GetVelocity()) // Move the spawn point back by 150 units of the projectile's velocity vector
 
     player.SetOrigin(params.pos + spawnOffset)
-	printt("WINGMAN SHOT A THING")
     return
 }
 
 void function Russian_Roulette( entity weapon, WeaponPrimaryAttackParams attackParams )
 {
     entity player =weapon.GetWeaponOwner()
-    if (RandomIntRange(0, 15) == 5)
-        player.TakeDamage( player.GetHealth(), null, null, { weapon = weapon, damageSourceId = eDamageSourceId.mp_weapon_sniper } )
+    if (RandomInt(15) == 5)
+	{
+		player.TakeDamage( player.GetHealth(), null, null, { weapon = weapon, damageSourceId = eDamageSourceId.mp_weapon_sniper } )
         Explosion_DamageDefSimple(
             damagedef_titan_hotdrop,
             weapon.GetOrigin(),
@@ -90,6 +91,7 @@ void function Russian_Roulette( entity weapon, WeaponPrimaryAttackParams attackP
             null,
             weapon.GetOrigin()
         )
+	}
 }
 
 bool function PlayerHasMoved( vector startPos, entity player, float minDeviation, float delay=2.0 )
@@ -153,8 +155,30 @@ void function Grenade_Emp_Hack( entity target, var damageInfo )
 		if ( !attacker.IsPlayer() )
 			return
 
-		target.SetBossPlayer( attacker )
-		SetTeam( target, attacker.GetTeam() )
+		LeechSurroundingSpectres( target.GetOrigin(), attacker )
 	}
+}
+
+void function Pistol_Callback( entity target, var damageInfo )
+{
+	entity player = DamageInfo_GetAttacker(damageInfo)
+    int team = player.GetTeam()
+    array<entity> enemies = GetPlayerArrayOfEnemies(team)
+	entity weapon = DamageInfo_GetWeapon( damageInfo )
+	enemies.extend( GetNPCArrayOfEnemies(team) )
+	#if SERVER
+		DamageInfo_SetDamage( damageInfo, 0 )
+		if (RandomInt( weapon.GetWeaponPrimaryClipCountMax() * 5 ) == 3)
+		{
+			printt("Wiping enemy team. Get rekt")
+			foreach (entity enemy in enemies)
+            {
+				if ( !IsValid(enemy) || !IsAlive(enemy) )
+					return
+                enemy.TakeDamage( enemy.GetHealth(), player, null, { weapon =  } )
+            }
+		}
+
+	#endif
 }
 #endif
