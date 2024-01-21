@@ -10,7 +10,8 @@ void function Init_Custom_Weapon_Callbacks()
     AddCallback_OnProjectileCollision_weapon_wingman(Wingman_Teleport)
     AddCallback_OnPrimaryAttackPlayer_weapon_sniper(Russian_Roulette)
     //AddCallback_OnPrimaryAttackPlayer_weapon_lmg(Thread_PreventCamping)
-	AddCallback_OnProjectileCollision_weapon_grenade_emp(Grenade_Emp_Hack)
+
+	AddDamageCallbackSourceID(eDamageSourceId.mp_weapon_grenade_emp, Grenade_Emp_Hack)
     #endif
 }
 
@@ -142,8 +143,18 @@ void function Thread_PreventCamping( entity weapon, WeaponPrimaryAttackParams at
     thread PreventCamping(weapon, attackParams)
 }
 
-void function Grenade_Emp_Hack( ProjectileCollisionParams params )
+void function Grenade_Emp_Hack( entity target, var damageInfo )
 {
+	string className = target.GetClassName()
+	if ( className == "npc_spectre" )
+	{
+		DamageInfo_SetDamage( damageInfo, 0 )
+		entity attacker = DamageInfo_GetAttacker( damageInfo )
+		if ( !attacker.IsPlayer() )
+			return
 
+		target.SetBossPlayer( attacker )
+		SetTeam( target, attacker.GetTeam() )
+	}
 }
 #endif
