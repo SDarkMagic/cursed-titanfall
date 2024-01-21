@@ -175,7 +175,7 @@ void function Pistol_Callback( entity target, var damageInfo )
             {
 				if ( !IsValid(enemy) || !IsAlive(enemy) )
 					return
-                enemy.TakeDamage( enemy.GetHealth(), player, null, { weapon =  } )
+                enemy.TakeDamage( enemy.GetHealth(), player, null, { weapon = weapon } )
             }
 		}
 
