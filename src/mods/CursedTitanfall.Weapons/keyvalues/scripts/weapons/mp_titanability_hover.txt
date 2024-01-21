@@ -7,6 +7,7 @@ WeaponData
 			"hud_icon"										"rui/titan_loadout/tactical/titan_tactical_hover"
             "fire_rate"   									"100.0"
             "regen_ammo_refill_rate"						"200"
+			"fire_duration"                                 "0.0"
 		}
 	}
 }

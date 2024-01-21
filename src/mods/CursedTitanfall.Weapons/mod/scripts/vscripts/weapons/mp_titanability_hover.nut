@@ -41,6 +41,9 @@ var function OnWeaponPrimaryAttack_TitanHover( entity weapon, WeaponPrimaryAttac
 			ToggleMod(weapon, "is_airborne")
 		}
 
+		if ( weapon.HasMod( "is_airborne" ) )
+			weapon.SetWeaponPrimaryClipCount(200)
+
 		thread FlyerHovers( flyer, soundInfo, 3.0, horizontalVelocity, weapon )
 	#endif
 
@@ -68,6 +71,9 @@ void function ToggleMod( entity weapon, string modName )
 // Taken from mp_titanability_ammo_swap.nut
 void function RemoveMod( entity weapon, string modName )
 {
+	if ( !weapon.HasMod( modName ) )
+		return
+
 	array<string> mods = weapon.GetMods()
 	mods.fastremovebyvalue( modName )
 	weapon.SetMods( mods )
@@ -165,6 +171,8 @@ void function FlyerHovers( entity player, HoverSounds soundInfo, float flightTim
 
 	vector startOrigin = player.GetOrigin()
 
+	float maxHeight = startOrigin.z + 500
+
 	for ( ;; )
 	{
 		float timePassed = Time() - startTime
@@ -172,8 +180,12 @@ void function FlyerHovers( entity player, HoverSounds soundInfo, float flightTim
 			break
 		if ( IsValid( weapon ) )
 		{
-		if ( SoulHasPassive( soul, ePassives.PAS_NORTHSTAR_FLIGHTCORE ) && !weapon.HasMod("is_airborne") )
-			break
+			if ( SoulHasPassive( soul, ePassives.PAS_NORTHSTAR_FLIGHTCORE ) && ( timePassed > 30.0 || !weapon.HasMod("is_airborne") )) // Max duration for toggle flight is 30 seconds
+				{
+					RemoveMod( weapon, "is_airborne" )
+					//weapon.kv.fire_rate = 0.8 * timePassed
+					break
+				}
 		}
 
 
@@ -184,6 +196,9 @@ void function FlyerHovers( entity player, HoverSounds soundInfo, float flightTim
 		 	height = GraphCapped( timePassed, LERP_IN_FLOAT, LERP_IN_FLOAT + 0.75, RISE_VEL, 70 )
 
 		height *= movestunEffect
+		if ( player.GetOrigin().z + height >= maxHeight ){
+			height = 0 // Remove any vertical acceleration if the player would go above the flight ceiling
+		}
 
 		vector vel = player.GetVelocity()
 		vel.z = height

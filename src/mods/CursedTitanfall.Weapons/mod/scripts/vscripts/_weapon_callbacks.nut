@@ -9,7 +9,7 @@ void function Init_Custom_Weapon_Callbacks()
     AddCallback_OnProjectileCollision_weapon_softball(Softball_ESmoke)
     AddCallback_OnProjectileCollision_weapon_wingman(Wingman_Teleport)
     AddCallback_OnPrimaryAttackPlayer_weapon_sniper(Russian_Roulette)
-    AddCallback_OnPrimaryAttackPlayer_weapon_lmg(Thread_PreventCamping)
+    //AddCallback_OnPrimaryAttackPlayer_weapon_lmg(Thread_PreventCamping)
 	AddCallback_OnProjectileCollision_weapon_grenade_emp(Grenade_Emp_Hack)
     #endif
 }
