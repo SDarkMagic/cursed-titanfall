@@ -165,6 +165,9 @@ void function FlyerHovers( entity player, HoverSounds soundInfo, float flightTim
 
 	vector startOrigin = player.GetOrigin()
 
+	float maxHeight = startOrigin.z + 750
+	printt("Max height = " + maxHeight)
+
 	for ( ;; )
 	{
 		float timePassed = Time() - startTime
@@ -184,6 +187,10 @@ void function FlyerHovers( entity player, HoverSounds soundInfo, float flightTim
 		 	height = GraphCapped( timePassed, LERP_IN_FLOAT, LERP_IN_FLOAT + 0.75, RISE_VEL, 70 )
 
 		height *= movestunEffect
+		if ( player.GetOrigin() + height >= maxHeight ){
+			printt("Exceeded max height: " + height)
+			height = 0 // Remove any vertical acceleration if the player would go above the flight ceiling
+		}
 
 		vector vel = player.GetVelocity()
 		vel.z = height

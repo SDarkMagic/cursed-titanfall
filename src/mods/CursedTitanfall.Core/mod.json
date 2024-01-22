@@ -3,7 +3,7 @@
     "Description": "A collection of the most unbalanced and chaotic ideas I could come up with bundled into one package for your enjoyment",
     "Version": "1.0.0",
     "RequiredOnClient": false,
-    "LoadPriority": 0,
+    "LoadPriority": 1,
     "InitScript": "_cursed_datatypes.nut",
     "ConVars": [],
     "Scripts":

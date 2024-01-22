@@ -27,6 +27,13 @@
             "ServerCallback": {
                 "Before": "Init_SpitfireProjectileCollison_Callback"
             }
+        },
+        {
+            "Path": "_monarch_healer.nut",
+            "RunOn": "MP",
+            "ServerCallback": {
+                "Before": "Init_Monarch_Healing_Shots"
+            }
         }
     ],
     "Localisation":

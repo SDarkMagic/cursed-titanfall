@@ -1,5 +1,6 @@
 global function UpgradeCore_Init
 global function OnWeaponPrimaryAttack_UpgradeCore
+global function AddCallback_OnPrimaryAttackPlayer_titancore_upgrade
 #if SERVER
 global function OnWeaponNpcPrimaryAttack_UpgradeCore
 #endif
@@ -10,6 +11,19 @@ global function ServerCallback_VanguardUpgradeMessage
 const LASER_CHAGE_FX_1P = $"P_handlaser_charge"
 const LASER_CHAGE_FX_3P = $"P_handlaser_charge"
 const FX_SHIELD_GAIN_SCREEN		= $"P_xo_shield_up"
+
+// Cursed Titanfall callback stuff
+struct {
+    array< void functionref( ProjectileCollisionParams ) > onProjectileCollisionCallbacks_titancore_upgrade
+    array< void functionref( entity, WeaponPrimaryAttackParams ) > onPrimaryAttackPlayerCallbacks_titancore_upgrade
+} file
+
+void function AddCallback_OnPrimaryAttackPlayer_titancore_upgrade( void functionref( entity, WeaponPrimaryAttackParams ) callback )
+{
+    Assert( !file.onPrimaryAttackPlayerCallbacks_titancore_upgrade.contains( callback ), "Already added " + string( callbackFunc ) + " with AddCallback_OnPrimaryAttackPlayer_titancore_upgrade"  )
+	file.onPrimaryAttackPlayerCallbacks_titancore_upgrade.append( callback )
+}
+//////////////////////////////////////
 
 void function UpgradeCore_Init()
 {
@@ -35,6 +49,13 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 
 	entity owner = weapon.GetWeaponOwner()
 	entity soul = owner.GetTitanSoul()
+	if ( owner.IsPlayer() )
+	{
+		foreach ( callback in file.onPrimaryAttackPlayerCallbacks_titancore_upgrade )
+		{
+			callback( weapon, attackParams )
+		}
+	}
 	#if SERVER
 		float coreDuration = weapon.GetCoreDuration()
 		thread UpgradeCoreThink( weapon, coreDuration )
@@ -273,13 +294,6 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 				int conversationID = GetConversationIndex( "upgradeShieldReplenish" )
 				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
 			}
-		}
-		if (currentUpgradeCount >= 2){
-			#if SERVER
-			entity reaper = CreateNPC( "npc_super_spectre", GetOtherTeam(owner.GetTeam()), owner.GetOrigin(), owner.GetAngles() )
-			DispatchSpawn(reaper)
-			thread SuperSpectre_WarpFall(reaper)
-			#endif
 		}
 		soul.SetTitanSoulNetInt( "upgradeCount", currentUpgradeCount + 1 )
 		int statesIndex = owner.FindBodyGroup( "states" )

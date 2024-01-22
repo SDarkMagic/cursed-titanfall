@@ -278,6 +278,8 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 			#if SERVER
 			entity reaper = CreateNPC( "npc_super_spectre", GetOtherTeam(owner.GetTeam()), owner.GetOrigin(), owner.GetAngles() )
 			DispatchSpawn(reaper)
+			if ( owner.IsPlayer() )
+				NSSendPopUpMessageToPlayer(owner, "Dodge!")
 			thread SuperSpectre_WarpFall(reaper)
 			#endif
 		}
