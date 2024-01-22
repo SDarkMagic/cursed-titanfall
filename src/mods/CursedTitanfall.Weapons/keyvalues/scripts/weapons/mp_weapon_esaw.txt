@@ -16,7 +16,7 @@ WeaponData
 
 	// Behavior
 	"fire_rate"   					"5"
-	"fire_rate_max"					"500"
+	"fire_rate_max"					"20"
 	"fire_rate_max_time_speedup"	"0.5"
 	"fire_rate_max_time_cooldown"	"0"
 }
