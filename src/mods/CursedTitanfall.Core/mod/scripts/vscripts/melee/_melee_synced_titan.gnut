@@ -1033,7 +1033,7 @@ void function TitanVsTitan_3p( SyncedMelee action, entity attacker, entity targe
 		switch (weaponName)
 		{
 			case "mp_titanweapon_leadwall":
-			shouldApplyBatteryAfterRodeo = true
+				shouldApplyBatteryAfterRodeo = true
 		}
 	}
 

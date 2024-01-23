@@ -49,13 +49,6 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 
 	entity owner = weapon.GetWeaponOwner()
 	entity soul = owner.GetTitanSoul()
-	if ( owner.IsPlayer() )
-	{
-		foreach ( callback in file.onPrimaryAttackPlayerCallbacks_titancore_upgrade )
-		{
-			callback( weapon, attackParams )
-		}
-	}
 	#if SERVER
 		float coreDuration = weapon.GetCoreDuration()
 		thread UpgradeCoreThink( weapon, coreDuration )
@@ -295,6 +288,15 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
 			}
 		}
+	#endif
+	if ( owner.IsPlayer() ) // Hacky way of calling this before current upgrade number is incremented but after the upgrade is completed
+	{
+		foreach ( callback in file.onPrimaryAttackPlayerCallbacks_titancore_upgrade )
+		{
+			callback( weapon, attackParams )
+		}
+	}
+	#if SERVER
 		soul.SetTitanSoulNetInt( "upgradeCount", currentUpgradeCount + 1 )
 		int statesIndex = owner.FindBodyGroup( "states" )
 		owner.SetBodygroup( statesIndex, 1 )

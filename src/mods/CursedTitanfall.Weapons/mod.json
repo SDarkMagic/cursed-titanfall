@@ -29,9 +29,12 @@
             }
         },
         {
-            "Path": "_monarch_healer.nut",
+            "Path": "sh_monarch_healer.nut",
             "RunOn": "MP",
             "ServerCallback": {
+                "Before": "Init_Monarch_Healing_Shots"
+            },
+            "ClientCallback": {
                 "Before": "Init_Monarch_Healing_Shots"
             }
         }
