@@ -4,8 +4,10 @@ WeaponData
     //"OnProjectileCollision"							"OnProjectileCollision_weapon_thermite_grenade"
     //"OnProjectileIgnite"                            "OnProjectileIgnite_weapon_thermite_grenade"
 
-    //"impact_effect_table"							"exp_frag_grenade"
+    "impact_effect_table" 							"titan_bullet"
 	"projectile_trail_effect_0"						"P_grenade_thermite_trail"
+	"vortex_absorb_effect"							"wpn_vortex_projectile_star_FP"
+	"vortex_absorb_effect_third_person"				"wpn_vortex_projectile_star"
 
     "damage_type"                                   "burn"
     "damage_flags"									"DF_RAGDOLL | DF_EXPLOSION | DF_STOPS_TITAN_REGEN"
@@ -22,6 +24,8 @@ WeaponData
     "stick_pilot"										"1"
 	"stick_titan"										"1"
 	"stick_npc"											"1"
+	//"projectile_ignores_vortex"						"drop"
+	"vortex_impact_effect"							"P_impact_xo_shield_cp"
 
     MP_BASE
     {
