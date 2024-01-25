@@ -1,0 +1,55 @@
+{
+    "Name": "CursedTitanfall.Titans",
+    "Description": "Cursed Titanfall module containing changes made to individual titan weapons, abilities, and custom titans.",
+    "Version": "1.0.0",
+    "RequiredOnClient": false,
+    "LoadPriority": 4,
+    "ConVars": [],
+    "Scripts":
+    [
+        /*
+        {
+            "Path": "register_titan_boomer.nut",
+            "RunOn": "MP",
+            "ServerCallback": {
+                "Before": "Boomer_Setup"
+            },
+            "ClientCallback": {
+                "Before": "Boomer_Setup"
+            }
+        },
+        */
+        {
+            "Path": "sh_monarch_healer.nut",
+            "RunOn": "MP",
+            "ServerCallback": {
+                "Before": "Init_Monarch_Healing_Shots"
+            },
+            "ClientCallback": {
+                "Before": "Init_Monarch_Healing_Shots"
+            }
+        },
+        {
+            "Path": "_emp_ronin.nut",
+            "RunOn": "MP",
+            "ServerCallback": {
+                "After": "Init_ArcTitan_Player"
+            }
+        },
+        {
+            "Path": "sh_upgrade_core_callbacks.nut",
+            "RunOn": "MP && SERVER",
+            "ServerCallback": {
+                "After": "Init_UpgradeCore_Callbacks"
+            }
+        }
+    ],
+    "Localisation":
+    [
+
+    ],
+    "Dependencies":
+    {
+      //"HAS_TITANFRAMEWORK": "Peepee.TitanFramework"
+    }
+}

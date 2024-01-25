@@ -8,8 +8,8 @@ void function Init_Custom_Weapon_Callbacks()
     AddCallback_OnPrimaryAttackPlayer_weapon_defender(Dash_Player_Threaded)
     AddCallback_OnProjectileCollision_weapon_softball(Softball_ESmoke)
     AddCallback_OnProjectileCollision_weapon_wingman(Wingman_Teleport)
+	//AddCallback_OnProjectileCollision_weapon_wingman(DisplayPlayerCoords)
     AddCallback_OnPrimaryAttackPlayer_weapon_sniper(Russian_Roulette)
-	AddCallback_OnPrimaryAttackPlayer_titancore_upgrade(ReaperJumpscare)
     //AddCallback_OnPrimaryAttackPlayer_weapon_lmg(Thread_PreventCamping)
 
 	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_grenade_emp, Grenade_Emp_Hack )
@@ -184,25 +184,12 @@ void function Pistol_Callback( entity target, var damageInfo )
 	#endif
 }
 
-void function ReaperJumpscare( entity weapon, WeaponPrimaryAttackParams attackParams )
+void function DisplayPlayerCoords( ProjectileCollisionParams params )
 {
-	int currentUpgradeCount = GetCurrentUpgrade_FromWeapon( weapon )
-	entity owner = weapon.GetWeaponOwner()
-	if (currentUpgradeCount >= 2){
-			#if SERVER
-			entity reaper = CreateNPC( "npc_super_spectre", GetOtherTeam(owner.GetTeam()), owner.GetOrigin(), owner.GetAngles() )
-			DispatchSpawn(reaper)
-			if ( owner.IsPlayer() )
-				NSSendPopUpMessageToPlayer(owner, "Dodge! :)")
-			thread SuperSpectre_WarpFall(reaper)
-			#endif
-		}
-}
-
-int function GetCurrentUpgrade_FromWeapon( entity weapon )
-{
-	entity owner = weapon.GetWeaponOwner()
-	entity soul = owner.GetTitanSoul()
-	return soul.GetTitanSoulNetInt( "upgradeCount" )
+	entity projectile = params.projectile
+	entity player = projectile.GetOwner()
+	if ( !player.IsPlayer() )
+		return
+    printt("Shot position: " + params.pos)
 }
 #endif

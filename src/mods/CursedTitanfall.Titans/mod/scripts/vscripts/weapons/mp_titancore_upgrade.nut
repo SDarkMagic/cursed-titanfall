@@ -350,12 +350,14 @@ void function UpgradeCoreThink( entity weapon, float coreDuration )
 			if ( IsValid( soul ) )
 			{
 				CleanupCoreEffect( soul )
+				// Cursed titanfall - Thanks Zanieon for sending this bit of code to me :)
 				int currentUpgradeCount = soul.GetTitanSoulNetInt( "upgradeCount" )
                 if( currentUpgradeCount > 2 && IsValid( owner ) )
                 {
                     owner.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
                     owner.GiveOffhandWeapon( "mp_titancore_amp_core", OFFHAND_EQUIPMENT )
                 }
+				///////////////////////////////////////////////////////////////////////////
 			}
 		}
 	)

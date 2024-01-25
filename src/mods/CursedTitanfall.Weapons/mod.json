@@ -29,13 +29,10 @@
             }
         },
         {
-            "Path": "sh_monarch_healer.nut",
+            "Path": "grav_field.nut",
             "RunOn": "MP",
             "ServerCallback": {
-                "Before": "Init_Monarch_Healing_Shots"
-            },
-            "ClientCallback": {
-                "Before": "Init_Monarch_Healing_Shots"
+                "Before": "GravField_Init"
             }
         }
     ],
