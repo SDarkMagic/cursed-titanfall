@@ -1,0 +1,6 @@
+WeaponData
+{
+    "projectile_explosion_delay"  						"0"
+    "explosion_inner_radius"  						"150"
+	"explosionradius" 								"220"
+}

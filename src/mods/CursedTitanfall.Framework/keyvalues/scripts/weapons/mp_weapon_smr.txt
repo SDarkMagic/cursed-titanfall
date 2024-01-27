@@ -1,0 +1,5 @@
+WeaponData
+{
+    "OnProjectileCollision"  						"OnProjectileCollision_weapon_smr"
+	//"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_titanweapon_dumbfire_rockets"
+}
