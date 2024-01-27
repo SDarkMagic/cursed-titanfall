@@ -216,7 +216,7 @@ void function SpawnClusterMissile_smr( ProjectileCollisionParams params )
 
 	PopcornInfo popcornInfo
 
-	popcornInfo.weaponName = "mp_titanweapon_dumbfire_rockets"
+	popcornInfo.weaponName = "mp_weapon_smr"
 	popcornInfo.weaponMods = []
 	popcornInfo.damageSourceId = eDamageSourceId.mp_weapon_smr
 	popcornInfo.count = 3
