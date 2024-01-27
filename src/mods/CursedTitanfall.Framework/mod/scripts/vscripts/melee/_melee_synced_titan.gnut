@@ -34,7 +34,7 @@ struct
 int RAGDOLL_IMPACT_TABLE_IDX = -1
 
 // Cursed Titanfall callback stuff
-function AddCallback_OnTitanVsTitan3p_ShouldGiveBattery( void functionref( entity, entity ) callback )
+function AddCallback_OnTitanVsTitan3p_ShouldGiveBattery( bool functionref( entity, entity ) callback )
 {
     Assert( !file.onTitanVsTitan3p_ShouldGiveBattery_Callbacks.contains( callback ), "Already added " + string( callbackFunc ) + " with AddCallback_OnTitanVsTitan3p_ShouldGiveBattery"  )
 	file.onTitanVsTitan3p_ShouldGiveBattery_Callbacks.append( callback )

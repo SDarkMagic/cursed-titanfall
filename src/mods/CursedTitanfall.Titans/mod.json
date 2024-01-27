@@ -42,6 +42,13 @@
             "ServerCallback": {
                 "After": "Init_UpgradeCore_Callbacks"
             }
+        },
+        {
+            "Path": "_general_titan_functions.nut",
+            "RunOn": "MP",
+            "ServerCallback": {
+                "After": "InitGeneralTitanFunctions"
+            }
         }
     ],
     "Localisation":

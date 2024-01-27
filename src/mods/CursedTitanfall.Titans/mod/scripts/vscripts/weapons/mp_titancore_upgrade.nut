@@ -14,7 +14,6 @@ const FX_SHIELD_GAIN_SCREEN		= $"P_xo_shield_up"
 
 // Cursed Titanfall callback stuff
 struct {
-    array< void functionref( ProjectileCollisionParams ) > onProjectileCollisionCallbacks_titancore_upgrade
     array< void functionref( entity, WeaponPrimaryAttackParams ) > onPrimaryAttackPlayerCallbacks_titancore_upgrade
 } file
 

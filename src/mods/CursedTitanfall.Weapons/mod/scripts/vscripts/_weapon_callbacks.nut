@@ -8,6 +8,7 @@ void function Init_Custom_Weapon_Callbacks()
     AddCallback_OnPrimaryAttackPlayer_weapon_defender(Dash_Player_Threaded)
     AddCallback_OnProjectileCollision_weapon_softball(Softball_ESmoke)
     AddCallback_OnProjectileCollision_weapon_wingman(Wingman_Teleport)
+	AddCallback_OnProjectileCollision_weapon_smr( SpawnClusterMissile_smr )
 	//AddCallback_OnProjectileCollision_weapon_wingman(DisplayPlayerCoords)
     AddCallback_OnPrimaryAttackPlayer_weapon_sniper(Russian_Roulette)
     //AddCallback_OnPrimaryAttackPlayer_weapon_lmg(Thread_PreventCamping)
@@ -191,5 +192,43 @@ void function DisplayPlayerCoords( ProjectileCollisionParams params )
 	if ( !player.IsPlayer() )
 		return
     printt("Shot position: " + params.pos)
+}
+
+void function SpawnClusterMissile_smr( ProjectileCollisionParams params )
+{
+	entity rocket = params.projectile
+	vector normal = params.normal
+	vector pos = params.pos
+	float explosionDelay = 0
+
+	entity owner = rocket.GetOwner()
+	if ( !IsValid( owner ) )
+		return
+
+	int count
+	float duration
+	float range
+
+	array<string> mods = rocket.ProjectileGetMods()
+	count = CLUSTER_ROCKET_BURST_COUNT
+	duration = 0.5
+	range = CLUSTER_ROCKET_BURST_RANGE
+
+	PopcornInfo popcornInfo
+
+	popcornInfo.weaponName = "mp_titanweapon_dumbfire_rockets"
+	popcornInfo.weaponMods = []
+	popcornInfo.damageSourceId = eDamageSourceId.mp_weapon_smr
+	popcornInfo.count = 3
+	popcornInfo.delay = 0.2
+	popcornInfo.offset = CLUSTER_ROCKET_BURST_OFFSET
+	popcornInfo.range = range
+	popcornInfo.normal = normal
+	popcornInfo.duration = duration
+	popcornInfo.groupSize = 3
+	popcornInfo.hasBase = true
+
+	thread StartClusterExplosions( rocket, owner, popcornInfo, CLUSTER_ROCKET_FX_TABLE )
+	CreateNoSpawnArea( TEAM_INVALID, TEAM_INVALID, pos, ( duration + explosionDelay ) * 0.5 + 1.0, CLUSTER_ROCKET_BURST_RANGE + 100 )
 }
 #endif
