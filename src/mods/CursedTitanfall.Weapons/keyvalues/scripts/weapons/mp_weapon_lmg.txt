@@ -24,7 +24,8 @@ WeaponData
     "stick_pilot"										"1"
 	"stick_titan"										"1"
 	"stick_npc"											"1"
-	//"projectile_ignores_vortex"						"drop"
+	"vortex_refire_behavior"  						"grenade"
+	"projectile_ignores_vortex"						"drop"
 	"vortex_impact_effect"							"P_impact_xo_shield_cp"
 
     MP_BASE

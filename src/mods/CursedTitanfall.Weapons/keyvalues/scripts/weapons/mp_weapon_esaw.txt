@@ -3,6 +3,7 @@ WeaponData
 	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_weapon_esaw"
 	"OnWeaponReload"                                "OnWeaponReload_weapon_esaw"
 	"ammo_clip_size"   								"250"
+	"titanarmor_critical_hit_required"              "0"
 	MP_BASE
 	{
 		"ammo_default_total"							"1000"
