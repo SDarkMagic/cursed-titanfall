@@ -49,6 +49,13 @@
             "ServerCallback": {
                 "After": "InitGeneralTitanFunctions"
             }
+        },
+        {
+            "Path": "_legion_ammo_absorb.nut",
+            "RunOn": "MP && SERVER",
+            "ServerCallback": {
+                "After": "Init_LegionAmmoAbsorber"
+            }
         }
     ],
     "Localisation":
