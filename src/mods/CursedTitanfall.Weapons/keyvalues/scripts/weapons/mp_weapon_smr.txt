@@ -2,10 +2,10 @@ WeaponData
 {
     "projectile_explosion_delay"  						"0"
     "explosion_inner_radius"  						"75"
-	"explosionradius" 								"110"
+	"explosionradius" 								"105"
     MP_BASE
     {
-        "explosion_damage"								"10"
-		"explosion_damage_heavy_armor"					"75"
+        "explosion_damage"								"5"
+		"explosion_damage_heavy_armor"					"20"
     }
 }
