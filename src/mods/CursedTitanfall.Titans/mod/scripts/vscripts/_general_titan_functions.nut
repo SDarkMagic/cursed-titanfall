@@ -12,16 +12,13 @@ void function InitGeneralTitanFunctions()
 
 bool function RoninExecutionGivesBatt( entity attacker, entity target )
 {
-    string titanClass = attacker.GetClassName()
-	array<entity> attackerWeapons = attacker.GetMainWeapons()
-	if ( attackerWeapons.len() > 0 && attacker.IsPlayer() )
+	if ( attacker.IsPlayer() )
 	{
-		printt("Titan does indeed have weapons...")
-		string weaponName = attackerWeapons[0].GetWeaponClassName()
-		printt(weaponName)
-		switch (weaponName)
+        string titanName = GetTitanCharacterName( attacker )
+		printt(titanName)
+		switch (titanName)
 		{
-			case "mp_titanweapon_leadwall":
+			case "ronin":
 				return true
 		}
 	}

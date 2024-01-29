@@ -32,6 +32,7 @@ void function PlayerTitan_TookDamage( entity titan, var damageInfo )
     if ( !IsValid( soul ) || !IsValid( titan ) || !titan.IsPlayer() || damage <= 0 )
         return
     int ammoToAdd = int( damage / 100 )
+    DamageInfo_SetDamage( damageInfo, damage / 1.6 )
     array<entity> weapons = titan.GetMainWeapons()
     if ( weapons.len() > 0 )
     {
