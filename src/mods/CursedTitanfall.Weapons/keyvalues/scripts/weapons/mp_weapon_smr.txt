@@ -6,6 +6,6 @@ WeaponData
     MP_BASE
     {
         "explosion_damage"								"5"
-		"explosion_damage_heavy_armor"					"20"
+		"explosion_damage_heavy_armor"					"10"
     }
 }

@@ -15,6 +15,7 @@ void function Init_Custom_Weapon_Callbacks()
 
 	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_grenade_emp, Grenade_Emp_Hack )
 	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_semipistol, Pistol_Callback )
+	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_car, PushEnt_WhenHit_Callback )
     #endif
 }
 
@@ -231,4 +232,10 @@ void function SpawnClusterMissile_smr( ProjectileCollisionParams params )
 	thread StartClusterExplosions( rocket, owner, popcornInfo, CLUSTER_ROCKET_FX_TABLE )
 	CreateNoSpawnArea( TEAM_INVALID, TEAM_INVALID, pos, ( duration + explosionDelay ) * 0.5 + 1.0, CLUSTER_ROCKET_BURST_RANGE + 100 )
 }
+
+void function PushEnt_WhenHit_Callback( entity target, var damageInfo )
+{
+	PushEntWithDamageInfo( target, damageInfo, 7.5, 1.0 ) // Function defined on line 3598 of _utility.gnut
+}
+
 #endif
