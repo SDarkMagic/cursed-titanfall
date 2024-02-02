@@ -1,0 +1,17 @@
+WeaponData
+{
+    Mods
+    {
+        arc_rounds
+		{
+			"primary_fire_does_not_block_sprint"			"1"
+			"crosshair_force_sprint_fade_disabled"          "1"
+		}
+
+		arc_rounds_with_battle_rifle
+		{
+			"primary_fire_does_not_block_sprint"			"1"
+			"crosshair_force_sprint_fade_disabled"          "1"
+		}
+    }
+}
