@@ -28,7 +28,7 @@ bool function RoninExecutionGivesBatt( entity attacker, entity target )
 void function WarnNorthstarBug( entity player, entity titan )
 {
     entity soul = player.GetTitanSoul()
-    string bugWarning = "The Viper thrusters kit is currently buggy, and can cause you to become stuck in the air when using flight core. This server makes the viper thruster flight speed the default for Northstar and it is recommended that you change kits."
+    string bugWarning = "The Viper thrusters kit is currently buggy, and can cause you to become stuck in the air when using flight core. It is recommended that you change kits."
     if ( !IsValid( player ) || !IsValid( titan ) || !IsValid( soul ) )
         return
     if ( !SoulHasPassive( soul, ePassives.PAS_NORTHSTAR_FLIGHTCORE) )
