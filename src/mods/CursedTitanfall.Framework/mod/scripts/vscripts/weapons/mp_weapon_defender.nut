@@ -39,10 +39,6 @@ var function OnWeaponPrimaryAttack_weapon_defender( entity weapon, WeaponPrimary
 {
 	if ( weapon.GetWeaponChargeFraction() < 1.0 )
 		return 0
-	foreach ( callback in file.onPrimaryAttackPlayerCallbacks_weapon_defender)
-	{
-		callback( weapon, attackParams )
-	}
 	return FireDefender( weapon, attackParams )
 }
 
@@ -58,6 +54,11 @@ int function FireDefender( entity weapon, WeaponPrimaryAttackParams attackParams
 {
 	weapon.EmitWeaponNpcSound( LOUD_WEAPON_AI_SOUND_RADIUS_MP, 0.2 )
 	weapon.FireWeaponBullet( attackParams.pos, attackParams.dir, 1, DF_GIB | DF_EXPLOSION )
+
+	foreach ( callback in file.onPrimaryAttackPlayerCallbacks_weapon_defender)
+	{
+		callback( weapon, attackParams )
+	}
 
 	return 1
 }
