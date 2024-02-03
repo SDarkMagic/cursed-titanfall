@@ -250,8 +250,8 @@ void function initFrontierDefenseData()
 	waveEvents.append(wave4)
 	index = 1
 	array<WaveEvent> wave5
-	wave1.append( CreateBossTitanEvent_Ash( < -9248.27, -4602.89, 572.391 >, <0, 2.81, 0>, "mainStretch", index++ ))
-	wave1.append( CreateWaitUntilAliveEvent( 0, index++ ) )
+	wave5.append( CreateBossTitanEvent_Ash( < -1500, 1200, 560 >, <0, 2.81, 0>, "mainEntrance", index++ ))
+	wave5.append( CreateWaitUntilAliveEvent( 0, index++ ) )
 	wave5.append(CreateMonarchTitanEvent(< -878 , 785 , 568 >,< 0, -90, 0 >,"",index++))
 	wave5.append(CreateWaitForTimeEvent( 0.5, index++ ) )
 	wave5.append(CreateMonarchTitanEvent(< -694 , 101 , 584 >,< 0, -90, 0 >,"",index++))

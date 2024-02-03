@@ -22,7 +22,6 @@ void function ReaperJumpscare( entity weapon, WeaponPrimaryAttackParams attackPa
 			if ( owner.IsPlayer() )
 				NSSendPopUpMessageToPlayer(owner, "Dodge! :)")
                 EmitSoundOnEntityOnlyToPlayer( owner, owner, "diag_sp_bossFight_STS676_08_01_imc_viper")
-            wait 1.0
 			thread SuperSpectre_WarpFall(reaper)
 		}
 }
