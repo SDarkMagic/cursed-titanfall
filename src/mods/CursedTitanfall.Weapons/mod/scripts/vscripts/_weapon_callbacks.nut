@@ -5,7 +5,7 @@ void function Init_Custom_Weapon_Callbacks()
     printt("Initializing Custom weapon callback functions...")
     #if SERVER
     AddCallback_OnProjectileCollision_weapon_epg(Weapon_Epg_Collision)
-    AddCallback_OnPrimaryAttackPlayer_weapon_defender(Dash_Player_Threaded)
+    AddCallback_OnPrimaryAttackPlayer_weapon_defender(Dash_Player)
     AddCallback_OnProjectileCollision_weapon_softball(Softball_ESmoke)
     AddCallback_OnProjectileCollision_weapon_wingman(Wingman_Teleport)
 	AddCallback_OnProjectileCollision_weapon_smr( SpawnClusterMissile_smr )
@@ -40,6 +40,8 @@ void function Dash_Player(entity weapon, WeaponPrimaryAttackParams attackParams)
 {
 	printt("Called Dash_Player function")
 	entity player = weapon.GetWeaponOwner()
+	if ( !player.IsPlayer() )
+		return
 	float speedModifier = -500
 	vector viewDirection = player.GetViewVector()
 	vector appliedVelocity = viewDirection * (speedModifier * weapon.GetWeaponChargeTime()) // Scale the applied velocity based on how long the weapon needs to charge for. Then create apply the speed modifier to the velocity vector to get the applied force.
@@ -50,7 +52,7 @@ void function Dash_Player(entity weapon, WeaponPrimaryAttackParams attackParams)
 
 void function Dash_Player_Threaded( entity weapon, WeaponPrimaryAttackParams attackParams )
 {
-	thread Dash_Player( weapon, attackParams )
+	Dash_Player( weapon, attackParams )
 	return
 }
 
@@ -83,7 +85,9 @@ void function Wingman_Teleport( ProjectileCollisionParams params )
 
 void function Russian_Roulette( entity weapon, WeaponPrimaryAttackParams attackParams )
 {
-    entity player =weapon.GetWeaponOwner()
+    entity player = weapon.GetWeaponOwner()
+	if ( !IsValid( player ) )
+		return
     if (RandomInt(15) == 5)
 	{
 		player.TakeDamage( player.GetHealth(), null, null, { weapon = weapon, damageSourceId = eDamageSourceId.mp_weapon_sniper } )
@@ -170,20 +174,18 @@ void function Pistol_Callback( entity target, var damageInfo )
 	entity weapon = DamageInfo_GetWeapon( damageInfo )
 	enemies.extend( GetNPCArrayOfEnemies(team) )
 	enemies.extend( GetTitanArrayOfEnemies(team) )
-	#if SERVER
-		DamageInfo_SetDamage( damageInfo, 0 )
-		if (RandomInt( weapon.GetWeaponPrimaryClipCountMax() * 4 ) == 3)
+	DamageInfo_SetDamage( damageInfo, 0 )
+	if (RandomInt( weapon.GetWeaponPrimaryClipCountMax() * 4 ) == 3)
+	{
+		printt("Wiping enemy team. Get rekt")
+		foreach (entity enemy in enemies)
 		{
-			printt("Wiping enemy team. Get rekt")
-			foreach (entity enemy in enemies)
-            {
-				if ( !IsValid(enemy) || !IsAlive(enemy) )
-					continue
-                enemy.TakeDamage( enemy.GetHealth(), player, null, { weapon = weapon } )
-            }
+			if ( !IsValid(enemy) || !IsAlive(enemy) )
+				continue
+			enemy.TakeDamage( enemy.GetHealth(), player, null, { weapon = weapon } )
 		}
+	}
 
-	#endif
 }
 
 void function DisplayPlayerCoords( ProjectileCollisionParams params )
@@ -192,7 +194,7 @@ void function DisplayPlayerCoords( ProjectileCollisionParams params )
 	entity player = projectile.GetOwner()
 	if ( !player.IsPlayer() )
 		return
-    printt("Shot position: " + params.pos)
+    printt("routes[ \"\" ].append( " + params.pos + " )")
 }
 
 void function SpawnClusterMissile_smr( ProjectileCollisionParams params )
@@ -235,7 +237,22 @@ void function SpawnClusterMissile_smr( ProjectileCollisionParams params )
 
 void function PushEnt_WhenHit_Callback( entity target, var damageInfo )
 {
-	PushEntWithDamageInfo( target, damageInfo, 7.5, 1.0 ) // Function defined on line 3598 of _utility.gnut
+	int source = DamageInfo_GetDamageSourceIdentifier( damageInfo )
+	switch ( source )
+	{
+ 		case eDamageSourceId.mp_titanweapon_vortex_shield:
+  		case eDamageSourceId.mp_titanweapon_vortex_shield_ion:
+			return
+	}
+
+	entity projectile = DamageInfo_GetInflictor( damageInfo )
+	if ( !IsValid( projectile ) )
+		return
+
+	vector attackDirection = Normalize( projectile.GetPlayerOrNPCViewVector() )
+	float damage = DamageInfo_GetDamage( damageInfo )
+
+	PushEntWithDamageFromDirection( target, damage, attackDirection, 7.5, 1.0 )
 }
 
 #endif
