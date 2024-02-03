@@ -17,13 +17,13 @@ void function ReaperJumpscare( entity weapon, WeaponPrimaryAttackParams attackPa
 	int currentUpgradeCount = GetCurrentUpgrade_FromWeapon( weapon )
 	entity owner = weapon.GetWeaponOwner()
 	if (currentUpgradeCount >= 2){
-			#if SERVER
 			entity reaper = CreateNPC( "npc_super_spectre", GetOtherTeam(owner.GetTeam()), owner.GetOrigin(), owner.GetAngles() )
 			DispatchSpawn(reaper)
 			if ( owner.IsPlayer() )
 				NSSendPopUpMessageToPlayer(owner, "Dodge! :)")
+                EmitSoundOnEntityOnlyToPlayer( owner, owner, "diag_sp_bossFight_STS676_08_01_imc_viper")
+            wait 1.0
 			thread SuperSpectre_WarpFall(reaper)
-			#endif
 		}
 }
 

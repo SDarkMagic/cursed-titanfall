@@ -2,7 +2,7 @@ WeaponData
 {
 	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_weapon_esaw"
 	//"OnWeaponReload"                                "OnWeaponReload_weapon_esaw"
-	"ammo_clip_size"   								"250"
+	"ammo_clip_size"   								"125"
 	"titanarmor_critical_hit_required"              "0"
 	MP_BASE
 	{
@@ -27,7 +27,7 @@ WeaponData
 	{
 		extended_ammo
 		{
-			"ammo_clip_size"   					"300"
+			"ammo_clip_size"   					"150"
 		}
 	}
 }

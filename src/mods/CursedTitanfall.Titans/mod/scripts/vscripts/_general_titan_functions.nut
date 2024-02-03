@@ -15,7 +15,6 @@ bool function RoninExecutionGivesBatt( entity attacker, entity target )
 	if ( attacker.IsPlayer() )
 	{
         string titanName = GetTitanCharacterName( attacker )
-		printt(titanName)
 		switch (titanName)
 		{
 			case "ronin":
