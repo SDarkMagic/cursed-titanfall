@@ -9,7 +9,7 @@ void function Init_Custom_Weapon_Callbacks()
     AddCallback_OnProjectileCollision_weapon_softball(Softball_ESmoke)
     AddCallback_OnProjectileCollision_weapon_wingman(Wingman_Teleport)
 	AddCallback_OnProjectileCollision_weapon_smr( SpawnClusterMissile_smr )
-	//AddCallback_OnProjectileCollision_weapon_wingman(DisplayPlayerCoords)
+	AddCallback_OnProjectileCollision_weapon_wingman(DisplayPlayerCoords)
     AddCallback_OnPrimaryAttackPlayer_weapon_sniper(Russian_Roulette)
     //AddCallback_OnPrimaryAttackPlayer_weapon_lmg(Thread_PreventCamping)
 
@@ -24,12 +24,15 @@ void function Weapon_Epg_Collision( ProjectileCollisionParams params )
 {
     entity prowler = CreateEntity( "npc_prowler" )
     entity player = params.projectile.GetOwner()
+	if ( !IsValid(player) )
+		return
     int team = player.GetTeam()
     vector spawnOffset = -150 * Normalize(params.projectile.GetVelocity()) // Move the spawn point back by 150 units of the projectile's velocity vector
 
     prowler.SetOrigin(params.pos + spawnOffset)
     prowler.SetAngles(params.projectile.GetAngles())
-    prowler.SetBossPlayer(player)
+	if ( player.IsPlayer() )
+	    prowler.SetBossPlayer(player)
     SetTeam(prowler, team)
     DispatchSpawn(prowler)
     add_prowler(prowler)
@@ -169,19 +172,29 @@ void function Grenade_Emp_Hack( entity target, var damageInfo )
 void function Pistol_Callback( entity target, var damageInfo )
 {
 	entity player = DamageInfo_GetAttacker(damageInfo)
+	if ( !player.IsPlayer() )
+		return
     int team = player.GetTeam()
     array<entity> enemies = GetPlayerArrayOfEnemies(team)
 	entity weapon = DamageInfo_GetWeapon( damageInfo )
 	enemies.extend( GetNPCArrayOfEnemies(team) )
-	enemies.extend( GetTitanArrayOfEnemies(team) )
+	array<entity> titans = GetTitanArrayOfEnemies(team)
+	enemies.extend(titans)
 	DamageInfo_SetDamage( damageInfo, 0 )
-	if (RandomInt( weapon.GetWeaponPrimaryClipCountMax() * 4 ) == 3)
+	if ( RandomInt( weapon.GetWeaponPrimaryClipCountMax() * 4 ) == 3 )
 	{
 		printt("Wiping enemy team. Get rekt")
 		foreach (entity enemy in enemies)
 		{
+			printt(enemy)
 			if ( !IsValid(enemy) || !IsAlive(enemy) )
 				continue
+			if ( enemy.IsTitan() )
+			{
+				entity soul = enemy.GetTitanSoul()
+				if ( !soul.IsDoomed() )
+					//enemy.TakeDamage( enemy.GetHealth(), player, null, { weapon = weapon } )
+			}
 			enemy.TakeDamage( enemy.GetHealth(), player, null, { weapon = weapon } )
 		}
 	}

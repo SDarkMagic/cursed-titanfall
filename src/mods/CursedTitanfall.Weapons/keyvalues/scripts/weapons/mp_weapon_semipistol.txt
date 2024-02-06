@@ -1,0 +1,4 @@
+WeaponData
+{
+   "titanarmor_critical_hit_required"              "0"
+}
