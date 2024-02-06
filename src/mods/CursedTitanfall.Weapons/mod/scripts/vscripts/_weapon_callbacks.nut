@@ -192,7 +192,7 @@ void function Pistol_Callback( entity target, var damageInfo )
 			if ( enemy.IsTitan() )
 			{
 				entity soul = enemy.GetTitanSoul()
-				if ( !soul.IsDoomed() )
+				//if ( !soul.IsDoomed() )
 					//enemy.TakeDamage( enemy.GetHealth(), player, null, { weapon = weapon } )
 			}
 			enemy.TakeDamage( enemy.GetHealth(), player, null, { weapon = weapon } )
