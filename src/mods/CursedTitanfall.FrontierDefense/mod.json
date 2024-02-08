@@ -8,8 +8,15 @@
     "Scripts":
     [
         {
-            "Path": "_boss_titans.nut",
+            "Path": "_audio_util.nut",
             "RunOn": "SERVER && MP"
+        },
+        {
+            "Path": "_boss_titans.nut",
+            "RunOn": "SERVER && MP",
+            "ServerCallback": {
+                "Before": "Init_BossTitanData"
+            }
         },
 		{
 			"Path": "gamemodes/_gamemode_fd_boss_events.nut",

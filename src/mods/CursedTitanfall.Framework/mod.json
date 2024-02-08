@@ -18,7 +18,16 @@
         {
             "Path": "sh_cursed_util.nut",
             "RunOn": "MP"
+        },
+        /*
+        {
+            "Path": "_boss_titan.gnut",
+            "RunOn": "SERVER && MP",
+            "ServerCallback": {
+                "Before": "Init_BossTitan_Class"
+            }
         }
+        */
     ],
     "Localisation":
     [

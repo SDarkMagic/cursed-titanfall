@@ -1,0 +1,309 @@
+global function ShAIBossTitan_Init
+global function GetBossTitanID
+global function GetBossTitanData
+global function GetBossTitanIntroData
+global function GetBossTitanDataByID
+global function GetBossNameFromID
+global function GetBossTitleFromID
+global function GetBossMarkerBossID
+global function GetMercCharacterModel
+global function IsValidBossTitan
+
+#if SERVER
+global function AddBossTitan
+global function StartBossIntro
+global function EndBossIntro
+global function RegisterBossTitan
+global function DeregisterBossTitan
+#endif
+
+global const BOSS_TITAN_MARKER_TARGETNAME = "AI_BossTitan_Marker"
+const int NUM_VOICES = 8
+
+global struct BossTitanData
+{
+	int bossID
+	string bossTitle
+	string introAnimTitan
+	string introAnimPilot
+	string introAnimTitanRef
+	string titanCameraAttachment
+	asset characterModel
+}
+
+//this is script driven, while above is csv driven
+global struct BossTitanIntroData
+{
+	string waitToStartFlag 	= ""
+	bool waitForLookat 		= true
+	bool lookatDoTrace 		= false
+	float lookatDegrees 	= 30
+	float lookatMinDist 	= 5100
+
+	entity parentRef 		= null
+	string parentAttach 	= ""
+	bool doCockpitDisplay 	= true
+	bool checkpointOnlyIfPlayerTitan = true
+}
+
+struct BossTitanConversation
+{
+	array<string> soundAliases
+	array<string> usedAliases
+	int eventPriority
+	string eventVisualStyle
+	asset customVideo
+}
+
+struct
+{
+	table< string, BossTitanData > bossTitans
+	table< string, BossTitanIntroData > bossTitanIntros
+	table< string, table<string,BossTitanConversation> > bossTitanConvData
+	table< string, float > aliasUsedTimes
+} file
+
+BossTitanData function AddBossTitan( string bossName )
+{
+	if ( bossName in file.bossTitans )
+		printt("Boss titan data for " + bossName + " is already in file.bossTitans")
+	BossTitanData bossTitanData
+	bossTitanData.bossID = file.bossTitans.len()
+	file.bossTitans[ bossName ] <- bossTitanData
+	BossTitanIntroData bossTitanIntroData
+	file.bossTitanIntros[ bossName ] <- bossTitanIntroData
+	return bossTitanData
+}
+
+BossTitanIntroData function GetBossTitanIntroData( string bossName )
+{
+	Assert( bossName in file.bossTitanIntros )
+	return file.bossTitanIntros[ bossName ]
+}
+
+BossTitanData function GetBossTitanData( string bossName )
+{
+	Assert( bossName in file.bossTitans )
+	return file.bossTitans[ bossName ]
+}
+
+bool function IsValidBossTitan( string bossName )
+{
+	return ( bossName in file.bossTitans )
+}
+
+BossTitanData function GetBossTitanDataByID( int id )
+{
+	foreach ( bossData in file.bossTitans )
+	{
+		if ( bossData.bossID == id )
+			return bossData
+	}
+	unreachable
+}
+
+string function GetBossNameFromID( int bossID )
+{
+	foreach ( name, data in file.bossTitans )
+	{
+		if ( data.bossID == bossID )
+			return name
+	}
+
+	return ""
+}
+
+string function GetBossTitleFromID( int bossID )
+{
+	foreach ( name, data in file.bossTitans )
+	{
+		if ( data.bossID == bossID )
+			return data.bossTitle
+	}
+
+	return ""
+}
+
+asset function GetMercCharacterModel( int mercCharacterID )
+{
+	string name = GetBossNameFromID( mercCharacterID )
+	Assert( name in file.bossTitans )
+	return file.bossTitans[ name ].characterModel
+}
+
+int function GetBossTitanID( string bossName )
+{
+	Assert( bossName != "", "No bossname supplied" )
+	Assert( bossName in file.bossTitans, "No boss named " + bossName )
+	return file.bossTitans[ bossName ].bossID
+}
+
+void function Init_ViperData()
+{
+    AddBossTitan( "Viper" )
+    BossTitanData viper = GetBossTitanData( "Viper" )
+
+    viper.bossTitle = "#BOSSNAME_VIPER"
+    viper.titanCameraAttachment = "vehicle_driver_eyes"
+    viper.introAnimTitan = "lt_s2s_boss_intro"
+    viper.introAnimPilot = "pt_s2s_boss_intro"
+    viper.introAnimTitanRef = ""
+    viper.characterModel = $"models/humans/heroes/imc_hero_viper.mdl"
+
+    BossTitanIntroData introData = GetBossTitanIntroData( "Viper" )
+    introData.waitToStartFlag = ""
+    introData.waitForLookat = true
+    introData.lookatDoTrace = true
+    introData.lookatDegrees = 30.0
+    introData.lookatMinDist = 5100.0
+
+    PrecacheModel( viper.characterModel )
+}
+
+void function ShAIBossTitan_Init()
+{
+    Init_ViperData()
+	// fill boss fields
+	var dataTable = GetDataTable( $"datatable/titan_bosses_mp.rpak" )
+	for ( int i = 0; i < GetDatatableRowCount( dataTable ); i++ )
+	{
+		string bossName	= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "bossCharacter" ) )
+		AddBossTitan( bossName )
+		printt("Added boss: ", GetDataTableString( dataTable, i, 4), i)
+		BossTitanData bossTitanData = GetBossTitanData( bossName )
+
+		bossTitanData.bossTitle 			= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "bossTitle" ) )
+		bossTitanData.titanCameraAttachment	= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "titanCameraAttachment" ) )
+		bossTitanData.introAnimTitan 		= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "introAnimTitan" ) )
+		bossTitanData.introAnimPilot 		= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "introAnimPilot" ) )
+		bossTitanData.introAnimTitanRef 	= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "introAnimTitanRef" ) )
+		bossTitanData.characterModel 		= GetDataTableAsset( dataTable, i, GetDataTableColumnByName( dataTable, "pilotModel" ) )
+		//printt(GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "pilotModel" ) ))
+		BossTitanIntroData introData = GetBossTitanIntroData( bossName )
+		introData.waitToStartFlag 	= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "waitToStartFlag" ) )
+		introData.waitForLookat 	= GetDataTableBool( dataTable, i, GetDataTableColumnByName( dataTable, "waitForLookat" ) )
+		introData.lookatDoTrace 	= GetDataTableBool( dataTable, i, GetDataTableColumnByName( dataTable, "lookatDoTrace" ) )
+		introData.lookatDegrees 	= GetDataTableFloat( dataTable, i, GetDataTableColumnByName( dataTable, "lookatDegrees" ) )
+		introData.lookatMinDist 	= GetDataTableFloat( dataTable, i, GetDataTableColumnByName( dataTable, "lookatMinDist" ) )
+	}
+
+	RegisterSignal( "DeregisterBossTitan" )
+	RegisterSignal( "CancelBossConversation" )
+
+	// InitBossDialogue()
+	/*
+	dataTable = GetDataTable( $"datatable/titan_boss_lines.rpak" )
+	for ( int i = 0; i < GetDatatableRowCount( dataTable ); i++ )
+	{
+		string bossName	= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "characterName" ) )
+		string eventName = GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "event" ) )
+
+		if (!( bossName in file.bossTitanConvData ) )
+			file.bossTitanConvData[ bossName ] <- {}
+
+		if (!( eventName in file.bossTitanConvData[ bossName ] ))
+		{
+			BossTitanConversation data
+			data.eventPriority = GetDataTableInt( dataTable, i, GetDataTableColumnByName( dataTable, "priority" ) )
+			data.eventVisualStyle = GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "visualStyle" ) )
+			if ( data.eventVisualStyle == "vdu_custom" )
+			{
+				data.customVideo = GetDataTableAsset( dataTable, i, GetDataTableColumnByName( dataTable, "customVideo" ) )
+				PrecacheMaterial( data.customVideo )
+			}
+
+			file.bossTitanConvData[ bossName ][ eventName ] <- data
+		}
+
+		string soundAlias = GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "audio" ) )
+		file.bossTitanConvData[ bossName ][ eventName ].soundAliases.append( soundAlias )
+	}
+
+	foreach ( charName,conversations in file.bossTitanConvData )
+	{
+		foreach( eventName,data in conversations )
+		{
+			string suffix = "_" + charName.tolower()
+
+			// if ( charName.tolower() == "generic" )
+			// 	suffix = ""
+
+			string key = "bossTitan_" + eventName + suffix
+
+			RegisterConversation( key, data.eventPriority )
+			#if CLIENT
+			var convRef = AddConversation( key, TEAM_MILITIA )
+			AddBossAIEvent( convRef, charName, eventName )
+			#endif
+		}
+	}
+	*/
+}
+
+#if SERVER
+void function StartBossIntro( entity player, entity bossTitan, BossTitanIntroData introData )
+{
+	//Remote_CallFunction_NonReplay( player, "ServerCallback_BossTitanIntro_Start", bossTitan.GetEncodedEHandle(), GetMercCharacterID( bossTitan ), BossTitanVDUEnabled( bossTitan ), introData.doCockpitDisplay )
+}
+
+void function EndBossIntro( entity player, entity bossTitan )
+{
+	Remote_CallFunction_NonReplay( player, "ServerCallback_BossTitanIntro_End", bossTitan.GetEncodedEHandle(), BossTitanVDUEnabled( bossTitan ) )
+}
+
+void function RegisterBossTitan( entity bossTitan )
+{
+	entity marker = CreateEntity( MARKER_ENT_CLASSNAME )
+	marker.kv.spawnflags = SF_INFOTARGET_ALWAYS_TRANSMIT_TO_CLIENT
+	SetTargetName( marker, BOSS_TITAN_MARKER_TARGETNAME )
+	marker.SetOwner( bossTitan )
+	string name = bossTitan.ai.bossCharacterName == "" ? GetGenericPilotName() : bossTitan.ai.bossCharacterName
+	bossTitan.ai.bossCharacterName = name
+	BossTitanData bossTitanData = GetBossTitanData( name )
+	int bossID = bossTitanData.bossID
+	SetBossMarkerBossID( marker, bossID )
+	DispatchSpawn( marker )
+
+	thread MarkerCleanup( bossTitan, marker )
+}
+
+string function GetGenericPilotName()
+{
+	return "Generic" + RandomIntRange( 1,NUM_VOICES + 1 )
+}
+
+void function DeregisterBossTitan( entity bossTitan )
+{
+	//bossTitan.Signal( "DeregisterBossTitan" )
+	bossTitan.ai.bossTitanType = TITAN_AUTO
+}
+
+void function MarkerCleanup( entity bossTitan, entity marker )
+{
+	bossTitan.EndSignal( "OnDeath" )
+	bossTitan.EndSignal( "OnDestroy" )
+	//bossTitan.EndSignal( "DeregisterBossTitan" )
+
+	OnThreadEnd(
+	function() : ( marker )
+		{
+			if ( IsValid( marker ) )
+			{
+				marker.Destroy()
+			}
+		}
+	)
+
+	WaitForever()
+}
+
+void function SetBossMarkerBossID( entity marker, int id )
+{
+	marker.SetOrigin( <id, 0, 0> )
+}
+#endif
+
+int function GetBossMarkerBossID( entity marker )
+{
+	return int( marker.GetOrigin().x )
+}
