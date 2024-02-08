@@ -1,9 +1,0 @@
-WeaponData
-{
-    "OnWeaponPrimaryAttack"                         "OnWeaponPrimaryAttack_lmg"
-    "OnWeaponBulletHit"								"OnWeaponBulletHit_weapon_lmg"
-    //"OnProjectileCollision"							"OnProjectileCollision_weapon_thermite_grenade"
-    //"OnProjectileIgnite"                            "OnProjectileIgnite_weapon_thermite_grenade"
-
-    "projectile_trail_effect_0" 					"P_wpn_meteor_trail"
-}
