@@ -8,12 +8,6 @@ global function Spawn_Richter
 global function Spawn_Kane
 global function Spawn_Blisk
 
-global struct bossStageTracker {
-    int currentStage = 0
-    int maxStages = 3
-    float regenTime = 15.0
-}
-
 global struct BossData {
     string name
     asset modelPath
@@ -32,31 +26,101 @@ global struct BossData {
     string execution
     string theme
     string className
+    BossVoiceDiag &diag
+}
+
+struct bossStageTracker {
+    int currentStage = 0
+    int maxStages = 3
+    float regenTime = 15.0
+}
+
+struct BossVoiceDiag {
+    string intro
+    string death
+    string doomed
+    array<string> changeTarget
+    array<string> coreActivate
+    array<string> retreat
+    array<string> advance
 }
 
 struct {
-    array<string> musicTracksPlaying
     table<string, bossStageTracker> bossStageTrackers
     table<string, BossData> bosses
     table<string, entity> bossEnts
 } file
 
-BossData ash
+BossData &ash
+BossData &viper
+BossData &slone
+BossData &richter
+BossData &kane
+BossData &blisk
 
 void function Init_BossTitanData()
 {
-    bossStageTracker ashStageData
-    ashStageData.regenTime = 10.0
-    ashStageData.maxStages = 2
+    ash = Init_Ash()
+    viper = Init_Viper()
+    slone = Init_Slone()
+    richter = Init_Richter()
+    kane = Init_Kane()
+    blisk = Init_Blisk()
+}
 
-    ash.stageTracker = ashStageData
+BossData function Init_Viper()
+{
+    BossData viper
+
+    bossStageTracker stageData
+    stageData.regenTime = 15.0
+    stageData.maxStages = 3
+
+    viper.stageTracker = stageData
+
+    viper.name = "Viper"
+    viper.className = "titan_stryder"
+    viper.modelPath = $"models/titans/light/titan_light_raptor.mdl"
+    viper.skinIndex = 6
+    viper.decalIndex = 10
+    viper.aiSettings = "npc_titan_stryder_sniper_boss_fd_viper"
+    viper.healthModifier = 7500
+    viper.soulPassive4 = "pas_northstar_cluster"
+    viper.soulPassive5 = "pas_northstar_trap"
+    viper.execution = "execution_northstar_prime"
+    viper.warpfall = true
+    viper.theme = "music_s2s_14_titancombat"
+    viper.title = "#BOSSNAME_VIPER"
+    viper.loadoutSetter = SetLoadout_Viper
+
+    BossVoiceDiag voice
+    voice.intro = "diag_sp_bossFight_STS673_01_01_mcor_viper"
+    voice.death = "diag_sp_bossFight_STS676_43_01_imc_viper"
+    voice.doomed = "diag_sp_bossFight_STS676_42_01_imc_viper"
+    voice.retreat = [ "diag_sp_bossFight_STS676_23_01_imc_viper", "diag_sp_bossFight_STS676_22_01_imc_viper", "diag_sp_bossFight_STS676_21_01_imc_viper", "diag_sp_bossFight_STS676_20_01_imc_viper", "diag_sp_bossFight_STS676_19_01_imc_viper" ]
+    voice.advance = [ "diag_sp_bossFight_STS676_24_01_imc_viper", "diag_sp_bossFight_STS676_25_01_imc_viper", "diag_sp_bossFight_STS676_26_01_imc_viper", "diag_sp_bossFight_STS676_27_01_imc_viper", ]
+    voice.coreActivate = [ "diag_sp_bossFight_STS676_09_01_imc_viper", "diag_sp_bossFight_STS676_08_01_imc_viper", "diag_sp_bossFight_STS676_39_01_imc_viper", "diag_sp_bossFight_STS676_15_01_imc_viper", "diag_sp_bossFight_STS676_09_01_imc_viper", "diag_sp_bossFight_STS676_40_01_imc_viper" ]
+    voice.changeTarget = [ "diag_sp_bossFight_STS676_19_01_imc_viper", "diag_sp_bossFight_STS676_33_01_imc_viper", "diag_sp_bossFight_STS676_41_01_imc_viper", "diag_sp_bossFight_STS676_35_01_imc_viper" ]
+    viper.diag = voice
+    return viper
+}
+
+BossData function Init_Ash()
+{
+    BossData ash
+
+    bossStageTracker stageData
+    stageData.regenTime = 10.0
+    stageData.maxStages = 2
+
+    ash.stageTracker = stageData
 
     ash.name = "Ash"
     ash.className = "titan_stryder"
     ash.modelPath = $"models/titans/light/titan_light_locust.mdl"
     ash.skinIndex = 6
     ash.decalIndex = 10
-    ash.aiSettings = "npc_titan_stryder_leadwall_boss_fd_elite"
+    ash.aiSettings = "npc_titan_stryder_leadwall_boss_fd_ash"
     ash.healthModifier = 7500
     ash.soulPassive4 = "pas_ronin_swordcore"
     ash.soulPassive5 = "pas_ronin_weapon"
@@ -65,6 +129,165 @@ void function Init_BossTitanData()
     ash.warpfall = true
     ash.theme = "music_boomtown_23_ashintro"
     ash.title = "#BOSSNAME_ASH"
+    ash.loadoutSetter = SetLoadout_Ash
+
+    BossVoiceDiag voice
+    voice.intro = "diag_sp_BossVdu_BM112_01_01_imc_ash"
+    voice.death = "diag_sp_BossVdu_BM111_06_01_imc_ash"
+    voice.doomed = "diag_sp_BossVdu_BM112_05_01_imc_ash"
+    voice.retreat = [ "diag_sp_BossVdu_BM112_22_01_imc_ash", "diag_sp_BossVdu_BM112_21_01_imc_ash", "diag_sp_BossVdu_BM112_20_01_imc_ash", "diag_sp_BossVdu_BM112_19_01_imc_ash" ]
+    voice.advance = [ "diag_sp_BossVdu_BM112_23_01_imc_ash", "diag_sp_BossVdu_BM112_24_01_imc_ash", "diag_sp_BossVdu_BM112_25_01_imc_ash", "diag_sp_BossVdu_BM112_26_01_imc_ash" ]
+    voice.coreActivate = [ "diag_sp_BossVdu_BM112_15_01_imc_ash", "diag_sp_BossVdu_BM112_33_01_imc_ash", "diag_sp_BossVdu_BM112_34_01_imc_ash", "diag_sp_BossVdu_BM112_35_01_imc_ash" ] // Core used lines in addition to random_backup event lines
+    voice.changeTarget = [ "diag_sp_BossVdu_BM112_10_01_imc_ash", "diag_sp_BossVdu_BM112_11_01_imc_ash", "diag_sp_BossVdu_BM112_12_01_imc_ash" ]
+    ash.diag = voice
+    return ash
+}
+
+BossData function Init_Slone()
+{
+    BossData slone
+
+    bossStageTracker stageData
+    stageData.regenTime = 20.0
+    stageData.maxStages = 3
+
+    slone.stageTracker = stageData
+
+    slone.name = "Slone"
+    slone.className = "titan_atlas"
+    slone.modelPath = $"models/titans/medium/titan_medium_ajax.mdl"
+    slone.skinIndex = 7
+    slone.decalIndex = 11
+    slone.aiSettings = "npc_titan_atlas_stickybomb_boss_fd_slone"
+    slone.healthModifier = 10000
+    slone.soulPassive4 = "pas_ion_lasercannon"
+    slone.execution = "execution_ion"
+    slone.warpfall = true
+    slone.theme = "music_skyway_16_slonefight"
+    slone.title = "#BOSSNAME_SLONE"
+    slone.loadoutSetter = SetLoadout_Slone
+
+    BossVoiceDiag voice
+    voice.intro = "diag_sp_bossFight_SK676_01_01_imc_slone"
+    voice.death = "diag_sp_bossFight_SK676_07_01_imc_slone"
+    voice.doomed = "diag_sp_bossFight_SK676_06_01_imc_slone"
+    voice.retreat = [ "diag_sp_bossFight_SK676_21_01_imc_slone", "diag_sp_bossFight_SK676_22_01_imc_slone", "diag_sp_bossFight_SK676_23_01_imc_slone" ]
+    voice.advance = [ "diag_sp_bossFight_SK676_24_01_imc_slone", "diag_sp_bossFight_SK676_25_01_imc_slone", "diag_sp_bossFight_SK676_26_01_imc_slone", "diag_sp_bossFight_SK676_27_01_imc_slone" ]
+    voice.coreActivate = [ "diag_sp_bossFight_SK676_35_01_imc_slone", "diag_sp_bossFight_SK676_37_01_imc_slone", "diag_sp_bossFight_SK676_40_01_imc_slone" ]
+    voice.changeTarget = [ "diag_sp_bossFight_SK676_11_01_imc_slone", "diag_sp_bossFight_SK676_12_01_imc_slone", "diag_sp_bossFight_SK676_13_01_imc_slone" ]
+    slone.diag = voice
+    return slone
+}
+
+BossData function Init_Richter()
+{
+    BossData richter
+
+    bossStageTracker stageData
+    stageData.regenTime = 20.0
+    stageData.maxStages = 3
+
+    richter.stageTracker = stageData
+
+    richter.name = "Richter"
+    richter.className = "titan_atlas"
+    richter.modelPath = $"models/titans/medium/titan_medium_wraith.mdl"
+    richter.skinIndex = 4
+    richter.decalIndex = 11
+    richter.aiSettings = "npc_titan_atlas_tracker_boss_fd_richter"
+    richter.healthModifier = 10000
+    richter.soulPassive4 = "pas_tone_sonar"
+    richter.soulPassive5 = "pas_tone_wall"
+    richter.soulPassive6 = "pas_tone_rockets"
+    richter.execution = "execution_random_4"
+    richter.warpfall = false
+    richter.theme = "Music_Beacon_28_BossArrivesAndBattle"
+    richter.title = "#BOSSNAME_RICHTER"
+    richter.loadoutSetter = SetLoadout_Richter
+
+    BossVoiceDiag voice
+    voice.intro = "diag_sp_bossFight_BN676_01_01_imc_richter"
+    voice.death = "diag_sp_bossFight_BN676_06_01_imc_richter"
+    voice.doomed = "diag_sp_bossFight_BN676_05_01_imc_richter"
+    voice.retreat = [ "diag_sp_bossFight_BN676_16_01_imc_richter", "diag_sp_bossFight_BN676_17_01_imc_richter", "diag_sp_bossFight_BN676_18_01_imc_richter" ]
+    voice.advance = [ "diag_sp_bossFight_BN676_23_01_imc_richter", "diag_sp_bossFight_BN676_24_01_imc_richter", "diag_sp_bossFight_BN676_25_01_imc_richter", "diag_sp_bossFight_BN676_26_01_imc_richter" ]
+    voice.coreActivate = [ "diag_sp_bossFight_BN676_09_01_imc_richter", "diag_sp_bossFight_BN676_35_01_imc_richter" ]
+    voice.changeTarget = [ "diag_sp_bossFight_BN676_10_01_imc_richter", "diag_sp_bossFight_BN676_11_01_imc_richter", "diag_sp_bossFight_BN676_12_01_imc_richter" ]
+    richter.diag = voice
+    return richter
+}
+
+BossData function Init_Kane()
+{
+    BossData kane
+
+    bossStageTracker stageData
+    stageData.regenTime = 15.0
+    stageData.maxStages = 3
+
+    kane.stageTracker = stageData
+
+    kane.name = "Kane"
+    kane.className = "titan_ogre"
+    kane.modelPath = $"models/titans/heavy/titan_heavy_ogre.mdl"
+    kane.skinIndex = 3
+    kane.decalIndex = 1
+    kane.aiSettings = "npc_titan_ogre_meteor_boss_fd_kane"
+    kane.healthModifier = 15000
+    kane.soulPassive4 = "pas_scorch_flamecore"
+    kane.soulPassive5 = "pas_scorch_selfdmg"
+    kane.execution = "execution_scorch_prime"
+    kane.warpfall = false
+    kane.theme = "music_reclamation_21_kaneslamcam"
+    kane.title = "#BOSSNAME_KANE"
+    kane.loadoutSetter = SetLoadout_Kane
+
+    BossVoiceDiag voice
+    voice.intro = "diag_sp_bossFight_SE676_02_01_imc_kane"
+    voice.death = "diag_sp_bossFight_SE676_06_01_imc_kane"
+    voice.doomed = "diag_sp_bossFight_SE676_05_01_imc_kane"
+    voice.retreat = [ "diag_sp_bossFight_SE676_16_01_imc_kane", "diag_sp_bossFight_SE676_17_01_imc_kane", "diag_sp_bossFight_SE676_17_01_imc_kane", "diag_sp_bossFight_SE676_04_01_imc_kane" ]
+    voice.advance = [ "diag_sp_bossFight_SE676_23_01_imc_kane", "diag_sp_bossFight_SE676_24_01_imc_kane", "diag_sp_bossFight_SE676_25_01_imc_kane", "diag_sp_bossFight_SE676_26_01_imc_kane" ]
+    voice.coreActivate = [ "diag_sp_bossFight_SE676_34_01_imc_kane", "diag_sp_bossFight_SE676_36_01_imc_kane" ]
+    voice.changeTarget = [ "diag_sp_bossFight_SE676_35_01_imc_kane", "diag_sp_bossFight_SE676_10_01_imc_kane", "diag_sp_bossFight_SE676_11_01_imc_kane", "diag_sp_bossFight_SE676_12_01_imc_kane" ]
+    kane.diag = voice
+    return kane
+}
+
+BossData function Init_Blisk()
+{
+    BossData blisk
+
+    bossStageTracker stageData
+    stageData.regenTime = 30.0
+    stageData.maxStages = 5
+
+    blisk.stageTracker = stageData
+
+    blisk.name = "Blisk"
+    blisk.className = "titan_ogre"
+    blisk.modelPath = $"models/titans/heavy/titan_heavy_deadbolt.mdl"
+    blisk.skinIndex = 4
+    blisk.decalIndex = 9
+    blisk.aiSettings = "npc_titan_ogre_minigun_boss_fd_elite"
+    blisk.healthModifier = 15000
+    blisk.soulPassive4 = "pas_legion_spinup"
+    blisk.execution = "execution_legion_prime"
+    blisk.warpfall = false
+    blisk.theme = "music_skyway_13_enroutetobliskandslone"
+    blisk.title = "#BOSSNAME_BLISK"
+    blisk.loadoutSetter = SetLoadout_Blisk
+
+    BossVoiceDiag voice
+    voice.intro = "diag_sp_torture_SK101_02_01_imc_blisk"
+    voice.death = "diag_imc_pilot5_hc_death"
+    voice.doomed = "diag_imc_pilot5_hc_death"
+    voice.retreat = [ "diag_sp_injectorRoom_SK161_07_01_imc_blisk" ]
+    voice.advance = [ "diag_imc_pilot5_hc_battleStart" ]
+    voice.coreActivate = [ "diag_sp_torture_SK101_03_01_imc_blisk" ]
+    voice.changeTarget = [ "diag_sp_torture_SK101_08_01_imc_blisk" ]
+    blisk.diag = voice
+    return blisk
 }
 
 void function DEV_SpawnAllBossTitans( )
@@ -97,16 +320,13 @@ void function DEV_SpawnBossTitan( string bossName )
 
 	vector origin = GetPlayerCrosshairOrigin( player )
 	vector angles = Vector( 0, 0, 0 )
-
-
-
     switch ( bossName )
     {
         case "ash":
             Spawn_Ash( origin, angles )
             return
         case "viper":
-            Spawn_Viper( origin, angles )
+            CreateBossTitan_Generic( viper, origin, angles )
             return
         case "slone":
             Spawn_Slone( origin, angles )
@@ -128,50 +348,35 @@ void function DEV_SpawnBossTitan( string bossName )
     }
 }
 
-void function PlayMusic( string track )
-{
-	printt( "#################################" )
-	printt( "Playing Music" )
-	printt( "  Track:", track )
-	printt( "#################################" )
-	file.musicTracksPlaying.append( track )
 
-	foreach( entity player in GetPlayerArray() )
-	{
-		EmitSoundOnEntityOnlyToPlayer( player, player, track )
-	}
+void function Spawn_Ash( vector origin, vector angles )
+{
+    CreateBossTitan_Generic( ash, origin, angles )
 }
 
-void function StopMusic( float fadeTime = 2.0 )
+void function Spawn_Viper( vector origin, vector angles )
 {
-	array<string> tracks = clone file.musicTracksPlaying
-	foreach( entity player in GetPlayerArray() )
-	{
-		foreach( string track in tracks )
-		{
-			StopMusicTrack( track, fadeTime )
-		}
-	}
+    CreateBossTitan_Generic( viper, origin, angles )
 }
 
-bool function IsMusicTrackPlaying( string track )
+void function Spawn_Slone( vector origin, vector angles )
 {
-	return file.musicTracksPlaying.contains( track )
+    CreateBossTitan_Generic( slone, origin, angles )
 }
 
-void function StopMusicTrack( string track, float fadeTime = 2.0 )
+void function Spawn_Richter( vector origin, vector angles )
 {
-	printt( "#################################" )
-	printt( "Stopping music track:", track )
-	printt( "#################################" )
+    CreateBossTitan_Generic( richter, origin, angles )
+}
 
-	foreach( entity player in GetPlayerArray() )
-	{
-		//StopSoundOnEntity( player, file.lastMusicTrack )
-		FadeOutSoundOnEntity( player, track, fadeTime )
-	}
+void function Spawn_Kane( vector origin, vector angles )
+{
+    CreateBossTitan_Generic( kane, origin, angles )
+}
 
-	file.musicTracksPlaying.fastremovebyvalue( track )
+void function Spawn_Blisk( vector origin, vector angles )
+{
+    CreateBossTitan_Generic( blisk, origin, angles )
 }
 
 void function BossDefeated( entity trigger, entity activator, entity caller, var value )
@@ -192,129 +397,8 @@ void function SetLoadout_Ash( entity npc )
     return
 }
 
-void function CreateBossTitan_Generic( BossData boss, vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0)
+void function SetLoadout_Viper( entity npc )
 {
-    file.bossStageTrackers[ "ronin" ] <- boss.stageTracker
-
-    file.bosses[ boss.name ] <- boss
-
-    entity npc = CreateNPCTitan( boss.className, team, origin, angles )
-    SetSpawnOption_AISettings( npc, boss.aiSettings )
-    npc.SetScriptName( boss.name )
-    SetTitanAsElite( npc )
-    if ( boss.soulPassive4 != "" )
-        SetSpawnOption_TitanSoulPassive4( npc, boss.soulPassive4 )
-    if ( boss.soulPassive5 != "" )
-        SetSpawnOption_TitanSoulPassive5( npc, boss.soulPassive5 )
-    if ( boss.soulPassive6 != "" )
-        SetSpawnOption_TitanSoulPassive6( npc, boss.soulPassive6 )
-
-    if ( boss.warpfall == true )
-        SetSpawnOption_Warpfall( npc )
-    else
-        SetSpawnOption_Titanfall( npc )
-
-    SetTargetName( npc, GetTargetNameForID( spawnType ) )
-    DispatchSpawn( npc )
-    SetBossTitanPostSpawn( npc, boss )
-
-    //boss.loadoutSetter( npc )
-
-    npc.SetMaxHealth( ( npc.GetMaxHealth() + boss.healthModifier ) )
-    npc.SetHealth( npc.GetMaxHealth() )
-    npc.GetTitanSoul().soul.titanLoadout.titanExecution = boss.execution
-    npc.ConnectOutput( "OnDeath", BossDefeated )
-
-    npc.SetDangerousAreaReactionTime( 0 )
-    spawnedNPCs.append( npc )
-    file.bossEnts[ boss.name ] <- npc
-    AddMinimapForTitans( npc )
-    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
-    AddEntityCallback_OnDamaged( npc, BossTitan_TakesDamage_StageHandler )
-    printt("finished titan setup")
-    npc.WaitSignal( "TitanHotDropComplete" )
-    //thread PlayMusic( boss.theme )
-
-    printt("Succesfully dropped titan")
-}
-
-void function SpawnBossTitan_Generic( BossData boss, vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
-{
-    printt("Called SpawnBossTitan_Generic")
-    PlayMusic( boss.theme )
-    CreateBossTitan_Generic( boss, origin, angles, team, spawnType )
-    entity npc = file.bossEnts[ boss.name ]
-    ShowName( npc )
-    AddMinimapForTitans( npc )
-    printt("Titan dropped successfully")
-    // Set weapon mods here after the boss is loaded. This should allow for more generic factory functions
-}
-
-entity function Spawn_Ash( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
-{
-    bossStageTracker stageCount
-    file.bossStageTrackers[ "ronin" ] <-stageCount
-
-    entity npc = CreateNPCTitan( "titan_stryder", team, origin, angles )
-    SetSpawnOption_AISettings( npc, "npc_titan_stryder_leadwall_boss_fd_elite" )
-
-    SetTitanAsElite( npc )
-    SetSpawnOption_TitanSoulPassive4( npc, "pas_ronin_swordcore" )
-    SetSpawnOption_TitanSoulPassive5( npc, "pas_ronin_weapon" )
-    SetSpawnOption_TitanSoulPassive6( npc, "pas_ronin_phase" )
-    SetSpawnOption_Warpfall( npc )
-    SetTargetName( npc, GetTargetNameForID( spawnType ) )
-    npc.ConnectOutput( "OnDeath", BossDefeated )
-
-    DispatchSpawn( npc )
-
-    npc.SetModel( $"models/titans/light/titan_light_locust.mdl" )
-    npc.SetSkin( 6 )
-    npc.SetDecal( 10 )
-
-    SetEliteTitanPostSpawn( npc )
-    npc.SetTitle( "#BOSSNAME_ASH" )
-    ShowName( npc )
-    npc.SetMaxHealth( ( npc.GetMaxHealth() + 7500 ) )
-    npc.SetHealth( npc.GetMaxHealth() )
-    npc.GetTitanSoul().soul.titanLoadout.titanExecution = "execution_ronin_prime"
-
-    npc.GetOffhandWeapon( OFFHAND_MELEE ).AddMod( "fd_sword_upgrade" )
-    npc.SetDangerousAreaReactionTime( 0 )
-    PlayMusic( "music_boomtown_23_ashintro" )
-    spawnedNPCs.append( npc )
-	AddMinimapForTitans( npc )
-    npc.WaitSignal( "TitanHotDropComplete" )
-    return npc
-}
-
-entity function Spawn_Viper( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
-{
-    bossStageTracker stageCount
-    file.bossStageTrackers[ "northstar" ] <-stageCount
-
-    entity npc = CreateNPCTitan( "titan_stryder", team, origin, angles )
-    SetSpawnOption_AISettings( npc, "npc_titan_stryder_sniper_boss_fd_elite" )
-    SetTitanAsElite( npc )
-    SetSpawnOption_TitanSoulPassive4( npc, "pas_northstar_cluster" )
-	SetSpawnOption_TitanSoulPassive5( npc, "pas_northstar_trap" )
-    SetSpawnOption_Warpfall( npc )
-    SetTargetName( npc, GetTargetNameForID( spawnType ) )
-    AddEntityCallback_OnDamaged( npc, BossTitan_TakesDamage_StageHandler )
-
-    DispatchSpawn( npc )
-
-    npc.SetModel( $"models/titans/light/titan_light_raptor.mdl" )
-    npc.SetSkin( 6 )
-    npc.SetDecal( 10 )
-
-    SetEliteTitanPostSpawn( npc )
-    npc.SetTitle( "#BOSSNAME_VIPER" )
-    ShowName( npc )
-    npc.SetMaxHealth( ( npc.GetMaxHealth() + 7500 ) )
-    npc.SetHealth( npc.GetMaxHealth() )
-    npc.GetTitanSoul().soul.titanLoadout.titanExecution = "execution_northstar_prime"
-
     array<entity> primaryWeapons = npc.GetMainWeapons()
     entity maingun = primaryWeapons[0]
     maingun.AddMod( "quick_shot" )
@@ -331,77 +415,15 @@ entity function Spawn_Viper( vector origin, vector angles, int team = TEAM_IMC, 
     clustermissile.AddMod( "fd_twin_cluster" )
     clustermissile.AddMod( "dev_mod_low_recharge" )
     clustermissile.AddMod( "burn_mod_titan_dumbfire_rockets" )
-
-    npc.SetDangerousAreaReactionTime( 0 )
-    PlayMusic( "music_s2s_14_titancombat" )
-    spawnedNPCs.append( npc )
-	AddMinimapForTitans( npc )
-    npc.WaitSignal( "TitanHotDropComplete" )
-    npc.ConnectOutput( "OnDeath", BossDefeated )
-    return npc
 }
 
-entity function Spawn_Slone( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
+void function SetLoadout_Slone( entity npc )
 {
-    bossStageTracker stageCount
-    file.bossStageTrackers[ "ion" ] <-stageCount
 
-    entity npc = CreateNPCTitan( "titan_atlas", team, origin, angles )
-    SetSpawnOption_AISettings( npc, "npc_titan_atlas_stickybomb_boss_fd_elite" )
-    SetTitanAsElite( npc )
-    SetSpawnOption_TitanSoulPassive4( npc, "pas_ion_lasercannon" )
-    SetSpawnOption_Titanfall( npc )
-    SetTargetName( npc, GetTargetNameForID( spawnType ) )
-
-    DispatchSpawn( npc )
-
-    npc.SetModel( $"models/titans/medium/titan_medium_ajax.mdl" )
-    npc.SetSkin( 7 )
-    npc.SetDecal( 11 )
-
-    SetEliteTitanPostSpawn( npc )
-    npc.SetTitle( "#BOSSNAME_SLONE" )
-    ShowName( npc )
-    npc.SetMaxHealth( ( npc.GetMaxHealth() + 10000 ) )
-    npc.SetHealth( npc.GetMaxHealth() )
-    npc.GetTitanSoul().soul.titanLoadout.titanExecution = "execution_ion"
-    npc.SetDangerousAreaReactionTime( 0 )
-
-    PlayMusic( "music_skyway_16_slonefight" )
-    npc.ConnectOutput( "OnDeath", BossDefeated )
-    spawnedNPCs.append( npc )
-	AddMinimapForTitans( npc )
-    npc.WaitSignal( "TitanHotDropComplete" )
-    return npc
 }
 
-entity function Spawn_Richter( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
+void function SetLoadout_Richter( entity npc )
 {
-    bossStageTracker stageCount
-    file.bossStageTrackers[ "tone" ] <-stageCount
-
-    entity npc = CreateNPCTitan( "titan_atlas", team, origin, angles )
-    SetSpawnOption_AISettings( npc, "npc_titan_atlas_tracker_fd_sniper_elite" )
-    SetTitanAsElite( npc )
-    SetSpawnOption_TitanSoulPassive4( npc, "pas_tone_sonar" )
-    SetSpawnOption_TitanSoulPassive5( npc, "pas_tone_wall" )
-    SetSpawnOption_TitanSoulPassive6( npc, "pas_tone_rockets" )
-    SetSpawnOption_Titanfall( npc )
-    SetTargetName( npc, GetTargetNameForID( spawnType ) )
-
-    DispatchSpawn( npc )
-
-    npc.SetModel( $"models/titans/medium/titan_medium_wraith.mdl" )
-    npc.SetSkin( 4 )
-    npc.SetDecal( 11 )
-
-    SetEliteTitanPostSpawn( npc )
-    npc.SetTitle( "#BOSSNAME_RICHTER" )
-    ShowName( npc )
-    npc.SetMaxHealth( ( npc.GetMaxHealth() + 10000 ) )
-    npc.SetHealth( npc.GetMaxHealth() )
-    npc.GetTitanSoul().soul.titanLoadout.titanExecution = "execution_random_4"
-
     entity tonesonar = npc.GetOffhandWeapon( OFFHAND_ANTIRODEO )
     tonesonar.AddMod( "fd_sonar_duration" )
     tonesonar.AddMod( "fd_sonar_damage_amp" )
@@ -410,82 +432,17 @@ entity function Spawn_Richter( vector origin, vector angles, int team = TEAM_IMC
     entity maingun = primaryWeapons[0]
     maingun.AddMod( "fast_reload" )
     maingun.AddMod( "extended_ammo" )
-
-    npc.SetDangerousAreaReactionTime( 0 )
-
-    PlayMusic( "Music_Beacon_28_BossArrivesAndBattle" )
-    npc.ConnectOutput( "OnDeath", BossDefeated )
-    spawnedNPCs.append( npc )
-	AddMinimapForTitans( npc )
-    npc.WaitSignal( "TitanHotDropComplete" )
-    return npc
 }
 
-entity function Spawn_Kane( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
+void function SetLoadout_Kane( entity npc )
 {
-    bossStageTracker stageCount
-    file.bossStageTrackers[ "scorch" ] <-stageCount
-
-    entity npc = CreateNPCTitan( "titan_ogre", team, origin, angles )
-    SetSpawnOption_AISettings( npc, "npc_titan_ogre_meteor_boss_fd_elite" )
-    SetTitanAsElite( npc )
-    SetSpawnOption_TitanSoulPassive4( npc, "pas_scorch_flamecore" )
-	SetSpawnOption_TitanSoulPassive5( npc, "pas_scorch_selfdmg" )
-    SetSpawnOption_Titanfall( npc )
-    SetTargetName( npc, GetTargetNameForID( spawnType ) )
-
-    DispatchSpawn( npc )
-
-    npc.SetModel( $"models/titans/heavy/titan_heavy_ogre.mdl" )
-    npc.SetSkin( 3 )
-    npc.SetDecal( 1 )
-
-    SetEliteTitanPostSpawn( npc )
-    npc.SetTitle( "#BOSSNAME_KANE" )
-    ShowName( npc )
-    npc.SetMaxHealth( ( npc.GetMaxHealth() + 15000 ) )
-    npc.SetHealth( npc.GetMaxHealth() )
-    npc.GetTitanSoul().soul.titanLoadout.titanExecution = "execution_scorch_prime"
-
     array<entity> primaryWeapons = npc.GetMainWeapons()
     entity weapon = primaryWeapons[0]
     weapon.AddMod( "fd_wpn_upgrade_2" )
-
-    npc.SetDangerousAreaReactionTime( 0 )
-
-    PlayMusic( "music_reclamation_21_kaneslamcam" )
-    npc.ConnectOutput( "OnDeath", BossDefeated )
-    spawnedNPCs.append( npc )
-	AddMinimapForTitans( npc )
-    npc.WaitSignal( "TitanHotDropComplete" )
-    return npc
 }
 
-entity function Spawn_Blisk( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
+void function SetLoadout_Blisk( entity npc )
 {
-    bossStageTracker stageCount
-    file.bossStageTrackers[ "legion" ] <-stageCount
-
-    entity npc = CreateNPCTitan( "titan_ogre", team, origin, angles )
-    SetSpawnOption_AISettings( npc, "npc_titan_ogre_minigun_boss_fd_elite" )
-    SetTitanAsElite( npc )
-    SetSpawnOption_TitanSoulPassive4( npc, "pas_legion_spinup" )
-    SetSpawnOption_Titanfall( npc )
-    SetTargetName( npc, GetTargetNameForID( spawnType ) )
-
-    DispatchSpawn( npc )
-
-    npc.SetModel( $"models/titans/heavy/titan_heavy_deadbolt.mdl" )
-    npc.SetSkin( 4 )
-    npc.SetDecal( 9 )
-
-    SetEliteTitanPostSpawn( npc )
-    npc.SetTitle( "#BOSSNAME_BLISK" )
-    ShowName( npc )
-    npc.SetMaxHealth( ( npc.GetMaxHealth() + 15000 ) )
-    npc.SetHealth( npc.GetMaxHealth() )
-    npc.GetTitanSoul().soul.titanLoadout.titanExecution = "execution_legion_prime"
-
     array<entity> primaryWeapons = npc.GetMainWeapons()
     entity maingun = primaryWeapons[0]
     maingun.AddMod( "fd_closerange_helper" )
@@ -500,16 +457,62 @@ entity function Spawn_Blisk( vector origin, vector angles, int team = TEAM_IMC, 
     gunshield.AddMod( "fd_gun_shield" )
     gunshield.AddMod( "fd_gun_shield_redirect" )
     gunshield.AddMod( "SiegeMode" )
+}
+
+void function CreateBossTitan_Generic( BossData boss, vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0)
+{
+    bossStageTracker stageTracker = boss.stageTracker
+    stageTracker.currentStage = 0 // Reset the boss' stage to zero on spawn in case something weird happened to a previous instance
+    file.bosses[ boss.name ] <- boss
+    AddBossTitan( boss.name )
+
+    entity npc = CreateNPCTitan( boss.className, team, origin, angles )
+    SetSpawnOption_AISettings( npc, boss.aiSettings )
+    npc.SetScriptName( boss.name )
+    npc.ai.bossCharacterName = boss.name
+    SetTitanAsElite( npc )
+    if ( boss.soulPassive4 != "" )
+        SetSpawnOption_TitanSoulPassive4( npc, boss.soulPassive4 )
+    if ( boss.soulPassive5 != "" )
+        SetSpawnOption_TitanSoulPassive5( npc, boss.soulPassive5 )
+    if ( boss.soulPassive6 != "" )
+        SetSpawnOption_TitanSoulPassive6( npc, boss.soulPassive6 )
+
+    if ( boss.warpfall == true )
+        SetSpawnOption_Warpfall( npc )
+    else
+        SetSpawnOption_Titanfall( npc )
+    AddEntityCallback_OnDamaged( npc, BossTitan_TakesDamage_StageHandler )
+
+    SetTargetName( npc, GetTargetNameForID( spawnType ) )
+    DispatchSpawn( npc )
+    SetBossTitanPostSpawn( npc, boss )
+
+    boss.loadoutSetter( npc )
+
+    npc.SetMaxHealth( ( npc.GetMaxHealth() + boss.healthModifier ) )
+    npc.SetHealth( npc.GetMaxHealth() )
+    npc.GetTitanSoul().soul.titanLoadout.titanExecution = boss.execution
+    npc.ConnectOutput( "OnFoundPlayer", BossChangedTarget )
+    npc.ConnectOutput( "OnDeath", BossDefeated )
 
     npc.SetDangerousAreaReactionTime( 0 )
-
-    PlayMusic( "music_skyway_18_backblast" ) // Need a better song for fighting him
     spawnedNPCs.append( npc )
-	AddMinimapForTitans( npc )
-    npc.WaitSignal( "TitanHotDropComplete" )
-    npc.ConnectOutput( "OnDeath", BossDefeated )
-    AddEntityCallback_OnDamaged( npc, BossTitan_TakesDamage_StageHandler )
-    return npc
+    file.bossEnts[ boss.name ] <- npc
+    //RegisterBossTitan( npc )
+    AddMinimapForTitans( npc )
+    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
+    printt("Finished titan setup")
+    string introLine = boss.diag.intro
+    foreach ( entity player in GetPlayerArray() )
+    {
+        //thread BossTitanIntro( player, npc )
+        EmitSoundOnEntityOnlyToPlayer( player, player, introLine )
+    }
+    //npc.WaitSignal( "TitanHotDropComplete" )
+    PlayMusic( boss.theme )
+
+    printt("Succesfully dropped titan")
 }
 
 void function BossTitan_TakesDamage_StageHandler( entity titan, var damageInfo )
@@ -518,54 +521,96 @@ void function BossTitan_TakesDamage_StageHandler( entity titan, var damageInfo )
         return
     if ( !titan.IsTitan() )
         return
+    entity soul = titan.GetTitanSoul()
     string bossTitanName = GetTitanCharacterName( titan )
     string bossName = titan.GetScriptName()
     int currentHealth = titan.GetHealth()
     float damage = DamageInfo_GetDamage( damageInfo )
+    bool shouldReset = false
     bossStageTracker stageInfo = file.bosses[ bossName ].stageTracker
     printt(currentHealth, currentHealth - damage)
-    printt("Mods")
-    foreach ( string mod in titan.GetOffhandWeapon( OFFHAND_MELEE ).GetMods() )
+    if ( currentHealth - damage <= 1 && stageInfo.currentStage < stageInfo.maxStages) //Run this check when the boss has one cell or less of health remaining to hopefully avoid boss being doomed before entering health regen
     {
-        printt(mod)
-    }
-    if ( currentHealth - damage <= 1 && stageInfo.currentStage < stageInfo.maxStages)
-    {
+        array<string> retreatLines = file.bosses[ bossName ].diag.retreat
+        string comm = retreatLines[ RandomInt( retreatLines.len() - 1 ) ]
+        titan.SetInvulnerable( )
         DamageInfo_SetDamage( damageInfo, 0 )
         titan.SetHealth( 1 )
-        titan.SetInvulnerable( )
+        PlayBossCommsForAllPlayers( comm )
         // Do health regen stuff here
-        thread ResetBossHealth( titan )
         file.bosses[ bossName ].stageTracker.currentStage++
+        thread ResetBossHealth( titan )
     }
 }
 
 void function ResetBossHealth( entity boss )
 {
+    entity soul = boss.GetTitanSoul()
     int maxHealth = boss.GetMaxHealth()
     int currentHealth = boss.GetHealth()
     int loopCount = int( ceil( maxHealth / 1000 ) )
     string bossName = boss.GetScriptName()
     float regenTime = file.bosses[ bossName ].stageTracker.regenTime
+    bossStageTracker stageInfo = file.bosses[ bossName ].stageTracker
     float cycleWaitDuration = regenTime / loopCount
     string bossTheme = file.bosses[ bossName ].theme
 
+    array<string> advanceLines = file.bosses[ bossName ].diag.advance
+    string comm = advanceLines[ RandomInt( advanceLines.len() - 1 ) ]
 
-    StopMusicTrack( bossTheme, regenTime )
-    while ( true )
+    if ( stageInfo.currentStage >= stageInfo.maxStages )
     {
-        if ( currentHealth + 1000 < maxHealth )
-            currentHealth += 1000
-        else
-            currentHealth = maxHealth
-        boss.SetHealth( currentHealth )
-        if ( currentHealth == maxHealth )
-            break
-        wait cycleWaitDuration
+        boss.SetHealth( boss.GetMaxHealth() )
+        boss.ClearInvulnerable()
+        soul.EnableDoomed()
+        return
+        //titan.SetMaxHealth( 5000 )
     }
+    //if ( boss.ContextAction_IsActive() || boss.ContextAction_IsActive() )
+    //    boss.ContextAction_ClearBusy()
+    StopMusicTrack( bossTheme, regenTime )
+    //SetStanceKneel( boss.GetTitanSoul() )
+    UndoomBossTitan( boss )
+    while ( currentHealth < maxHealth)
+    {
+        currentHealth += 1000
+        boss.SetHealth( currentHealth )
+        wait regenTime / loopCount
+    }
+
+    boss.SetHealth( boss.GetMaxHealth() )
     boss.ClearInvulnerable()
+    //TitanCanStand( boss )
+    PlayBossCommsForAllPlayers( comm )
     PlayMusic( bossTheme )
     return
+}
+
+void function UndoomBossTitan( entity titan )
+{
+    if ( !IsValid( titan ) || !titan.IsTitan() )
+        return
+    string bossName = titan.GetScriptName()
+    entity soul = titan.GetTitanSoul()
+    int segmentHealth = GetSegmentHealthForTitan( titan )
+    BossData boss = file.bosses[ bossName ]
+    titan.SetMaxHealth( ( titan.GetMaxHealth() + boss.healthModifier ) )
+    titan.SetHealth( segmentHealth * 1 )
+	SetSoulBatteryCount( soul, 1 )
+
+	titan.Signal( "TitanUnDoomed" )
+	UndoomTitan_Body( titan )
+}
+
+void function BossChangedTarget( entity trigger, entity activator, entity caller, var value )
+{
+    expect entity( value );
+    if ( !IsValid( value ) || !value.IsPlayer() )
+        return
+    printt("Boss target changed; ", trigger, activator, caller, value)
+    array<string> targetLines = file.bosses[ trigger.GetScriptName() ].diag.changeTarget
+    string line = targetLines[ RandomInt( targetLines.len() - 1 ) ]
+    EmitSoundOnEntityOnlyToPlayer( value, value, line )
 }
 
 void function SetBossTitanPostSpawn( entity npc, BossData bossData )
@@ -573,7 +618,7 @@ void function SetBossTitanPostSpawn( entity npc, BossData bossData )
 	if( GetGameState() != eGameState.Playing )
 		return
 
-	Assert( IsValid( npc ) && npc.IsTitan(), "Entity is not a Titan to set as Elite: " + npc )
+	Assert( IsValid( npc ) && npc.IsTitan(), "Entity is not a Titan to set as Boss: " + npc )
 	if ( npc.IsTitan() )
 	{
 		npc.EnableNPCFlag( NPC_NO_PAIN | NPC_NO_GESTURE_PAIN | NPC_NEW_ENEMY_FROM_SOUND | NPC_DIRECTIONAL_MELEE | NPC_IGNORE_FRIENDLY_SOUND ) //NPC_AIM_DIRECT_AT_ENEMY
@@ -589,7 +634,7 @@ void function SetBossTitanPostSpawn( entity npc, BossData bossData )
 		npc.SetEngagementDistVsWeak( 0, 800 )
 		npc.SetEngagementDistVsStrong( 0, 800 )
 		SetTitanWeaponSkin( npc )
-        npc.SetModel( bossData.modelPath )
+        Rodeo_Disallow( npc )
         npc.SetSkin( bossData.skinIndex )
         npc.SetDecal( bossData.decalIndex )
 		HideCrit( npc )
@@ -602,6 +647,7 @@ void function SetBossTitanPostSpawn( entity npc, BossData bossData )
 			soul.SetPreventCrits( true )
 			soul.SetShieldHealthMax( 8000 )
 			soul.SetShieldHealth( soul.GetShieldHealthMax() )
+            soul.DisableDoomed()
 		}
 
 		if( GetTitanCharacterName( npc ) == "vanguard" ) //Monarchs never use their core, but can track their shields to simulate a player-like behavior
@@ -614,6 +660,9 @@ void function SetBossTitanPostSpawn( entity npc, BossData bossData )
 void function MonitorBossTitanCore( entity npc )
 {
 	Assert( IsValid( npc ) && npc.IsTitan(), "Entity is not a Titan to set as Elite: " + npc )
+    BossData boss = file.bosses[ npc.GetScriptName() ]
+    array<string> coreLines = boss.diag.coreActivate
+    string voiceLine;
 	entity soul = npc.GetTitanSoul()
 	if ( !IsValid( soul ) )
 		return
@@ -629,6 +678,10 @@ void function MonitorBossTitanCore( entity npc )
 		wait 0.1
 
 		soul.SetShieldHealth( soul.GetShieldHealthMax() / 2 )
+
+
+        voiceLine = coreLines[ RandomInt( coreLines.len() - 1 ) ]
+        PlayBossCommsForAllPlayers( voiceLine )
 
 		entity meleeWeapon = npc.GetMeleeWeapon()
 		if( meleeWeapon.HasMod( "super_charged" ) || meleeWeapon.HasMod( "super_charged_SP" ) ) //Hack for Elite Ronin
