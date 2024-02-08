@@ -8,6 +8,24 @@ global function Spawn_Richter
 global function Spawn_Kane
 global function Spawn_Blisk
 
+
+
+global struct bossStageTracker {
+    int currentStage = 0
+    int maxStages = 3
+    float regenTime = 15.0
+}
+
+global struct BossVoiceDiag {
+    string intro
+    string death
+    string doomed
+    array<string> changeTarget
+    array<string> coreActivate
+    array<string> retreat
+    array<string> advance
+}
+
 global struct BossData {
     string name
     asset modelPath
@@ -28,23 +46,6 @@ global struct BossData {
     string className
     BossVoiceDiag &diag
 }
-
-struct bossStageTracker {
-    int currentStage = 0
-    int maxStages = 3
-    float regenTime = 15.0
-}
-
-struct BossVoiceDiag {
-    string intro
-    string death
-    string doomed
-    array<string> changeTarget
-    array<string> coreActivate
-    array<string> retreat
-    array<string> advance
-}
-
 struct {
     table<string, bossStageTracker> bossStageTrackers
     table<string, BossData> bosses
@@ -111,7 +112,7 @@ BossData function Init_Ash()
 
     bossStageTracker stageData
     stageData.regenTime = 10.0
-    stageData.maxStages = 2
+    stageData.maxStages = 4
 
     ash.stageTracker = stageData
 
@@ -168,7 +169,7 @@ BossData function Init_Slone()
     slone.loadoutSetter = SetLoadout_Slone
 
     BossVoiceDiag voice
-    voice.intro = "diag_sp_bossFight_SK676_01_01_imc_slone"
+    voice.intro = "diag_sp_bossFight_SK676_02_01_imc_slone"
     voice.death = "diag_sp_bossFight_SK676_07_01_imc_slone"
     voice.doomed = "diag_sp_bossFight_SK676_06_01_imc_slone"
     voice.retreat = [ "diag_sp_bossFight_SK676_21_01_imc_slone", "diag_sp_bossFight_SK676_22_01_imc_slone", "diag_sp_bossFight_SK676_23_01_imc_slone" ]
@@ -223,7 +224,7 @@ BossData function Init_Kane()
 
     bossStageTracker stageData
     stageData.regenTime = 15.0
-    stageData.maxStages = 3
+    stageData.maxStages = 2
 
     kane.stageTracker = stageData
 
@@ -282,10 +283,10 @@ BossData function Init_Blisk()
     voice.intro = "diag_sp_torture_SK101_02_01_imc_blisk"
     voice.death = "diag_imc_pilot5_hc_death"
     voice.doomed = "diag_imc_pilot5_hc_death"
-    voice.retreat = [ "diag_sp_injectorRoom_SK161_07_01_imc_blisk" ]
-    voice.advance = [ "diag_imc_pilot5_hc_battleStart" ]
-    voice.coreActivate = [ "diag_sp_torture_SK101_03_01_imc_blisk" ]
-    voice.changeTarget = [ "diag_sp_torture_SK101_08_01_imc_blisk" ]
+    voice.retreat = [ "diag_sp_injectorRoom_SK161_07_01_imc_blisk", "diag_sp_injectorRoom_SK161_07_01_imc_blisk" ]
+    voice.advance = [ "diag_imc_pilot5_hc_battleStart", "diag_imc_pilot5_hc_battleStart" ]
+    voice.coreActivate = [ "diag_sp_torture_SK101_03_01_imc_blisk", "diag_sp_torture_SK101_03_01_imc_blisk" ]
+    voice.changeTarget = [ "diag_sp_torture_SK101_08_01_imc_blisk", "diag_sp_torture_SK101_08_01_imc_blisk" ]
     blisk.diag = voice
     return blisk
 }
@@ -349,34 +350,34 @@ void function DEV_SpawnBossTitan( string bossName )
 }
 
 
-void function Spawn_Ash( vector origin, vector angles )
+void function Spawn_Ash( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
 {
-    CreateBossTitan_Generic( ash, origin, angles )
+    CreateBossTitan_Generic( ash, origin, angles, team, spawnType )
 }
 
-void function Spawn_Viper( vector origin, vector angles )
+void function Spawn_Viper( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
 {
-    CreateBossTitan_Generic( viper, origin, angles )
+    CreateBossTitan_Generic( viper, origin, angles, team, spawnType )
 }
 
-void function Spawn_Slone( vector origin, vector angles )
+void function Spawn_Slone( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
 {
-    CreateBossTitan_Generic( slone, origin, angles )
+    CreateBossTitan_Generic( slone, origin, angles, team, spawnType )
 }
 
-void function Spawn_Richter( vector origin, vector angles )
+void function Spawn_Richter( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
 {
-    CreateBossTitan_Generic( richter, origin, angles )
+    CreateBossTitan_Generic( richter, origin, angles, team, spawnType )
 }
 
-void function Spawn_Kane( vector origin, vector angles )
+void function Spawn_Kane( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
 {
-    CreateBossTitan_Generic( kane, origin, angles )
+    CreateBossTitan_Generic( kane, origin, angles, team, spawnType )
 }
 
-void function Spawn_Blisk( vector origin, vector angles )
+void function Spawn_Blisk( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
 {
-    CreateBossTitan_Generic( blisk, origin, angles )
+    CreateBossTitan_Generic( blisk, origin, angles, team, spawnType )
 }
 
 void function BossDefeated( entity trigger, entity activator, entity caller, var value )
@@ -389,6 +390,7 @@ void function BossDefeated( entity trigger, entity activator, entity caller, var
     string bossTitanName = trigger.GetScriptName()
     file.bosses[ bossTitanName ].stageTracker.currentStage = 0
     StopMusicTrack( file.bosses[ bossTitanName ].theme )
+    PlayBossCommsForAllPlayers( file.bosses[ bossTitanName ].diag.death )
 }
 
 void function SetLoadout_Ash( entity npc )
@@ -419,7 +421,8 @@ void function SetLoadout_Viper( entity npc )
 
 void function SetLoadout_Slone( entity npc )
 {
-
+    npc.GiveOffhandWeapon( "mp_titanability_phase_dash", OFFHAND_ANTIRODEO )
+    //array<entity> utilityWeapon = npc.GetOffhandWeapon( OFFHAND_ANTIRODEO )
 }
 
 void function SetLoadout_Richter( entity npc )
@@ -504,12 +507,7 @@ void function CreateBossTitan_Generic( BossData boss, vector origin, vector angl
     npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
     printt("Finished titan setup")
     string introLine = boss.diag.intro
-    foreach ( entity player in GetPlayerArray() )
-    {
-        //thread BossTitanIntro( player, npc )
-        EmitSoundOnEntityOnlyToPlayer( player, player, introLine )
-    }
-    //npc.WaitSignal( "TitanHotDropComplete" )
+    PlayBossCommsForAllPlayers( boss.diag.intro )
     PlayMusic( boss.theme )
 
     printt("Succesfully dropped titan")
@@ -610,7 +608,8 @@ void function BossChangedTarget( entity trigger, entity activator, entity caller
     printt("Boss target changed; ", trigger, activator, caller, value)
     array<string> targetLines = file.bosses[ trigger.GetScriptName() ].diag.changeTarget
     string line = targetLines[ RandomInt( targetLines.len() - 1 ) ]
-    EmitSoundOnEntityOnlyToPlayer( value, value, line )
+    if ( RandomInt( 100 ) > 70 )
+        EmitSoundOnEntityOnlyToPlayer( value, value, line )
 }
 
 void function SetBossTitanPostSpawn( entity npc, BossData bossData )
