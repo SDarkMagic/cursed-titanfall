@@ -62,9 +62,27 @@ void function initFrontierDefenseData()
 	index = 1
 
 	array<WaveEvent> wave2
-	wave2.append(CreateDroppodSpectreMortarEvent( < -9067.93, -4478.86, 572.391 >, "", index++))
-	wave2.append(CreateDroppodSpectreMortarEvent( < -9445.78, -3698.59, 580.391 >, "", index++))
-	//waveEvents.append(wave2)
+	wave2.append( CreateWarningEvent( FD_IncomingWarnings.HeavyWave, index++ ) )
+	wave2.append( CreateWaitForTimeEvent( 12.0, index++ ) )
+	wave2.append( CreateBossTitanEvent_Random( < -9415.43, -4317.23, 580.391 >, < 0, 38, 0 >, "leftFlank", index++, [ eFD_Bosses.Kane ] ) )
+	wave2.append( CreateWaitUntilAliveEvent( 0, index++ ) )
+	wave2.append( CreateWaitForTimeEvent( 5.0, index++ ) )
+	wave2.append( CreateBossTitanEvent_Ash( < -1500, 1200, 560 >, <0, 2.81, 0>, "mainEntrance", index++ ) )
+	wave2.append( CreateWaitUntilAliveEvent( 0, index++ ) )
+	wave1.append( CreateWaitForTimeEvent( 10.0, index++ ) )
+	wave2.append( CreateBossTitanEvent_Random( < -4464.23, -4578.01, 659.22 >, <0, 38.94, 0>, "domeEntrance", index++, [ eFD_Bosses.Richter] ) )
+	wave2.append( CreateWaitUntilAliveEvent( 0, index++ ) )
+	wave2.append( CreateWaitForTimeEvent( 5.0, index++ ) )
+	wave2.append( CreateBossTitanEvent_Random( < -732.604, -3003.42, 512.031 >, <0, -172.84, 0>, "mainEntrance", index++, [ eFD_Bosses.Viper ] ) )
+	wave2.append( CreateWaitUntilAliveEvent( 0, index++ ) )
+	wave2.append( CreateBossTitanEvent_Random( < -7417.23, -582.146, 576.031 >, <0, -44.82, 0>, "mainStretch", index++, [ eFD_Bosses.Slone ] ) )
+	wave2.append( CreateWaitUntilAliveEvent( 0, index++ ) )
+	wave2.append( CreateWarningEvent( FD_IncomingWarnings.Everything, index++ ) )
+	wave2.append( CreateWaitForTimeEvent( 20.0, index++ ) )
+	wave2.append( CreateBossTitanEvent_Random( < -9415.43, -4317.23, 580.391 >, < 0, 38, 0 >, "leftFlank", index++, [ eFD_Bosses.Blisk ] ) )
+	//wave2.append(CreateDroppodSpectreMortarEvent( < -9067.93, -4478.86, 572.391 >, "", index++))
+	//wave2.append(CreateDroppodSpectreMortarEvent( < -9445.78, -3698.59, 580.391 >, "", index++))
+	waveEvents.append(wave2)
 	index = 1
 
 	array<WaveEvent> wave3
@@ -149,7 +167,7 @@ void function initFrontierDefenseData()
 	wave3.append(CreateArcTitanEvent(< -2416 , -2232 , 644 >,< 0, 180, 0 >,"",index++))
 	wave3.append(CreateWaitForTimeEvent( 0.5, index++ ) )
 	wave3.append(CreateArcTitanEvent(< -2416 , -1915 , 644 >,< 0, 180, 0 >,"",0))
-	waveEvents.append(wave3)
+	//waveEvents.append(wave3)
 	index = 1
 	array<WaveEvent> wave4
 	wave4.append(CreateScorchTitanEvent(< -2300 , -1944 , 644 >,< 0, 180, 0 >,"",index++))
@@ -247,10 +265,10 @@ void function initFrontierDefenseData()
 	wave4.append(CreateMonarchTitanEvent(< -2538 , 367 , 558 >,< 0, 0, 0 >,"",index++,1,"",FD_TitanType.TITAN_ELITE))
 	wave4.append(CreateWaitForTimeEvent( 0.2, index++ ) )
 	wave4.append(CreateLegionTitanEvent(< -2373 , 100 , 696 >,< 0, 0, 0 >,"",0,1,"",FD_TitanType.TITAN_ELITE))
-	waveEvents.append(wave4)
+	//waveEvents.append(wave4)
 	index = 1
 	array<WaveEvent> wave5
-	wave5.append( CreateBossTitanEvent_Ash( < -1500, 1200, 560 >, <0, 2.81, 0>, "mainEntrance", index++ ))
+	wave5.append( CreateBossTitanEvent_Ash( < -1500, 1200, 560 >, <0, 2.81, 0>, "mainEntrance", index++ ) )
 	wave5.append( CreateWaitUntilAliveEvent( 0, index++ ) )
 	wave5.append(CreateMonarchTitanEvent(< -878 , 785 , 568 >,< 0, -90, 0 >,"",index++))
 	wave5.append(CreateWaitForTimeEvent( 0.5, index++ ) )
@@ -435,7 +453,7 @@ void function initFrontierDefenseData()
 	wave5.append(CreateArcTitanEvent(< -884 , -1729 , 512 >,< 0, 180, 0 >,"",index++))
 	wave5.append(CreateWaitForTimeEvent( 2.5, index++ ) )
 	wave5.append(CreateDroppodSpectreEvent(< -3721, -2289, 713 >,"",0))
-	waveEvents.append(wave5)
+	//waveEvents.append(wave5)
 }
 
 // Ash link_to_guid in map file is 5f7266d1 (sp_boomtown_end)

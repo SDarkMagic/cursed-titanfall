@@ -270,7 +270,7 @@ BossData function Init_Blisk()
     blisk.modelPath = $"models/titans/heavy/titan_heavy_deadbolt.mdl"
     blisk.skinIndex = 4
     blisk.decalIndex = 9
-    blisk.aiSettings = "npc_titan_ogre_minigun_boss_fd_elite"
+    blisk.aiSettings = "npc_titan_ogre_minigun_boss_fd_blisk"
     blisk.healthModifier = 15000
     blisk.soulPassive4 = "pas_legion_spinup"
     blisk.execution = "execution_legion_prime"
@@ -350,34 +350,34 @@ void function DEV_SpawnBossTitan( string bossName )
 }
 
 
-void function Spawn_Ash( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
+entity function Spawn_Ash( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
 {
-    CreateBossTitan_Generic( ash, origin, angles, team, spawnType )
+    return CreateBossTitan_Generic( ash, origin, angles, team, spawnType )
 }
 
-void function Spawn_Viper( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
+entity function Spawn_Viper( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
 {
-    CreateBossTitan_Generic( viper, origin, angles, team, spawnType )
+    return CreateBossTitan_Generic( viper, origin, angles, team, spawnType )
 }
 
-void function Spawn_Slone( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
+entity function Spawn_Slone( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
 {
-    CreateBossTitan_Generic( slone, origin, angles, team, spawnType )
+    return CreateBossTitan_Generic( slone, origin, angles, team, spawnType )
 }
 
-void function Spawn_Richter( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
+entity function Spawn_Richter( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
 {
-    CreateBossTitan_Generic( richter, origin, angles, team, spawnType )
+    return CreateBossTitan_Generic( richter, origin, angles, team, spawnType )
 }
 
-void function Spawn_Kane( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
+entity function Spawn_Kane( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
 {
-    CreateBossTitan_Generic( kane, origin, angles, team, spawnType )
+    return CreateBossTitan_Generic( kane, origin, angles, team, spawnType )
 }
 
-void function Spawn_Blisk( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
+entity function Spawn_Blisk( vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0 )
 {
-    CreateBossTitan_Generic( blisk, origin, angles, team, spawnType )
+    return CreateBossTitan_Generic( blisk, origin, angles, team, spawnType )
 }
 
 void function BossDefeated( entity trigger, entity activator, entity caller, var value )
@@ -421,6 +421,8 @@ void function SetLoadout_Viper( entity npc )
 
 void function SetLoadout_Slone( entity npc )
 {
+    //entity offHandWeapon = npc.GetOffhandWeapon( OFFHAND_ANTIRODEO )
+    npc.TakeOffhandWeapon(OFFHAND_ANTIRODEO )
     npc.GiveOffhandWeapon( "mp_titanability_phase_dash", OFFHAND_ANTIRODEO )
     //array<entity> utilityWeapon = npc.GetOffhandWeapon( OFFHAND_ANTIRODEO )
 }
@@ -462,12 +464,12 @@ void function SetLoadout_Blisk( entity npc )
     gunshield.AddMod( "SiegeMode" )
 }
 
-void function CreateBossTitan_Generic( BossData boss, vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0)
+entity function CreateBossTitan_Generic( BossData boss, vector origin, vector angles, int team = TEAM_IMC, int spawnType = 0)
 {
     bossStageTracker stageTracker = boss.stageTracker
     stageTracker.currentStage = 0 // Reset the boss' stage to zero on spawn in case something weird happened to a previous instance
     file.bosses[ boss.name ] <- boss
-    AddBossTitan( boss.name )
+    //AddBossTitan( boss.name )
 
     entity npc = CreateNPCTitan( boss.className, team, origin, angles )
     SetSpawnOption_AISettings( npc, boss.aiSettings )
@@ -511,6 +513,7 @@ void function CreateBossTitan_Generic( BossData boss, vector origin, vector angl
     PlayMusic( boss.theme )
 
     printt("Succesfully dropped titan")
+    return npc
 }
 
 void function BossTitan_TakesDamage_StageHandler( entity titan, var damageInfo )
@@ -571,8 +574,13 @@ void function ResetBossHealth( entity boss )
     UndoomBossTitan( boss )
     while ( currentHealth < maxHealth)
     {
+        if ( !IsValid( boss ) )
+            return
         currentHealth += 1000
-        boss.SetHealth( currentHealth )
+        if ( currentHealth <= boss.GetMaxHealth( ) )
+            boss.SetHealth( currentHealth )
+        else
+            boss.SetHealth( boss.GetMaxHealth() )
         wait regenTime / loopCount
     }
 
@@ -592,7 +600,7 @@ void function UndoomBossTitan( entity titan )
     entity soul = titan.GetTitanSoul()
     int segmentHealth = GetSegmentHealthForTitan( titan )
     BossData boss = file.bosses[ bossName ]
-    titan.SetMaxHealth( ( titan.GetMaxHealth() + boss.healthModifier ) )
+    titan.SetMaxHealth( ( titan.GetMaxHealth() ) )
     titan.SetHealth( segmentHealth * 1 )
 	SetSoulBatteryCount( soul, 1 )
 
@@ -633,7 +641,7 @@ void function SetBossTitanPostSpawn( entity npc, BossData bossData )
 		npc.SetEngagementDistVsWeak( 0, 800 )
 		npc.SetEngagementDistVsStrong( 0, 800 )
 		SetTitanWeaponSkin( npc )
-        Rodeo_Disallow( npc )
+        //Rodeo_Disallow( npc )
         npc.SetSkin( bossData.skinIndex )
         npc.SetDecal( bossData.decalIndex )
 		HideCrit( npc )

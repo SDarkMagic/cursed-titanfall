@@ -12,20 +12,6 @@
             "RunOn": "SERVER && MP"
         },
         {
-            "Path": "ai/_boss_titan_data.nut",
-            "RunOn": "SERVER && MP",
-            "ServerCallback": {
-                "Before": "ShAIBossTitan_Init"
-            }
-        },
-        {
-            "Path": "ai/_ai_boss_titan.gnut",
-            "RunOn": "SERVER && MP",
-            "ServerCallback": {
-                "Before": "AIBossTitan_Init"
-            }
-        },
-        {
             "Path": "_boss_titans.nut",
             "RunOn": "SERVER && MP",
             "ServerCallback": {

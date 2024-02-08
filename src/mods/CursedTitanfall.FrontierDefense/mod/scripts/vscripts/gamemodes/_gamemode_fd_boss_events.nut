@@ -130,7 +130,7 @@ void function SpawnBossTitan_Ash( SmokeEvent smokeEvent, SpawnEvent spawnEvent, 
 
 	if( spawnEvent.entityGlobalKey != "" )
 		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
-	npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
+	//npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
 	//GiveShieldByDifficulty( npc )
 	thread singleNav_thread( npc, spawnEvent.route )
 }
@@ -147,7 +147,7 @@ void function SpawnBossTitan_Slone( SmokeEvent smokeEvent, SpawnEvent spawnEvent
 
 	if( spawnEvent.entityGlobalKey != "" )
 		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
-	npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
+	//npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
 	//GiveShieldByDifficulty( npc )
 	thread singleNav_thread( npc, spawnEvent.route )
 }
@@ -164,7 +164,7 @@ void function SpawnBossTitan_Viper( SmokeEvent smokeEvent, SpawnEvent spawnEvent
 
 	if( spawnEvent.entityGlobalKey != "" )
 		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
-	npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
+	//npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
 	//GiveShieldByDifficulty( npc )
 	thread singleNav_thread( npc, spawnEvent.route )
 }
@@ -181,7 +181,7 @@ void function SpawnBossTitan_Kane( SmokeEvent smokeEvent, SpawnEvent spawnEvent,
 
 	if( spawnEvent.entityGlobalKey != "" )
 		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
-	npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
+	//npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
 	//GiveShieldByDifficulty( npc )
 	thread singleNav_thread( npc, spawnEvent.route )
 }
@@ -198,7 +198,7 @@ void function SpawnBossTitan_Richter( SmokeEvent smokeEvent, SpawnEvent spawnEve
 
 	if( spawnEvent.entityGlobalKey != "" )
 		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
-	npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
+	//npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
 	//GiveShieldByDifficulty( npc )
 	thread singleNav_thread( npc, spawnEvent.route )
 }
@@ -215,7 +215,7 @@ void function SpawnBossTitan_Blisk( SmokeEvent smokeEvent, SpawnEvent spawnEvent
 
 	if( spawnEvent.entityGlobalKey != "" )
 		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
-	npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
+	//npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
 	//GiveShieldByDifficulty( npc )
 	thread singleNav_thread( npc, spawnEvent.route )
 }
