@@ -15,6 +15,8 @@ void function ApplyEmpField( entity player, entity titan)
     entity soul = player.GetTitanSoul()
     if ( !player.IsPlayer() || !IsValid(titan) )
         return
+    if ( soul.IsDoomed() )
+        return
     entity ordinanceWeapon = player.GetOffhandWeapon( OFFHAND_RIGHT )
     if ( !ordinanceWeapon.HasMod( "pas_ronin_arcwave" ) )
         return
