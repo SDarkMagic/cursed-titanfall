@@ -83,29 +83,16 @@ void function CreateGravFieldOnEnt( entity projectile)
 {
 	projectile.EndSignal( "OnDestroy" )
 	WaitFrame()
-
+	array<entity> nearbyEnemies
 	vector pullPosition = projectile.GetOrigin()
-	entity gravTrig = CreateEntity( "trigger_point_gravity" )
-	// pull inner radius, pull outer radius, reduce speed inner radius, reduce speed outer radius, pull accel, pull speed, 0
-	gravTrig.SetParams( PULL_RANGE, PULL_RANGE * 2, 32, 128, 2000, 400 )
-	gravTrig.SetOrigin( projectile.GetOrigin() )
-	//projectile.ClearParent()
-	gravTrig.SetParent( projectile )
-	gravTrig.RoundOriginAndAnglesToNearestNetworkValue()
-    //gravTrig.SetParent(projectile)
-	SetTeam( gravTrig, projectile.GetTeam() )
-	DispatchSpawn( gravTrig )
-	gravTrig.SearchForNewTouchingEntity()
 
 	EmitSoundOnEntity( projectile, "default_gravitystar_impact_3p" )
 	entity FX = StartParticleEffectOnEntity_ReturnEntity( projectile, GetParticleSystemIndex( GRAVITY_VORTEX_FX ), FX_PATTACH_ABSORIGIN_FOLLOW, -1 )
     //	EmitSoundOnEntity( projectile, "gravitystar_vortex" )
 
 	OnThreadEnd(
-		function() : ( gravTrig, FX )
+		function() : ( FX )
 		{
-			if ( IsValid( gravTrig ) )
-				gravTrig.Destroy()
             if ( IsValid( FX ) )
     			EntFireByHandle( FX, "kill", "", FX_END_CAP_TIME, null, null )
 
@@ -114,13 +101,14 @@ void function CreateGravFieldOnEnt( entity projectile)
 
 	EmitSoundOnEntity( projectile, "weapon_gravitystar_preexplo" )
     AI_CreateDangerousArea( projectile, projectile, PULL_RANGE * 2.0, TEAM_INVALID, true, false )
-    //gravTrig.ClearParent()
     while ( true )
     {
+		nearbyEnemies = GetNearbyEnemiesForGravGrenade( projectile )
+		foreach ( enemy in nearbyEnemies )
+		{
+			Proto_SetEnemyVelocity_Pull( enemy, projectile.GetOrigin() )
+		}
         pullPosition = projectile.GetOrigin()
-        //trig.SetOrigin( pullPosition )
-        gravTrig.SetOrigin( pullPosition )
-        gravTrig.RoundOriginAndAnglesToNearestNetworkValue()
         WaitFrame()
     }
 }
@@ -188,7 +176,7 @@ array<entity> function GetNearbyEnemiesForGravGrenade( entity projectile )
 		if ( !IsAlive( guy ) )
 			continue
 
-		if ( IsEnemyTeam( team, guy.GetTeam() ) || (IsValid( owner ) && guy == owner) )
+		if ( IsEnemyTeam( team, guy.GetTeam() ) )
 			nearbyEnemies.append( guy )
 	}
 
@@ -224,5 +212,34 @@ array<entity> function GetNearbyProjectilesForGravGrenade( entity gravGrenade )
 	}
 
 	return affectedProjectiles
+}
+
+void function PROTO_GravGrenadePull( entity enemy, entity projectile )
+{
+	enemy.EndSignal( "OnDestroy" )
+
+	entity mover = CreateOwnedScriptMover( enemy )
+	enemy.SetParent( mover, "ref", true )
+
+	OnThreadEnd(
+	function() : ( enemy, mover )
+		{
+			if ( IsValid( enemy ) )
+				enemy.ClearParent()
+
+			if ( IsValid( mover ) )
+				mover.Destroy()
+		}
+	)
+
+	vector mins = enemy.GetBoundingMins()
+	vector maxs = enemy.GetBoundingMaxs()
+	vector org1 = enemy.GetOrigin()
+	vector org2 = projectile.GetOrigin()
+	vector newPosition = org1 + ( org2 - org1 ) / 2.0
+	TraceResults result = TraceHull( org1, newPosition, mins, maxs, [enemy,mover], TRACE_MASK_SOLID_BRUSHONLY, TRACE_COLLISION_GROUP_NONE )
+	mover.NonPhysicsMoveTo( ( newPosition - org1 ) * result.fraction + org1 + result.surfaceNormal, PULL_DELAY, 0, 0 )
+
+	wait PULL_DELAY
 }
 #endif

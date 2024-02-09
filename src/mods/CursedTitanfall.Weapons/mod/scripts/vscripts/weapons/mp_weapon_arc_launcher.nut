@@ -36,8 +36,8 @@ var function OnWeaponPrimaryAttack_weapon_arc_launcher( entity weapon, WeaponPri
 
 	entity arcBall = FireArcBall( weapon, attackPos, attackDir, shouldPredict, ARC_LAUNCHER_ZAP_DAMAGE )
 	#if SERVER
-	thread ProjectileEMPFieldThinkConstant( arcBall )
-	//thread CreateGravFieldOnEnt( arcBall )
+	//thread ProjectileEMPFieldThinkConstant( arcBall )
+	thread CreateGravFieldOnEnt( arcBall )
 	#endif
 	weapon.EmitWeaponSound_1p3p( "Weapon_ArcLauncher_Fire_1P", "Weapon_ArcLauncher_Fire_3P" )
 	weapon.EmitWeaponNpcSound( LOUD_WEAPON_AI_SOUND_RADIUS_MP, 0.2 )
