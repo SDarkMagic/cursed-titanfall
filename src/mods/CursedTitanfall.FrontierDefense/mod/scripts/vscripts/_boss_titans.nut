@@ -529,7 +529,6 @@ void function BossTitan_TakesDamage_StageHandler( entity titan, var damageInfo )
     float damage = DamageInfo_GetDamage( damageInfo )
     bool shouldReset = false
     bossStageTracker stageInfo = file.bosses[ bossName ].stageTracker
-    printt(currentHealth, currentHealth - damage)
     if ( currentHealth - damage <= 1 && stageInfo.currentStage < stageInfo.maxStages) //Run this check when the boss has one cell or less of health remaining to hopefully avoid boss being doomed before entering health regen
     {
         array<string> retreatLines = file.bosses[ bossName ].diag.retreat
