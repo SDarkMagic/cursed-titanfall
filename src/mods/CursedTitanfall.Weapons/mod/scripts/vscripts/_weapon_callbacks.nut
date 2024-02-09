@@ -11,6 +11,7 @@ void function Init_Custom_Weapon_Callbacks()
 	AddCallback_OnProjectileCollision_weapon_smr( SpawnClusterMissile_smr )
 	AddCallback_OnProjectileCollision_weapon_wingman(DisplayPlayerCoords)
     AddCallback_OnPrimaryAttackPlayer_weapon_sniper(Russian_Roulette)
+	AddCallback_OnProjectileCollision_weapon_mgl( SpawnTick )
     //AddCallback_OnPrimaryAttackPlayer_weapon_lmg(Thread_PreventCamping)
 
 	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_grenade_emp, Grenade_Emp_Hack )
@@ -266,6 +267,24 @@ void function PushEnt_WhenHit_Callback( entity target, var damageInfo )
 	float damage = DamageInfo_GetDamage( damageInfo )
 
 	PushEntWithDamageFromDirection( target, damage, attackDirection, 7.5, 1.0 )
+}
+
+void function SpawnTick( ProjectileCollisionParams params )
+{
+    entity player = params.projectile.GetOwner()
+	if ( !IsValid(player) )
+		return
+    int team = player.GetTeam()
+    vector spawnOffset = -150 * Normalize( params.projectile.GetVelocity() ) // Move the spawn point back by 150 units of the projectile's velocity vector
+	vector origin = params.pos + spawnOffset
+	vector angles = <0,0,0>
+
+	entity npc = CreateNPC( "npc_frag_drone", team, origin, angles )
+	if ( player.IsPlayer() )
+	    npc.SetBossPlayer(player)
+    DispatchSpawn(npc)
+	params.projectile.Destroy()
+	return
 }
 
 #endif
