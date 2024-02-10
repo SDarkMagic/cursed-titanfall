@@ -13,6 +13,7 @@ struct ReserveHealthPool {
     int totalUsed
     float max = 4000
     bool hasChanged = true
+    string msgId
 }
 
 struct {
@@ -32,6 +33,7 @@ void function Init_Monarch_Healing_Shots( )
     #if SERVER
     AddDamageCallbackSourceID( eDamageSourceId.mp_titanweapon_xo16_vanguard, Energy_Transfer_Primary_Weapon_Callback )
     AddCallback_OnPilotBecomesTitan( Healer_InitPlayer )
+    AddCallback_OnTitanBecomesPilot( Healer_CleanupPlayer )
     AddCallback_OnPrimaryAttackPlayer_titancore_upgrade( UpgradeCore_ReInitPlayer )
     #endif
     // TODO Implement a bar similar to Ion's energy bar for this to display available health pool.
@@ -89,6 +91,14 @@ void function Healer_InitPlayer( entity player, entity titan )
 
     healthPool.max = float( player.GetMaxHealth() )
     file.healthPools[player] <- healthPool
+    entity offhandWeapon = player.GetOffhandWeapon( OFFHAND_LEFT )
+    if ( offhandWeapon.HasMod("energy_transfer") )
+        CreateHealthPoolRui( player )
+}
+
+void function Healer_CleanupPlayer( entity player, entity titan )
+{
+    DeleteHealthPoolRui( player )
 }
 
 void function Charge_Meter( var damageInfo )
@@ -110,6 +120,7 @@ void function Charge_Meter( var damageInfo )
             file.healthPools[attacker].hasChanged = false
         }
     }
+    UpdateHealthPoolRui( attacker )
     printt("Current health pool for player: '" + attacker.GetTargetName() + "' - " + file.healthPools[attacker].current)
 }
 
@@ -143,8 +154,44 @@ void function Heal_Teammate( entity target, var damageInfo )
         file.healthPools[attacker].current = currentEnergy - cost
         file.healthPools[attacker].totalUsed += cost
         file.healthPools[attacker].hasChanged = true
+        UpdateHealthPoolRui( attacker )
     }
 }
+
+void function CreateHealthPoolRui( entity player )
+{
+    if ( !IsValid( player ) || !player.IsPlayer() )
+        return
+    ReserveHealthPool playerPool = file.healthPools[ player ]
+    if ( playerPool.msgId != "" )
+        return
+    string id = UniqueString("reserveHealthPoints")
+    playerPool.msgId = id
+    string currentPool = string(playerPool.current) + "/" + string(playerPool.max)
+    NSCreateStatusMessageOnPlayer( player, "Res. hp", currentPool, id )
+}
+
+void function UpdateHealthPoolRui( entity player )
+{
+    if ( !IsValid( player ) || !player.IsPlayer() )
+        return
+    ReserveHealthPool playerPool = file.healthPools[ player ]
+    string id = playerPool.msgId
+    string currentPool = string(playerPool.current) + "/" + string(playerPool.max)
+    NSEditStatusMessageOnPlayer( player, "Res. hp", currentPool, id )
+    return
+}
+
+void function DeleteHealthPoolRui( entity player )
+{
+    if ( !IsValid( player ) || !player.IsPlayer() )
+        return
+    ReserveHealthPool playerPool = file.healthPools[ player ]
+    string id = playerPool.msgId
+    NSDeleteStatusMessageOnPlayer( player, id )
+    playerPool.msgId = ""
+}
+
 #endif
 
 #if CLIENT

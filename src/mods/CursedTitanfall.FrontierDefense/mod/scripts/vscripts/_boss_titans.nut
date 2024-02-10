@@ -511,7 +511,7 @@ entity function CreateBossTitan_Generic( BossData boss, vector origin, vector an
     string introLine = boss.diag.intro
     PlayBossCommsForAllPlayers( boss.diag.intro )
     PlayMusic( boss.theme )
-
+    WarnAllPlayers_BossMechanics()
     printt("Succesfully dropped titan")
     return npc
 }
@@ -605,6 +605,14 @@ void function UndoomBossTitan( entity titan )
 
 	titan.Signal( "TitanUnDoomed" )
 	UndoomTitan_Body( titan )
+}
+
+void function WarnAllPlayers_BossMechanics()
+{
+    foreach ( entity player in GetPlayerArray() )
+    {
+        NSSendInfoMessageToPlayer( player, "WARNING: Boss titans have multiple phases and will regenerate HP when low. While regenerating health, the titan will be invulnerable to all damage.")
+    }
 }
 
 void function BossChangedTarget( entity trigger, entity activator, entity caller, var value )
@@ -710,6 +718,7 @@ void function MonitorBossTitanCore( entity npc )
 	}
 }
 
+/*
 void function AddMinimapForTitans( entity titan )
 {
 	if( !IsValid( titan ) )
@@ -722,3 +731,4 @@ void function AddMinimapForTitans( entity titan )
 	titan.Minimap_SetZOrder( MINIMAP_Z_NPC )
 	titan.Minimap_SetCustomState( eMinimapObject_npc_titan.AT_BOUNTY_BOSS )
 }
+*/
