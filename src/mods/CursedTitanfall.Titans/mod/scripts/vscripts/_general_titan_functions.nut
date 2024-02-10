@@ -4,7 +4,7 @@ void function InitGeneralTitanFunctions()
 {
     #if SERVER
     AddCallback_OnTitanVsTitan3p_ShouldGiveBattery( RoninExecutionGivesBatt )
-    AddCallback_OnPilotBecomesTitan( WarnNorthstarBug )
+    //AddCallback_OnPilotBecomesTitan( WarnNorthstarBug )
     #endif
 }
 

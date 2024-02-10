@@ -90,6 +90,7 @@ void function FlyerHovers( entity player, HoverSounds soundInfo, float flightTim
 {
 	player.EndSignal( "OnDeath" )
 	player.EndSignal( "TitanEjectionStarted" )
+	player.EndSignal( "CoreEnd" )
 
 	thread AirborneThink( player, soundInfo )
 	if ( player.IsPlayer() )
@@ -136,6 +137,8 @@ void function FlyerHovers( entity player, HoverSounds soundInfo, float flightTim
 					if ( player.IsOnGround() )
 						EmitSoundOnEntity( player, soundInfo.landing_3p )
 				}
+				entity weapon = player.GetOffhandWeapon( OFFHAND_ANTIRODEO )
+				RemoveMod( weapon, "is_airborne" )
 			}
 
 			foreach ( fx in activeFX )
@@ -182,7 +185,6 @@ void function FlyerHovers( entity player, HoverSounds soundInfo, float flightTim
 		{
 			if ( SoulHasPassive( soul, ePassives.PAS_NORTHSTAR_FLIGHTCORE ) && ( timePassed > 30.0 || !weapon.HasMod("is_airborne") )) // Max duration for toggle flight is 30 seconds
 				{
-					RemoveMod( weapon, "is_airborne" )
 					//weapon.kv.fire_rate = 0.8 * timePassed
 					break
 				}
