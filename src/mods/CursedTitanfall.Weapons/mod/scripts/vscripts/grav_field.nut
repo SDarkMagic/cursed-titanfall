@@ -89,6 +89,11 @@ void function CreateGravFieldOnEnt( entity projectile)
 	EmitSoundOnEntity( projectile, "default_gravitystar_impact_3p" )
 	entity FX = StartParticleEffectOnEntity_ReturnEntity( projectile, GetParticleSystemIndex( GRAVITY_VORTEX_FX ), FX_PATTACH_ABSORIGIN_FOLLOW, -1 )
     //	EmitSoundOnEntity( projectile, "gravitystar_vortex" )
+	bool hasProScreen = false
+
+	array<string> mods = projectile.ProjectileGetMods()
+	if ( mods.find( "pro_screen" ) >= 0 )
+		hasProScreen = true
 
 	OnThreadEnd(
 		function() : ( FX )
@@ -103,7 +108,7 @@ void function CreateGravFieldOnEnt( entity projectile)
     AI_CreateDangerousArea( projectile, projectile, PULL_RANGE * 2.0, TEAM_INVALID, true, false )
     while ( true )
     {
-		nearbyEnemies = GetNearbyEnemiesForGravGrenade( projectile )
+		nearbyEnemies = GetNearbyEnemiesForGravGrenade( projectile, hasProScreen )
 		foreach ( enemy in nearbyEnemies )
 		{
 			Proto_SetEnemyVelocity_Pull( enemy, projectile.GetOrigin() )
@@ -164,13 +169,17 @@ void function Proto_SetEnemyVelocity_Pull( entity enemy, vector projOrigin )
 	enemy.SetVelocity( newVelocity )
 }
 
-array<entity> function GetNearbyEnemiesForGravGrenade( entity projectile )
+array<entity> function GetNearbyEnemiesForGravGrenade( entity projectile, bool includeUser = false )
 {
 	int team = projectile.GetTeam()
 	entity owner = projectile.GetOwner()
 	vector origin = projectile.GetOrigin()
 	array<entity> nearbyEnemies
 	array<entity> guys = GetPlayerArrayEx( "any", TEAM_ANY, TEAM_ANY, origin, PULL_RANGE )
+
+	if ( includeUser == true && IsValid( owner ) )
+		nearbyEnemies.append( owner )
+
 	foreach ( guy in guys )
 	{
 		if ( !IsAlive( guy ) )
