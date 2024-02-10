@@ -718,7 +718,6 @@ void function MonitorBossTitanCore( entity npc )
 	}
 }
 
-/*
 void function AddMinimapForTitans( entity titan )
 {
 	if( !IsValid( titan ) )
@@ -731,4 +730,3 @@ void function AddMinimapForTitans( entity titan )
 	titan.Minimap_SetZOrder( MINIMAP_Z_NPC )
 	titan.Minimap_SetCustomState( eMinimapObject_npc_titan.AT_BOUNTY_BOSS )
 }
-*/
