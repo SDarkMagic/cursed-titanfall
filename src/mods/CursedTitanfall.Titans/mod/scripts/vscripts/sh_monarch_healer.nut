@@ -149,7 +149,7 @@ void function Heal_Teammate( entity target, var damageInfo )
             restoreAmount = targetMaxHealth - targetCurrentHealth
             cost = restoreAmount * 2
         }
-        printt("Restoring " + restoreAmount + " HP to " + target.GetPlayerName() + " from " + attacker.GetTargetName() + "'s' shared energy pool with cost " + cost)
+        //printt("Restoring " + restoreAmount + " HP to " + target.GetPlayerName() + " from " + attacker.GetTargetName() + "'s' shared energy pool with cost " + cost)
         target.SetHealth( targetCurrentHealth + restoreAmount )
         file.healthPools[attacker].current = currentEnergy - cost
         file.healthPools[attacker].totalUsed += cost
