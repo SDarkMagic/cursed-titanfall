@@ -1,34 +1,52 @@
-global array<entity> prowler_stack
-global array<entity> reaper_stack
+global struct EntityStack {
+    array<entity> entities
+    int maxEntities = 10
+}
 
-global function add_prowler
+global EntityStack prowlerStack
+global EntityStack reaperStack
+global EntityStack tickStack
+
+global function AddProwler
+global function AddTick
 
 const int MAX_ENTITIES_PER_STACK = 10
 
-void function remove_from_stack( array<entity> stack )
+void function Init_TeamEntityStacks()
 {
-    if ( stack.len() > MAX_ENTITIES_PER_STACK)
+    tickStack.maxEntities = 25
+}
+
+void function RemoveFromStack( EntityStack stack )
+{
+    if ( stack.entities.len() > stack.maxEntities )
     {
-        entity target = prowler_stack.remove(0)
-        if ( IsValid(target) )
+        entity target = stack.entities.remove( 0 )
+        if ( IsValid( target ) )
         {
             target.Destroy()
         }
         else
         {
-            remove_from_stack(stack)
+            RemoveFromStack( stack )
         }
     }
 }
 
-void function add_prowler( entity prowler )
+void function AddProwler( entity prowler )
 {
-    prowler_stack.append(prowler)
-    remove_from_stack(prowler_stack)
+    prowlerStack.entities.append(prowler)
+    RemoveFromStack( prowlerStack )
 }
 
-void function add_reaper( entity reaper )
+void function AddReaper( entity reaper )
 {
-    reaper_stack.append(reaper)
-    remove_from_stack(reaper_stack)
+    reaperStack.entities.append(reaper)
+    RemoveFromStack( reaperStack )
+}
+
+void function AddTick( entity tick )
+{
+    tickStack.entities.append( tick )
+    RemoveFromStack( tickStack )
 }

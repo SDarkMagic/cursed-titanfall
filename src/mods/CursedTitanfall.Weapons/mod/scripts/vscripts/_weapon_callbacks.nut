@@ -36,7 +36,7 @@ void function Weapon_Epg_Collision( ProjectileCollisionParams params )
 	    prowler.SetBossPlayer(player)
     SetTeam(prowler, team)
     DispatchSpawn(prowler)
-    add_prowler(prowler)
+    AddProwler(prowler)
     return
 }
 
@@ -44,20 +44,14 @@ void function Dash_Player(entity weapon, WeaponPrimaryAttackParams attackParams)
 {
 	printt("Called Dash_Player function")
 	entity player = weapon.GetWeaponOwner()
-	if ( !player.IsPlayer() )
-		return
-	float speedModifier = -500
-	vector viewDirection = player.GetViewVector()
+	//if ( !player.IsPlayer() )
+	//	return
+	float speedModifier = -600
+	vector viewDirection = player.GetPlayerOrNPCViewVector()
 	vector appliedVelocity = viewDirection * (speedModifier * weapon.GetWeaponChargeTime()) // Scale the applied velocity based on how long the weapon needs to charge for. Then create apply the speed modifier to the velocity vector to get the applied force.
 
 	player.SetVelocity(player.GetVelocity() + appliedVelocity)
     return
-}
-
-void function Dash_Player_Threaded( entity weapon, WeaponPrimaryAttackParams attackParams )
-{
-	Dash_Player( weapon, attackParams )
-	return
 }
 
 void function Softball_ESmoke( ProjectileCollisionParams params )
@@ -173,8 +167,8 @@ void function Grenade_Emp_Hack( entity target, var damageInfo )
 void function Pistol_Callback( entity target, var damageInfo )
 {
 	entity player = DamageInfo_GetAttacker(damageInfo)
-	if ( !player.IsPlayer() )
-		return
+	//if ( !player.IsPlayer() )
+	//	return
     int team = player.GetTeam()
     array<entity> enemies = GetPlayerArrayOfEnemies(team)
 	entity weapon = DamageInfo_GetWeapon( damageInfo )
@@ -284,6 +278,7 @@ void function SpawnTick( ProjectileCollisionParams params )
 	    npc.SetBossPlayer(player)
     DispatchSpawn(npc)
 	params.projectile.Destroy()
+	AddTick( npc )
 	return
 }
 

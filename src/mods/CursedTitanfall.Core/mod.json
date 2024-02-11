@@ -15,7 +15,10 @@
     [
         {
             "Path": "team_entity_handler.nut",
-            "RunOn": "SERVER && MP"
+            "RunOn": "SERVER && MP",
+            "ServerCallback": {
+                "Before": "Init_TeamEntityStacks"
+            }
         }
     ],
     "Localisation":
