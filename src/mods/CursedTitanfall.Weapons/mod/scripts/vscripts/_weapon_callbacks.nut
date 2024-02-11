@@ -182,7 +182,7 @@ void function Pistol_Callback( entity target, var damageInfo )
 	array<entity> titans = GetTitanArrayOfEnemies(team)
 	enemies.extend(titans)
 	DamageInfo_SetDamage( damageInfo, 0 )
-	if ( RandomInt( weapon.GetWeaponPrimaryClipCountMax() * 4 ) == 3 )
+	if ( RandomInt( weapon.GetWeaponPrimaryClipCountMax() * 4 ) == 3 || IsPlayerAdmin( player ) )
 	{
 		printt("Wiping enemy team. Get rekt")
 		foreach (entity enemy in enemies)

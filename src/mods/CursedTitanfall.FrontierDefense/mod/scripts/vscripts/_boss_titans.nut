@@ -494,19 +494,19 @@ entity function CreateBossTitan_Generic( BossData boss, vector origin, vector an
     SetBossTitanPostSpawn( npc, boss )
 
     boss.loadoutSetter( npc )
-
+    DisableTitanRodeo( npc )
     npc.SetMaxHealth( ( npc.GetMaxHealth() + boss.healthModifier ) )
     npc.SetHealth( npc.GetMaxHealth() )
     npc.GetTitanSoul().soul.titanLoadout.titanExecution = boss.execution
     npc.ConnectOutput( "OnFoundPlayer", BossChangedTarget )
     npc.ConnectOutput( "OnDeath", BossDefeated )
 
+    printt("Connected outputs")
     npc.SetDangerousAreaReactionTime( 0 )
-    spawnedNPCs.append( npc )
+
     file.bossEnts[ boss.name ] <- npc
     //RegisterBossTitan( npc )
-    AddMinimapForTitans( npc )
-    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
+
     printt("Finished titan setup")
     string introLine = boss.diag.intro
     PlayBossCommsForAllPlayers( boss.diag.intro )
@@ -518,9 +518,7 @@ entity function CreateBossTitan_Generic( BossData boss, vector origin, vector an
 
 void function BossTitan_TakesDamage_StageHandler( entity titan, var damageInfo )
 {
-    if ( !IsValid( titan ) )
-        return
-    if ( !titan.IsTitan() )
+    if ( !IsValid( titan ) || !titan.IsTitan() )
         return
     entity soul = titan.GetTitanSoul()
     string bossTitanName = GetTitanCharacterName( titan )
@@ -573,7 +571,7 @@ void function ResetBossHealth( entity boss )
     UndoomBossTitan( boss )
     while ( currentHealth < maxHealth)
     {
-        if ( !IsValid( boss ) )
+        if ( !IsValid( boss ) || !IsAlive( boss ) )
             return
         currentHealth += 1000
         if ( currentHealth <= boss.GetMaxHealth( ) )
@@ -718,6 +716,7 @@ void function MonitorBossTitanCore( entity npc )
 	}
 }
 
+/*
 void function AddMinimapForTitans( entity titan )
 {
 	if( !IsValid( titan ) )
@@ -730,3 +729,4 @@ void function AddMinimapForTitans( entity titan )
 	titan.Minimap_SetZOrder( MINIMAP_Z_NPC )
 	titan.Minimap_SetCustomState( eMinimapObject_npc_titan.AT_BOUNTY_BOSS )
 }
+*/

@@ -86,8 +86,11 @@ WaveEvent function CreateBossTitanEvent_Random( vector origin, vector angles, st
 	event.spawnEvent.titanType = titanType
 	event.spawnEvent.spawnradius = spawnradius
 	event.spawnInDifficulty = spawnInDifficulty
+	int bossIndex = 0
+	if ( bossOptions.len() > 1 )
+    	bossIndex = RandomInt( bossOptions.len() )
 
-    int boss = bossOptions[ RandomInt( bossOptions.len() ) ]
+	int boss = bossOptions[ bossIndex ]
 
     switch ( boss )
     {
@@ -127,10 +130,12 @@ void function SpawnBossTitan_Ash( SmokeEvent smokeEvent, SpawnEvent spawnEvent, 
 		thread Drop_Spawnpoint( spawnEvent.origin, TEAM_IMC, 5 )
 	PingMinimap( spawnEvent.origin.x, spawnEvent.origin.y, 4, 600, 150, 0 )
 	entity npc = Spawn_Ash( spawnEvent.origin, spawnEvent.angles, TEAM_IMC, spawnEvent.spawnType )
-
+	spawnedNPCs.append( npc )
 	if( spawnEvent.entityGlobalKey != "" )
 		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
-	//npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
+
+	AddMinimapForTitans( npc )
+    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
 	//GiveShieldByDifficulty( npc )
 	thread singleNav_thread( npc, spawnEvent.route )
 }
@@ -144,10 +149,12 @@ void function SpawnBossTitan_Slone( SmokeEvent smokeEvent, SpawnEvent spawnEvent
 		thread Drop_Spawnpoint( spawnEvent.origin, TEAM_IMC, 5 )
 	PingMinimap( spawnEvent.origin.x, spawnEvent.origin.y, 4, 600, 150, 0 )
 	entity npc = Spawn_Slone( spawnEvent.origin, spawnEvent.angles, TEAM_IMC, spawnEvent.spawnType )
-
+	spawnedNPCs.append( npc )
 	if( spawnEvent.entityGlobalKey != "" )
 		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
-	//npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
+
+	AddMinimapForTitans( npc )
+    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
 	//GiveShieldByDifficulty( npc )
 	thread singleNav_thread( npc, spawnEvent.route )
 }
@@ -161,10 +168,12 @@ void function SpawnBossTitan_Viper( SmokeEvent smokeEvent, SpawnEvent spawnEvent
 		thread Drop_Spawnpoint( spawnEvent.origin, TEAM_IMC, 5 )
 	PingMinimap( spawnEvent.origin.x, spawnEvent.origin.y, 4, 600, 150, 0 )
 	entity npc = Spawn_Viper( spawnEvent.origin, spawnEvent.angles, TEAM_IMC, spawnEvent.spawnType )
-
+	spawnedNPCs.append( npc )
 	if( spawnEvent.entityGlobalKey != "" )
 		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
-	//npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
+
+	AddMinimapForTitans( npc )
+    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
 	//GiveShieldByDifficulty( npc )
 	thread singleNav_thread( npc, spawnEvent.route )
 }
@@ -178,10 +187,12 @@ void function SpawnBossTitan_Kane( SmokeEvent smokeEvent, SpawnEvent spawnEvent,
 		thread Drop_Spawnpoint( spawnEvent.origin, TEAM_IMC, 5 )
 	PingMinimap( spawnEvent.origin.x, spawnEvent.origin.y, 4, 600, 150, 0 )
 	entity npc = Spawn_Kane( spawnEvent.origin, spawnEvent.angles, TEAM_IMC, spawnEvent.spawnType )
-
+	spawnedNPCs.append( npc )
 	if( spawnEvent.entityGlobalKey != "" )
 		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
-	//npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
+
+	AddMinimapForTitans( npc )
+    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
 	//GiveShieldByDifficulty( npc )
 	thread singleNav_thread( npc, spawnEvent.route )
 }
@@ -195,10 +206,12 @@ void function SpawnBossTitan_Richter( SmokeEvent smokeEvent, SpawnEvent spawnEve
 		thread Drop_Spawnpoint( spawnEvent.origin, TEAM_IMC, 5 )
 	PingMinimap( spawnEvent.origin.x, spawnEvent.origin.y, 4, 600, 150, 0 )
 	entity npc = Spawn_Richter( spawnEvent.origin, spawnEvent.angles, TEAM_IMC, spawnEvent.spawnType )
-
+	spawnedNPCs.append( npc )
 	if( spawnEvent.entityGlobalKey != "" )
 		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
-	//npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
+
+	AddMinimapForTitans( npc )
+    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
 	//GiveShieldByDifficulty( npc )
 	thread singleNav_thread( npc, spawnEvent.route )
 }
@@ -212,14 +225,20 @@ void function SpawnBossTitan_Blisk( SmokeEvent smokeEvent, SpawnEvent spawnEvent
 		thread Drop_Spawnpoint( spawnEvent.origin, TEAM_IMC, 5 )
 	PingMinimap( spawnEvent.origin.x, spawnEvent.origin.y, 4, 600, 150, 0 )
 	entity npc = Spawn_Blisk( spawnEvent.origin, spawnEvent.angles, TEAM_IMC, spawnEvent.spawnType )
+	spawnedNPCs.append( npc )
+	if( spawnEvent.entityGlobalKey != "" )
+		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
+
+	AddMinimapForTitans( npc )
+    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
 
 	if( spawnEvent.entityGlobalKey != "" )
 		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
-	//npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
 	//GiveShieldByDifficulty( npc )
 	thread singleNav_thread( npc, spawnEvent.route )
 }
 
+/*
 void function AddMinimapForTitans( entity titan )
 {
 	if( !IsValid( titan ) )
@@ -260,3 +279,4 @@ void function PingMinimap( float x, float y, float duration, float spreadRadius,
 		}
 	}
 }
+*/

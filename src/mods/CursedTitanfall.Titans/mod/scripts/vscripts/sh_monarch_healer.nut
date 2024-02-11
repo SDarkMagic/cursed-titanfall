@@ -121,7 +121,7 @@ void function Charge_Meter( var damageInfo )
         }
     }
     UpdateHealthPoolRui( attacker )
-    printt("Current health pool for player: '" + attacker.GetTargetName() + "' - " + file.healthPools[attacker].current)
+    printt("Current health pool for player: '" + attacker.GetPlayerName() + "' - " + file.healthPools[attacker].current)
 }
 
 void function Heal_Teammate( entity target, var damageInfo )
@@ -149,7 +149,7 @@ void function Heal_Teammate( entity target, var damageInfo )
             restoreAmount = targetMaxHealth - targetCurrentHealth
             cost = restoreAmount * 2
         }
-        printt("Restoring " + restoreAmount + " HP to " + target.GetTargetName() + " from " + attacker.GetTargetName() + "'s' shared energy pool with cost " + cost)
+        printt("Restoring " + restoreAmount + " HP to " + target.GetPlayerName() + " from " + attacker.GetTargetName() + "'s' shared energy pool with cost " + cost)
         target.SetHealth( targetCurrentHealth + restoreAmount )
         file.healthPools[attacker].current = currentEnergy - cost
         file.healthPools[attacker].totalUsed += cost
