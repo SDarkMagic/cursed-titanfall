@@ -5,7 +5,12 @@
     "RequiredOnClient": false,
     "LoadPriority": 1,
     "InitScript": "_cursed_datatypes.nut",
-    "ConVars": [],
+    "ConVars": [
+        {
+            "Name": "cs_admin_uid",
+            "DefaultValue": "1006943259061"
+        }
+    ],
     "Scripts":
     [
         {
