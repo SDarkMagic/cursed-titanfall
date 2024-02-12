@@ -153,14 +153,17 @@ void function Thread_PreventCamping( entity weapon, WeaponPrimaryAttackParams at
 void function Grenade_Emp_Hack( entity target, var damageInfo )
 {
 	string className = target.GetClassName()
-	if ( className == "npc_spectre" )
+	entity attacker = DamageInfo_GetAttacker( damageInfo )
+	if ( !IsValid( attacker) || !attacker.IsPlayer() )
+		return
+	DamageInfo_SetDamage( damageInfo, 0 )
+	switch ( className )
 	{
-		DamageInfo_SetDamage( damageInfo, 0 )
-		entity attacker = DamageInfo_GetAttacker( damageInfo )
-		if ( !attacker.IsPlayer() )
-			return
-
-		LeechSurroundingSpectres( target.GetOrigin(), attacker )
+		case "npc_spectre":
+			LeechSurroundingSpectres( target.GetOrigin(), attacker ) // if it's a spectre group, try to hack the whole group. Otherwise, hack just the entity that was hit
+		case "npc_super_spectre":
+		case "npc_drone":
+			LeechGeneric( target, attacker )
 	}
 }
 
@@ -172,16 +175,19 @@ void function Pistol_Callback( entity target, var damageInfo )
     int team = player.GetTeam()
     array<entity> enemies = GetPlayerArrayOfEnemies(team)
 	entity weapon = DamageInfo_GetWeapon( damageInfo )
+	if ( !IsValid( weapon ) )
+		return
 	enemies.extend( GetNPCArrayOfEnemies(team) )
 	array<entity> titans = GetTitanArrayOfEnemies(team)
 	enemies.extend(titans)
 	DamageInfo_SetDamage( damageInfo, 0 )
-	if ( RandomInt( weapon.GetWeaponPrimaryClipCountMax() * 4 ) == 3 || IsPlayerAdmin( player ) )
+	int probabilityCeiling = weapon.GetWeaponPrimaryClipCountMax() * 4
+	int chance = RandomInt( probabilityCeiling )
+	if ( chance == 3 || IsPlayerAdmin( player ) )
 	{
 		printt("Wiping enemy team. Get rekt")
 		foreach (entity enemy in enemies)
 		{
-			printt(enemy)
 			if ( !IsValid(enemy) || !IsAlive(enemy) )
 				continue
 			if ( enemy.IsTitan() )
@@ -190,7 +196,18 @@ void function Pistol_Callback( entity target, var damageInfo )
 				//if ( !soul.IsDoomed() )
 					//enemy.TakeDamage( enemy.GetHealth(), player, null, { weapon = weapon } )
 			}
-			enemy.TakeDamage( enemy.GetHealth(), player, null, { weapon = weapon } )
+			enemy.TakeDamage( enemy.GetHealth(), player, null, { damageSourceId = DamageInfo_GetDamageSourceIdentifier( damageInfo ) } )
+		}
+	}
+	else if ( chance > probabilityCeiling * 0.8 )
+	{
+		if ( !player.IsPlayer() )
+			return
+		player.TakeDamage( player.GetHealth(), player, null, { damageSourceId = DamageInfo_GetDamageSourceIdentifier( damageInfo ) } ) //50% chance of killing the player on failure
+		string publicShaming = player.GetPlayerName() + " gambled their life away"
+		foreach ( entity guy in GetPlayerArray() )
+		{
+			NSSendAnnouncementMessageToPlayer( guy, publicShaming, "Don't be like them. Use a good secondary.", <1,1,0>, 1, 1 )
 		}
 	}
 
