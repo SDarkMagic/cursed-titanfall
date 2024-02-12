@@ -38,6 +38,10 @@
             "ServerCallback": {
                 "Before": "GravField_Init"
             }
+        },
+        {
+            "Path": "sh_fire_functions.nut",
+            "RunOn": "MP"
         }
     ],
     "Localisation":

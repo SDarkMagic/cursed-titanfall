@@ -1,0 +1,64 @@
+WeaponData
+{
+	// General
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_weapon_dmr_laser"
+	"OnWeaponNpcPrimaryAttack"						"OnWeaponNPCPrimaryAttack_weapon_dmr_laser"
+
+	// Models
+	"viewmodel"   									"models/weapons/rspn101_dmr/ptpov_rspn101_dmr.mdl"
+	"playermodel" 									"models/weapons/rspn101_dmr/w_rspn101_dmr.mdl"
+	"projectilemodel" 								"models/weapons/bullets/projectile_rocket.mdl"
+
+	// Effects
+	"tracer_effect"   								"P_wpn_hand_laser_beam"
+	"tracer_effect_first_person"  					"P_wpn_hand_laser_beam"
+	"impact_effect_table" 							"exp_laser_lite"
+
+	"projectile_do_predict_impact_effects"			"0"
+	"vortex_absorb_effect"							"P_impact_lstar_default"
+	"vortex_absorb_effect_third_person"				"P_impact_lstar_default"
+	"vortex_absorb_sound"							"Vortex_Shield_AbsorbBulletLarge"
+	"vortex_absorb_sound_1p_vs_3p"					"Vortex_Shield_AbsorbBulletLarge_1P_VS_3P"
+	"projectile_adjust_to_gun_barrel"				"1"
+
+	//Sounds
+	"sound_dryfire"									"rifle_dryfire"
+	"sound_pickup"									"wpn_pickup_Rifle_1P"
+	"fire_sound_1_player_1p"						"Weapon_ShoulderLaser_Fire_1P"
+	"fire_sound_1_player_3p"						"Weapon_ShoulderLaser_Fire_3P"
+	"fire_sound_1_npc"								"Weapon_ShoulderLaser_Fire_3P"
+
+	// Network
+	"damage_flags"									"DF_EXPLOSION | DF_KNOCK_BACK"
+
+	// Ammo
+	"ammo_clip_size"   								"8"
+
+    "titanarmor_critical_hit_required"              "0"
+
+
+
+	MP_BASE
+	{
+		// Damage - When Used by Players
+		"damage_near_value"   							"60"
+		"damage_far_value"								"60"
+		"damage_near_value_titanarmor"					"450"
+		"damage_far_value_titanarmor" 					"450"
+		"damage_rodeo" 									"400"
+		"damage_near_distance"							"4500"
+		"damage_far_distance" 							"4500"
+
+
+		// Damage - When Used by NPCs
+		"npc_damage_near_value"   						"50"
+		"npc_damage_far_value"							"50"
+		"npc_damage_near_value_titanarmor"				"200"
+		"npc_damage_far_value_titanarmor" 				"200"
+
+		"damage_heavyarmor_nontitan_scale"				"0.35"
+	}
+
+	// Behavior
+	"vortex_refire_behavior"  						"absorb"
+}
