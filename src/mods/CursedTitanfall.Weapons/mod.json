@@ -29,6 +29,10 @@
             }
         },
         {
+            "Path": "_team_theft.nut",
+            "RunOn": "SERVER && MP"
+        },
+        {
             "Path": "grav_field.nut",
             "RunOn": "MP",
             "ServerCallback": {
