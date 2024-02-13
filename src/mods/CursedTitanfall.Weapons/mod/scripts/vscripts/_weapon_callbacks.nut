@@ -17,6 +17,8 @@ void function Init_Custom_Weapon_Callbacks()
 	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_grenade_emp, Grenade_Emp_Hack )
 	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_semipistol, Pistol_Callback )
 	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_car, PushEnt_WhenHit_Callback )
+
+	AddCallback_NPCLeeched( ReaperLeeched )
     #endif
 }
 
@@ -165,6 +167,30 @@ void function Grenade_Emp_Hack( entity target, var damageInfo )
 		case "npc_drone":
 			LeechGeneric( target, attacker )
 	}
+}
+
+void function ReaperLeeched( entity victim, entity attacker )
+{
+	printt(victim)
+	printt(victim.IsNPC(), victim.GetClassName(), GameRules_GetGameMode())
+	if ( !victim.IsNPC() || victim.GetClassName() != "npc_super_spectre" )
+		return
+	switch ( GameRules_GetGameMode() )
+	{
+		case "fd_easy":
+		case "fd_normal":
+		case "fd_hard":
+		case "fd_master":
+		case "fd_insane":
+		case "fd":
+			attacker.AddToPlayerGameStat( PGS_ASSAULT_SCORE, FD_SCORE_SPECTRE )
+			AddMoneyToPlayer( attacker, 20 )
+	}
+	victim.kv.AccuracyMultiplier = 1.0
+	victim.kv.WeaponProficiency = eWeaponProficiency.AVERAGE
+	victim.SetBehaviorSelector( "behavior_super_spectre" )
+	victim.Minimap_AlwaysShow( TEAM_MILITIA, null )
+	printt("Updating minimap for reaper")
 }
 
 void function Pistol_Callback( entity target, var damageInfo )
