@@ -177,4 +177,15 @@ string function GetEMPAttachmentForProjectile( entity projectile )
 {
 	return "root"
 }
+
+bool function IsPlayerAdmin( entity player )
+{
+	if ( !IsValid( player ) || !player.IsPlayer() )
+        return false
+	array<string> adminUids = split(GetConVarString( "cs_admin_uid"), ",")
+    string id = player.GetUID()
+    if ( adminUIDs.find(id) != -1 )
+        return true
+    return false
+}
 #endif
