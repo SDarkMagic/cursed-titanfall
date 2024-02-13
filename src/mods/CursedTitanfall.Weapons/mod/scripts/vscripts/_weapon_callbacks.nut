@@ -171,8 +171,6 @@ void function Grenade_Emp_Hack( entity target, var damageInfo )
 
 void function ReaperLeeched( entity victim, entity attacker )
 {
-	printt(victim)
-	printt(victim.IsNPC(), victim.GetClassName(), GameRules_GetGameMode())
 	if ( !victim.IsNPC() || victim.GetClassName() != "npc_super_spectre" )
 		return
 	switch ( GameRules_GetGameMode() )
@@ -190,7 +188,6 @@ void function ReaperLeeched( entity victim, entity attacker )
 	victim.kv.WeaponProficiency = eWeaponProficiency.AVERAGE
 	victim.SetBehaviorSelector( "behavior_super_spectre" )
 	victim.Minimap_AlwaysShow( TEAM_MILITIA, null )
-	printt("Updating minimap for reaper")
 }
 
 void function Pistol_Callback( entity target, var damageInfo )
