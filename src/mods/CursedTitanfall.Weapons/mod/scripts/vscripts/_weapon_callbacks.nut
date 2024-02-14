@@ -1,5 +1,9 @@
 global function Init_Custom_Weapon_Callbacks
 
+#if SERVER
+global function KillTargetThenExplode
+#endif
+
 void function Init_Custom_Weapon_Callbacks()
 {
     printt("Initializing Custom weapon callback functions...")
@@ -17,6 +21,7 @@ void function Init_Custom_Weapon_Callbacks()
 	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_grenade_emp, Grenade_Emp_Hack )
 	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_semipistol, Pistol_Callback )
 	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_car, PushEnt_WhenHit_Callback )
+	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_r97, DetonateOnDeath )
 
 	AddCallback_NPCLeeched( ReaperLeeched )
     #endif
@@ -320,6 +325,38 @@ void function SpawnTick( ProjectileCollisionParams params )
 	params.projectile.Destroy()
 	AddTick( npc )
 	return
+}
+
+void function DetonateOnDeath( entity target, var damageInfo )
+{
+	if ( !IsValid( target ) || !IsAlive( target ) )
+		return
+	float damage = DamageInfo_GetDamage( damageInfo )
+	int damageFlags = DamageInfo_GetDamageFlags( damageInfo )
+    int targetHealth = target.GetHealth()
+	int targetMaxHealth = target.GetMaxHealth()
+    if ( ( targetHealth - damage > 0 && targetHealth > 0 ) || target.IsTitan() )
+        return
+
+	int dmgSourceId = DamageInfo_GetDamageSourceIdentifier( damageInfo )
+	vector origin = target.GetOrigin()
+    entity attacker = DamageInfo_GetAttacker( damageInfo )
+    entity weapon = DamageInfo_GetWeapon( damageInfo )
+	vector projectileOrigin = attacker.GetOrigin()
+
+	int innerRad = 75
+	int outerRad = 200
+	int force = 1000
+	KillTargetThenExplode( target, attacker, eDamageSourceId.flash_surge, targetMaxHealth * 2, targetMaxHealth * 4, innerRad, outerRad, force, damageFlags, "exp_satchel")
+}
+
+void function KillTargetThenExplode( entity target, entity attacker, int sourceId, int explosionDamage, int explosionDamageArmor, int innerRad, int outerRad, int force, int damageFlags, string effectTable )
+{
+	vector origin= target.GetOrigin()
+	vector projectileOrigin = attacker.GetOrigin()
+	int damage = target.GetHealth()
+	target.Die()
+	Explosion( origin, attacker, attacker, explosionDamage, explosionDamageArmor, innerRad, outerRad, damageFlags, projectileOrigin, force, damageFlags, sourceId, effectTable )
 }
 
 #endif
