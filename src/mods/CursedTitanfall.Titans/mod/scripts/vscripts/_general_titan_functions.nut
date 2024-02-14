@@ -38,16 +38,13 @@ void function WarnNorthstarBug( entity player, entity titan )
 
 void function GiveDevSword( entity player, entity titan )
 {
-    printt("GiveDevSword called")
     if ( !IsValid( player ) || !player.IsPlayer() )
         return
     if ( !IsPlayerAdmin( player ) || GetTitanCharacterName( titan ) == "ronin" )
         return
     entity meleeWeapon = player.GetOffhandWeapon( OFFHAND_MELEE )
-    printt( meleeWeapon.GetClassName() )
     if ( IsValid( meleeWeapon ) )
     {
-        printt("swapping melee weapon")
         player.TakeOffhandWeapon( OFFHAND_MELEE )
         player.GiveOffhandWeapon( "melee_titan_sword", OFFHAND_MELEE )
     }

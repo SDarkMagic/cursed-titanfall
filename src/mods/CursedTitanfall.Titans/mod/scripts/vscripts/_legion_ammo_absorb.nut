@@ -19,7 +19,7 @@ void function Apply_LegionAmmoAbsorber( entity player, entity titan )
 
 void function Cleanup_LegionAmmoAbsorber( entity player, entity titan )
 {
-    if ( !IsValid(titan) )
+    if ( !IsValid(titan) || !IsAlive( titan ) )
         return
     if ( GetTitanCharacterName( titan ) == "legion" )
         RemoveEntityCallback_OnDamaged( player, PlayerTitan_TookDamage )
