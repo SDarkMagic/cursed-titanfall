@@ -9,6 +9,7 @@ global EntityStack tickStack
 
 global function AddProwler
 global function AddTick
+global function AddReaper
 
 const int MAX_ENTITIES_PER_STACK = 10
 
