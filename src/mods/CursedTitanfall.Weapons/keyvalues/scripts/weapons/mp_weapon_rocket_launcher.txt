@@ -1,0 +1,141 @@
+WeaponData
+{
+
+	SP_BASE
+	{
+		"explosion_damages_owner"						"0"
+
+		"ammo_default_total"							"7"
+		"ammo_stockpile_max"							"7"
+		"ammo_no_remove_from_stockpile"					"0"
+		"ammo_min_to_fire"								"1"
+
+		"projectile_drift_windiness"					"2.25"
+		"projectile_drift_intensity"					"0.8"
+		"projectile_straight_time_min"					"0.4"
+		"projectile_straight_time_max"					"1.2"
+		"projectile_straight_radius_min"				"40"
+		"projectile_straight_radius_max"				"65"
+
+		"damage_near_value"   							"100"
+		"damage_far_value"								"100"
+		"damage_near_value_titanarmor"					"2250"
+		"damage_far_value_titanarmor" 					"2250"
+		"explosion_damage"								"100"
+		"explosion_damage_heavy_armor"					"500"
+		"damage_near_distance"							"1200"
+		"damage_far_distance" 							"15000"
+
+		"smart_ammo_targeting_time_min"					"1.05"
+		"smart_ammo_targeting_time_max"					"1.55"
+
+		// Damage - When Used by NPCs
+		"npc_damage_near_value"   						"80"
+		"npc_damage_far_value"							"80"
+		"npc_damage_near_value_titanarmor"				"800"
+		"npc_damage_far_value_titanarmor" 				"800"
+		"npc_explosion_damage"							"100"
+		"npc_explosion_damage_heavy_armor"				"400"
+
+		// NPC
+		"npc_min_engage_range"							"100"
+		"npc_max_engage_range"							"2000"
+		"npc_min_engage_range_heavy_armor"				"500"
+		"npc_max_engage_range_heavy_armor"				"2500"
+		"npc_min_range"   								"0"
+		"npc_max_range"   								"8000"
+
+		"npc_min_burst"   								"1"
+		"npc_max_burst"   								"1"
+		"npc_rest_time_between_bursts_min"				"3.5"
+		"npc_rest_time_between_bursts_max"				"4"
+
+		"npc_vortex_block"								"0"
+
+		"enable_highlight_networking_on_creation"		"<KEEP_DEFAULT>"
+
+		"damage_heavyarmor_nontitan_scale"				"0.5"
+	}
+
+	MP_BASE
+	{
+		"explosion_damages_owner"						"1"
+
+		"ammo_default_total"							"12"
+		"ammo_stockpile_max"							"12"
+		"ammo_no_remove_from_stockpile"					"0"
+		"ammo_min_to_fire"								"1"
+
+		"projectile_drift_windiness"					"2.25"
+		"projectile_drift_intensity"					"0.8"
+		"projectile_straight_time_min"					"1.5"
+		"projectile_straight_time_max"					"1.8"
+		"projectile_straight_radius_min"				"40"
+		"projectile_straight_radius_max"				"65"
+
+		"damage_near_value"   							"250"
+		"damage_far_value"								"250"
+		"damage_near_value_titanarmor"					"1250"
+		"damage_far_value_titanarmor" 					"1250"
+		"explosion_damage"								"150"
+		"explosion_damage_heavy_armor"					"500"
+		"damage_near_distance"							"1200"
+		"damage_far_distance" 							"15000"
+
+		"smart_ammo_targeting_time_min"					"1.05"
+		"smart_ammo_targeting_time_max"					"1.55"
+
+		// Damage - When Used by NPCs
+		"npc_damage_near_value"   						"80"
+		"npc_damage_far_value"							"80"
+		"npc_damage_near_value_titanarmor"				"800"
+		"npc_damage_far_value_titanarmor" 				"800"
+		"npc_explosion_damage"							"80"
+		"npc_explosion_damage_heavy_armor"				"400"
+
+		// NPC
+		"npc_min_engage_range"							"100"
+		"npc_max_engage_range"							"2000"
+		"npc_min_engage_range_heavy_armor"				"500"
+		"npc_max_engage_range_heavy_armor"				"2500"
+		"npc_min_range"   								"0"
+		"npc_max_range"   								"8000"
+
+		"npc_min_burst"   								"1"
+		"npc_max_burst"   								"1"
+		"npc_rest_time_between_bursts_min"				"3.5"
+		"npc_rest_time_between_bursts_max"				"4"
+
+		"npc_vortex_block"								"0"
+
+		"enable_highlight_networking_on_creation"		"1"
+
+		"damage_heavyarmor_nontitan_scale"				"1"
+	}
+
+	"BuiltRightHanded"								"1"
+	"allow_empty_fire"								"0"
+	"reload_enabled"  								"1"
+	"allow_empty_click"   								"0"
+	"empty_reload_only"								"1"
+	"attack_button_presses_ads"						"0"
+	"pass_through_depth"							"500"
+	"pass_through_damage_preserved_scale"			"1.0"
+	"smart_ammo_lock_type"							"any"
+	"smart_ammo_allow_ads_lock"						"1"
+	"smart_ammo_allow_hip_fire_lock"				"1"
+	"smart_ammo_draw_acquisition_lines"				"1"
+
+	Mods
+	{
+		guided_missile
+		{
+			"reload_no_auto_if_ads_pressed"							"1"
+		}
+
+		titanhammer
+		{
+
+		}
+	}
+}
