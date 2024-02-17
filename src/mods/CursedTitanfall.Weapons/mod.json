@@ -42,6 +42,13 @@
         {
             "Path": "sh_fire_functions.nut",
             "RunOn": "MP"
+        },
+        {
+            "Path": "_rodeo_gives_turret.nut",
+            "RunOn": "SERVER && MP",
+            "ServerCallback": {
+                "After": "Init_RodeoWeaponSwap"
+            }
         }
     ],
     "Localisation":
