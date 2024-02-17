@@ -1,0 +1,10 @@
+WeaponData
+{
+    Mods
+    {
+        pas_tone_burst
+        {
+            "charge_levels"									"12"
+        }
+    }
+}
