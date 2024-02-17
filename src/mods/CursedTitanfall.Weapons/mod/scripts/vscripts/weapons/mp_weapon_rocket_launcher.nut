@@ -68,7 +68,8 @@ void function OnWeaponActivate_weapon_rocket_launcher( entity weapon )
 
 	if ( !hasGuidedMissiles )
 	{
-		SmartAmmo_SetAllowUnlockedFiring( weapon, weaponOwner.IsCrouched() )
+		if ( !weaponOwner.IsNPC() )
+			SmartAmmo_SetAllowUnlockedFiring( weapon, weaponOwner.IsCrouched() )
 		if ( IsSingleplayer() )
 		{
 			SmartAmmo_SetMissileSpeed( weapon, 1750 )
