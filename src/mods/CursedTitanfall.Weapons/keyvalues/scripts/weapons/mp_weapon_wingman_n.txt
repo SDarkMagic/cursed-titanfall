@@ -1,0 +1,4 @@
+WeaponData
+{
+    "OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_weapon_wingman_n"
+}
