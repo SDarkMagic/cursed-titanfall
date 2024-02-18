@@ -56,6 +56,13 @@
             "ServerCallback": {
                 "After": "Init_LegionAmmoAbsorber"
             }
+        },
+        {
+            "Path": "_tone.nut",
+            "RunOn": "MP && SERVER",
+            "ServerCallback": {
+                "After": "Init_Tone"
+            }
         }
     ],
     "Localisation":
