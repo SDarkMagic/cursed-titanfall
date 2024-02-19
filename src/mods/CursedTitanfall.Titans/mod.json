@@ -63,6 +63,13 @@
             "ServerCallback": {
                 "After": "Init_Tone"
             }
+        },
+        {
+            "Path": "_scorch.nut",
+            "RunOn": "MP && SERVER",
+            "ServerCallback": {
+                "After": "Init_Scorch"
+            }
         }
     ],
     "Localisation":
