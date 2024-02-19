@@ -1,7 +1,7 @@
 global function Init_Tone
 
-const int SONAR_PULSE_RADIUS = 500
-const float SONAR_PULSE_DURATION = 1.0
+const int SONAR_PULSE_RADIUS = 650
+const float SONAR_PULSE_DURATION = 1.5
 const float FD_SONAR_PULSE_DURATION = 3.0
 
 void function Init_Tone()
