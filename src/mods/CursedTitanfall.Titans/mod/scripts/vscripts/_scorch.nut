@@ -42,7 +42,7 @@ void function PlayerScorchBecomesDoomed( entity victim, var damageInfo )
     if ( !IsValid( victim ) || !victim.IsPlayer() || !victim.IsTitan() )
         return
     entity soul = victim.GetTitanSoul()
-    if ( !IsValid( soul ) )
+    if ( !IsValid( soul ) || GetTitanCharacterName( victim ) != "scorch")
         return
     if ( file.hasUsedPhoenix[soul] )
         return
