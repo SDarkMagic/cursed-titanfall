@@ -1,0 +1,6 @@
+WeaponData
+{
+
+        "charge_wave_max_count"								"10"
+        "charge_wave_step_dist"								"75.0"
+}

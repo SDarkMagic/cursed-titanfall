@@ -8,7 +8,7 @@ const asset FIRE_CENTER_FX = $"P_meteor_trap_center"
 const asset BARREL_EXP_FX = $"P_meteor_trap_EXP"
 const asset FIRE_LINES_FX = $"P_meteor_trap_burn"
 const asset FIRE_LINES_S2S_FX = $"P_meteor_trap_burn_s2s"
-const float FIRE_TRAP_MINI_EXPLOSION_RADIUS = 150
+const float FIRE_TRAP_MINI_EXPLOSION_RADIUS = 440
 const float FIRE_TRAP_LIFETIME = 10.5
 const int GAS_FX_HEIGHT = 45
 
@@ -185,6 +185,7 @@ void function IgniteArea( entity damageArea )
 		projectile.Hide()
 		projectile.NotSolid()
 		projectile.SetProjectilTrailEffectIndex( 1 )
+        projectile.proj.isChargedShot = true
 		thread SpawnFireLine( projectile, i, inflictor, origin, direction )
 	}
 	thread IncendiaryTrapFireSounds( inflictor )
@@ -405,7 +406,7 @@ void function FireTrap_RadiusDamage( vector pos, entity owner, entity inflictor 
 		0, 													// distanceFromAttacker
 		0, 													// explosionForce
 		DF_EXPLOSION,										// damage flags
-		eDamageSourceId.mp_titanability_slow_trap			// damage source id
+		eDamageSourceId.mp_titanweapon_phoenix_trap			// damage source id
 	)
 }
 
