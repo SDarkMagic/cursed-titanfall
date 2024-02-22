@@ -188,8 +188,9 @@ void function ReaperLeeched( entity victim, entity attacker )
 		case "fd":
 			attacker.AddToPlayerGameStat( PGS_ASSAULT_SCORE, FD_SCORE_SPECTRE )
 			AddMoneyToPlayer( attacker, 20 )
-			AddReaper( victim )
+
 	}
+	AddReaper( victim )
 	victim.kv.AccuracyMultiplier = 1.0
 	victim.kv.WeaponProficiency = eWeaponProficiency.AVERAGE
 	victim.SetBehaviorSelector( "behavior_super_spectre" )
