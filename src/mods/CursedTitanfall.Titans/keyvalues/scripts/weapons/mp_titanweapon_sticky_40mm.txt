@@ -1,5 +1,11 @@
 WeaponData
 {
+    "reload_time"									"2"
+	"reload_time_late1"								"2"
+	"reload_time_late2"								"2"
+	"reloadempty_time"								"2"
+	"reloadempty_time_late1"						"2"
+	"reloadempty_time_late2"						"2"
     Mods
     {
         pas_tone_burst
