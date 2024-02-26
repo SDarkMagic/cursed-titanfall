@@ -25,9 +25,9 @@
             "ServerCallback": {
                 "Before": "Init_Monarch_Healing_Shots"
             },
-            "ClientCallback": {
+            /*"ClientCallback": {
                 "Before": "Init_Monarch_Healing_Shots"
-            }
+            }*/
         },
         {
             "Path": "_emp_ronin.nut",
@@ -69,6 +69,13 @@
             "RunOn": "MP && SERVER",
             "ServerCallback": {
                 "After": "Init_Scorch"
+            }
+        },
+        {
+            "Path":"_ion.nut",
+            "RunOn": "MP && SERVER",
+            "ServerCallback": {
+                "After": "Init_Ion"
             }
         }
     ],
