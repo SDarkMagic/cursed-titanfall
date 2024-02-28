@@ -6,6 +6,7 @@ void function Init_Ion()
     AddCallback_OnTitanGetsNewTitanLoadout( ApplyPassiveOnLoadoutUpdate )
     AddCallback_OnPilotBecomesTitan( Apply_IonEnergyAbsorber )
     AddCallback_OnTitanBecomesPilot( Cleanup_IonEnergyAbsorber )
+    AddDamageCallbackSourceID( eDamageSourceId.mp_titanweapon_particle_accelerator, RechargeEnergy_OnHit )
     #endif
 }
 
@@ -44,8 +45,38 @@ void function FilterEnergyDamage( entity titan, var damageInfo )
     {
         float damage = DamageInfo_GetDamage( damageInfo )
         titan.AddSharedEnergy( int( damage / 10 ) )
-        DamageInfo_SetDamage( damageInfo, 0 )
+        DamageInfo_ScaleDamage( damageInfo, 0.4 )
     }
 
+}
+
+void function RechargeEnergy_OnHit( entity target, var damageInfo )
+{
+    entity inflictor = DamageInfo_GetInflictor( damageInfo )
+	if ( !IsValid( inflictor ) )
+		return
+	if ( !inflictor.IsProjectile() )
+		return
+
+	entity attacker = DamageInfo_GetAttacker( damageInfo )
+
+	if ( !IsValid( attacker ) || attacker.IsProjectile() ) //Is projectile check is necessary for when the original attacker is no longer valid it becomes the projectile.
+		return
+
+	if ( attacker.GetSharedEnergyTotal() <= 0 )
+		return
+
+	if ( attacker.GetTeam() == target.GetTeam() )
+		return
+
+	entity soul = attacker.GetTitanSoul()
+	if ( !IsValid( soul ) )
+		return
+    array<string> mods = inflictor.ProjectileGetMods()
+    if ( mods.contains( "fd_split_shot_cost" ) )
+    {
+        float damage = DamageInfo_GetDamage( damageInfo )
+        attacker.AddSharedEnergy( int ( damage / 10 ) )
+    }
 }
 #endif
