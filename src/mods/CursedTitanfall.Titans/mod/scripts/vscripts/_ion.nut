@@ -41,7 +41,36 @@ void function FilterEnergyDamage( entity titan, var damageInfo )
     int damageSourceId = DamageInfo_GetDamageSourceIdentifier( damageInfo )
     int damageFlags = DamageInfo_GetDamageFlags( damageInfo )
     int damageType = DamageInfo_GetDamageType( damageInfo )
-    if ( damageType == DF_DISSOLVE || damageType == DF_ELECTRICAL )
+    bool absorbDamage = false
+    switch ( damageSourceId )
+    {
+        case eDamageSourceId.mp_titanweapon_particle_accelerator:
+        case eDamageSourceId.mp_titanweapon_laser_lite:
+        case eDamageSourceId.mp_titancore_laser_cannon:
+        case eDamageSourceId.titanEmpField:
+        case eDamageSourceId.mp_titanweapon_arc_wave:
+        case eDamageSourceId.mp_titanability_electric_smoke:
+        case eDamageSourceId.mp_weapon_arc_launcher:
+        case eDamageSourceId.mp_turretweapon_plasma:
+        case eDamageSourceId.mp_weapon_arc_trap:
+        case eDamageSourceId.mp_weapon_defender:
+        case eDamageSourceId.mp_weapon_dronebeam:
+        case eDamageSourceId.mp_weapon_droneplasma:
+        case eDamageSourceId.mp_weapon_esaw:
+        case eDamageSourceId.mp_weapon_epg:
+        case eDamageSourceId.mp_weapon_grenade_electric_smoke:
+        case eDamageSourceId.mp_weapon_grenade_emp:
+        case eDamageSourceId.mp_weapon_lstar:
+        case eDamageSourceId.mp_weapon_super_spectre:
+        case eDamageSourceId.mp_weapon_turretplasma:
+        case eDamageSourceId.mp_weapon_turretplasma_mega:
+        case eDamageSourceId.mp_weapon_turretlaser_mega:
+        case eDamageSourceId.mp_weapon_pulse_lmg:
+            absorbDamage = true
+        default:
+            return
+    }
+    if ( absorbDamage )
     {
         float damage = DamageInfo_GetDamage( damageInfo )
         titan.AddSharedEnergy( int( damage / 10 ) )
