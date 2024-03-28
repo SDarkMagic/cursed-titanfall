@@ -173,7 +173,7 @@ void function initFrontierDefenseData()
 	WaveSpawn_TitanSpawn( wave3, "Legion", < 11204, -4969, 1884 >, 180, "", 5.0 )
 	WaveSpawn_WaitEnemyAliveAmount( wave3, 8 )
 
-	WaveSpawn_BossTitanSpawn_Random( wave5, [ eFD_Bosses.Viper, eFD_Bosses.Ash ], < 823.805, -2381.59, 2078.3 >, 0, "", 7.8 )
+	WaveSpawn_BossTitanSpawn_Random( wave3, [ eFD_Bosses.Viper, eFD_Bosses.Ash ], < 823.805, -2381.59, 2078.3 >, 0, "", 7.8 )
 	WaveSpawn_SmokeWall( wave3, < 8113, -3451, 2233 >,	0.5, 180 )
 	WaveSpawn_SmokeWall( wave3, < 5752, -2898, 2236 >, 0.5, 180 )
 	WaveSpawn_SmokeWall( wave3, < 5800, -4864, 2236 >, 0.5, 180 )
