@@ -1,7 +1,4 @@
-global function CreateBossTitanEvent_Slone
-global function CreateBossTitanEvent_Ash
-global function CreateBossTitanEvent_Viper
-global function CreateBossTitanEvent_Random
+global function WaveSpawn_BossTitanSpawn_Random
 
 global enum eFD_Bosses
 {
@@ -14,6 +11,7 @@ global enum eFD_Bosses
     None
 }
 
+/*
 WaveEvent function CreateBossTitanEvent_Slone( vector origin, vector angles, string route, int nextEventIndex, int executeOnThisCall = 1, string entityGlobalKey = "", int titanType = FD_TitanType.TITAN_ELITE, float spawnradius = 0.0, int spawnInDifficulty = eFDSD.ALL )
 {
 	WaveEvent event
@@ -23,7 +21,7 @@ WaveEvent function CreateBossTitanEvent_Slone( vector origin, vector angles, str
 	event.shouldThread = true
 	event.spawnEvent.spawnType= eFD_AITypeIDs.ION
 	event.spawnEvent.spawnAmount = 1
-	event.spawnEvent.origin = origin
+	event.spawnorigin = origin
 	event.spawnEvent.angles = angles
 	event.spawnEvent.route = route
 	event.spawnEvent.entityGlobalKey = entityGlobalKey
@@ -42,7 +40,7 @@ WaveEvent function CreateBossTitanEvent_Ash( vector origin, vector angles, strin
 	event.shouldThread = true
 	event.spawnEvent.spawnType= eFD_AITypeIDs.RONIN
 	event.spawnEvent.spawnAmount = 1
-	event.spawnEvent.origin = origin
+	event.spawnorigin = origin
 	event.spawnEvent.angles = angles
 	event.spawnEvent.route = route
 	event.spawnEvent.entityGlobalKey = entityGlobalKey
@@ -61,7 +59,7 @@ WaveEvent function CreateBossTitanEvent_Viper( vector origin, vector angles, str
 	event.shouldThread = true
 	event.spawnEvent.spawnType= eFD_AITypeIDs.NORTHSTAR
 	event.spawnEvent.spawnAmount = 1
-	event.spawnEvent.origin = origin
+	event.spawnorigin = origin
 	event.spawnEvent.angles = angles
 	event.spawnEvent.route = route
 	event.spawnEvent.entityGlobalKey = entityGlobalKey
@@ -70,21 +68,18 @@ WaveEvent function CreateBossTitanEvent_Viper( vector origin, vector angles, str
 	event.spawnInDifficulty = spawnInDifficulty
 	return event
 }
-
-WaveEvent function CreateBossTitanEvent_Random( vector origin, vector angles, string route, int nextEventIndex, array<int> bossOptions = [ eFD_Bosses.Kane, eFD_Bosses.Slone, eFD_Bosses.Viper, eFD_Bosses.Ash, eFD_Bosses.Richter, eFD_Bosses.Blisk, eFD_Bosses.None ], int executeOnThisCall = 1, string entityGlobalKey = "", int titanType = FD_TitanType.TITAN_ELITE, float spawnradius = 0.0, int spawnInDifficulty = eFDSD.ALL )
+*/
+void function WaveSpawn_BossTitanSpawn_Random( array<WaveSpawnEvent> waveName, array<int> bossOptions = [ eFD_Bosses.Kane, eFD_Bosses.Slone, eFD_Bosses.Viper, eFD_Bosses.Ash, eFD_Bosses.Richter, eFD_Bosses.Blisk ], vector origin = < 0, 0, 0 >, float angle = 0.0, string route = "", float waitTime = 0.5, string soundEventName = "", float spawnradius = 0.0, int spawnInDifficulty = eFDSD.ALL, int titanType = eFDTT.TITAN_COMMON, string subGroupName = "" )
 {
-    WaveEvent event
+    WaveSpawnEvent event
 
-	event.executeOnThisCall = executeOnThisCall
-	event.nextEventIndex = nextEventIndex
 	event.shouldThread = true
-	event.spawnEvent.spawnAmount = 1
-	event.spawnEvent.origin = origin
-	event.spawnEvent.angles = angles
-	event.spawnEvent.route = route
-	event.spawnEvent.entityGlobalKey = entityGlobalKey
-	event.spawnEvent.titanType = titanType
-	event.spawnEvent.spawnradius = spawnradius
+	event.spawnAmount = 1
+	event.origin = origin
+	event.angles = < 0, angle, 0 >
+	event.route = route
+	event.titanType = titanType
+	event.spawnradius = spawnradius
 	event.spawnInDifficulty = spawnInDifficulty
 	int bossIndex = 0
 	if ( bossOptions.len() > 1 )
@@ -95,188 +90,231 @@ WaveEvent function CreateBossTitanEvent_Random( vector origin, vector angles, st
     switch ( boss )
     {
         case eFD_Bosses.Kane:
-            event.spawnEvent.spawnType = eFD_AITypeIDs.SCORCH
+            event.spawnType = eFD_AITypeIDs.SCORCH
             event.eventFunction = SpawnBossTitan_Kane
-            return event
+            break
         case eFD_Bosses.Ash:
-            event.spawnEvent.spawnType = eFD_AITypeIDs.RONIN
+            event.spawnType = eFD_AITypeIDs.RONIN
             event.eventFunction = SpawnBossTitan_Ash
-            return event
+            break
         case eFD_Bosses.Richter:
-            event.spawnEvent.spawnType = eFD_AITypeIDs.TONE
+            event.spawnType = eFD_AITypeIDs.TONE
             event.eventFunction = SpawnBossTitan_Richter
-            return event
+            break
         case eFD_Bosses.Viper:
-            event.spawnEvent.spawnType = eFD_AITypeIDs.NORTHSTAR
+            event.spawnType = eFD_AITypeIDs.NORTHSTAR
             event.eventFunction = SpawnBossTitan_Viper
-            return event
+            break
         case eFD_Bosses.Slone:
-            event.spawnEvent.spawnType = eFD_AITypeIDs.ION
+            event.spawnType = eFD_AITypeIDs.ION
             event.eventFunction = SpawnBossTitan_Slone
-            return event
+            break
         case eFD_Bosses.Blisk:
-            event.spawnEvent.spawnType = eFD_AITypeIDs.LEGION
+            event.spawnType = eFD_AITypeIDs.LEGION
             event.eventFunction = SpawnBossTitan_Blisk
     }
-    return event
+
+	event.origin = origin
+	event.angles = < 0, angle, 0 >
+	event.route = route
+	event.spawnradius = spawnradius
+	event.titanType = titanType
+	event.spawnInDifficulty = spawnInDifficulty
+	event.soundEventName = soundEventName
+	event.waitTime = waitTime
+	event.waveSubGroupName = subGroupName
+	waveName.append(event)
 }
 
-void function SpawnBossTitan_Ash( SmokeEvent smokeEvent, SpawnEvent spawnEvent, FlowControlEvent flowControlEvent, SoundEvent soundEvent )
+void function SpawnBossTitan_Ash( WaveSpawnEvent ornull spawnEvent )
 {
-	#if SERVER && DEV
-	printt( "Spawning Ash at: " + spawnEvent.origin )
-	#endif
-	if ( GetConVarBool( "ns_fd_show_drop_points" ) )
-		thread Drop_Spawnpoint( spawnEvent.origin, TEAM_IMC, 5 )
-	PingMinimap( spawnEvent.origin.x, spawnEvent.origin.y, 4, 600, 150, 0 )
-	entity npc = Spawn_Ash( spawnEvent.origin, spawnEvent.angles, TEAM_IMC, spawnEvent.spawnType )
-	spawnedNPCs.append( npc )
-	if( spawnEvent.entityGlobalKey != "" )
-		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
-
-	AddMinimapForTitans( npc )
-    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
-	//GiveShieldByDifficulty( npc )
-	thread singleNav_thread( npc, spawnEvent.route )
-}
-
-void function SpawnBossTitan_Slone( SmokeEvent smokeEvent, SpawnEvent spawnEvent, FlowControlEvent flowControlEvent, SoundEvent soundEvent )
-{
-	#if SERVER && DEV
-	printt( "Spawning Slone at: " + spawnEvent.origin )
-	#endif
-	if ( GetConVarBool( "ns_fd_show_drop_points" ) )
-		thread Drop_Spawnpoint( spawnEvent.origin, TEAM_IMC, 5 )
-	PingMinimap( spawnEvent.origin.x, spawnEvent.origin.y, 4, 600, 150, 0 )
-	entity npc = Spawn_Slone( spawnEvent.origin, spawnEvent.angles, TEAM_IMC, spawnEvent.spawnType )
-	spawnedNPCs.append( npc )
-	if( spawnEvent.entityGlobalKey != "" )
-		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
-
-	AddMinimapForTitans( npc )
-    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
-	//GiveShieldByDifficulty( npc )
-	thread singleNav_thread( npc, spawnEvent.route )
-}
-
-void function SpawnBossTitan_Viper( SmokeEvent smokeEvent, SpawnEvent spawnEvent, FlowControlEvent flowControlEvent, SoundEvent soundEvent )
-{
-	#if SERVER && DEV
-	printt( "Spawning Viper at: " + spawnEvent.origin )
-	#endif
-	if ( GetConVarBool( "ns_fd_show_drop_points" ) )
-		thread Drop_Spawnpoint( spawnEvent.origin, TEAM_IMC, 5 )
-	PingMinimap( spawnEvent.origin.x, spawnEvent.origin.y, 4, 600, 150, 0 )
-	entity npc = Spawn_Viper( spawnEvent.origin, spawnEvent.angles, TEAM_IMC, spawnEvent.spawnType )
-	spawnedNPCs.append( npc )
-	if( spawnEvent.entityGlobalKey != "" )
-		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
-
-	AddMinimapForTitans( npc )
-    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
-	//GiveShieldByDifficulty( npc )
-	thread singleNav_thread( npc, spawnEvent.route )
-}
-
-void function SpawnBossTitan_Kane( SmokeEvent smokeEvent, SpawnEvent spawnEvent, FlowControlEvent flowControlEvent, SoundEvent soundEvent )
-{
-	#if SERVER && DEV
-	printt( "Spawning Kane at: " + spawnEvent.origin )
-	#endif
-	if ( GetConVarBool( "ns_fd_show_drop_points" ) )
-		thread Drop_Spawnpoint( spawnEvent.origin, TEAM_IMC, 5 )
-	PingMinimap( spawnEvent.origin.x, spawnEvent.origin.y, 4, 600, 150, 0 )
-	entity npc = Spawn_Kane( spawnEvent.origin, spawnEvent.angles, TEAM_IMC, spawnEvent.spawnType )
-	spawnedNPCs.append( npc )
-	if( spawnEvent.entityGlobalKey != "" )
-		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
-
-	AddMinimapForTitans( npc )
-    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
-	//GiveShieldByDifficulty( npc )
-	thread singleNav_thread( npc, spawnEvent.route )
-}
-
-void function SpawnBossTitan_Richter( SmokeEvent smokeEvent, SpawnEvent spawnEvent, FlowControlEvent flowControlEvent, SoundEvent soundEvent )
-{
-	#if SERVER && DEV
-	printt( "Spawning Richter at: " + spawnEvent.origin )
-	#endif
-	if ( GetConVarBool( "ns_fd_show_drop_points" ) )
-		thread Drop_Spawnpoint( spawnEvent.origin, TEAM_IMC, 5 )
-	PingMinimap( spawnEvent.origin.x, spawnEvent.origin.y, 4, 600, 150, 0 )
-	entity npc = Spawn_Richter( spawnEvent.origin, spawnEvent.angles, TEAM_IMC, spawnEvent.spawnType )
-	spawnedNPCs.append( npc )
-	if( spawnEvent.entityGlobalKey != "" )
-		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
-
-	AddMinimapForTitans( npc )
-    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
-	//GiveShieldByDifficulty( npc )
-	thread singleNav_thread( npc, spawnEvent.route )
-}
-
-void function SpawnBossTitan_Blisk( SmokeEvent smokeEvent, SpawnEvent spawnEvent, FlowControlEvent flowControlEvent, SoundEvent soundEvent )
-{
-	#if SERVER && DEV
-	printt( "Spawning Blisk at: " + spawnEvent.origin )
-	#endif
-	if ( GetConVarBool( "ns_fd_show_drop_points" ) )
-		thread Drop_Spawnpoint( spawnEvent.origin, TEAM_IMC, 5 )
-	PingMinimap( spawnEvent.origin.x, spawnEvent.origin.y, 4, 600, 150, 0 )
-	entity npc = Spawn_Blisk( spawnEvent.origin, spawnEvent.angles, TEAM_IMC, spawnEvent.spawnType )
-	spawnedNPCs.append( npc )
-	if( spawnEvent.entityGlobalKey != "" )
-		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
-
-	AddMinimapForTitans( npc )
-    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
-
-	if( spawnEvent.entityGlobalKey != "" )
-		GlobalEventEntitys[spawnEvent.entityGlobalKey] <- npc
-	//GiveShieldByDifficulty( npc )
-	thread singleNav_thread( npc, spawnEvent.route )
-}
-
-/*
-void function AddMinimapForTitans( entity titan )
-{
-	if( !IsValid( titan ) )
+	if( !spawnEvent )
 		return
 
-	titan.Minimap_SetAlignUpright( true )
-	titan.Minimap_AlwaysShow( TEAM_IMC, null )
-	titan.Minimap_AlwaysShow( TEAM_MILITIA, null )
-	titan.Minimap_SetHeightTracking( true )
-	titan.Minimap_SetZOrder( MINIMAP_Z_NPC )
-	titan.Minimap_SetCustomState( eMinimapObject_npc_titan.AT_BOUNTY_BOSS )
-}
-
-void function Drop_Spawnpoint( vector origin, int team, float impactTime )
-{
-	vector surfaceNormal = < 0, 0, 1 >
-
-	int index = GetParticleSystemIndex( $"P_ar_titan_droppoint" )
-
-	entity effectEnemy = StartParticleEffectInWorld_ReturnEntity( index, origin, surfaceNormal )
-	SetTeam( effectEnemy, team )
-	EffectSetControlPointVector( effectEnemy, 1, < 255, 64, 16 > )
-	effectEnemy.kv.VisibilityFlags = ENTITY_VISIBLE_TO_ENEMY
-
-	wait impactTime
-
-	EffectStop( effectEnemy )
-}
-
-void function PingMinimap( float x, float y, float duration, float spreadRadius, float ringRadius, int colorIndex )
-{
-	if( GetCurrentPlaylistVarFloat( "riff_minimap_state", 0 ) == 0 )
+	expect WaveSpawnEvent( spawnEvent )
+	vector spawnorigin = spawnEvent.origin
+	if( spawnEvent.spawnradius > 0 )
 	{
-		foreach( entity player in GetPlayerArrayOfTeam( TEAM_MILITIA ) )
-		{
-			Remote_CallFunction_NonReplay( player, "ServerCallback_FD_PingMinimap", x, y, duration, spreadRadius, ringRadius, colorIndex )
-			EmitSoundOnEntityOnlyToPlayer( player, player, "coop_minimap_ping" )
-		}
+		spawnorigin.x += RandomFloatRange( -spawnEvent.spawnradius, spawnEvent.spawnradius )
+		spawnorigin.y += RandomFloatRange( -spawnEvent.spawnradius, spawnEvent.spawnradius )
+		spawnorigin.z += 128 //Ensure we're above all playable geometry
+		spawnorigin = OriginToGround( spawnorigin )
 	}
+
+	#if SERVER && DEV
+	printt( "Spawning Ash at: " + spawnorigin )
+	#endif
+
+	thread Drop_Spawnpoint( spawnorigin, TEAM_IMC, 5 )
+
+	PingMinimap( spawnorigin.x, spawnorigin.y, 4, 600, 150, 0 )
+
+	entity npc = Spawn_Ash( spawnorigin, spawnEvent.angles, TEAM_IMC, spawnEvent.spawnType )
+	spawnedNPCs.append( npc )
+
+	AddMinimapForTitans( npc )
+    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
+	//GiveShieldByDifficulty( npc )
+	thread singleNav_thread( npc, spawnEvent.route )
 }
-*/
+
+void function SpawnBossTitan_Slone( WaveSpawnEvent ornull spawnEvent )
+{
+	if( !spawnEvent )
+		return
+
+	expect WaveSpawnEvent( spawnEvent )
+	vector spawnorigin = spawnEvent.origin
+	if( spawnEvent.spawnradius > 0 )
+	{
+		spawnorigin.x += RandomFloatRange( -spawnEvent.spawnradius, spawnEvent.spawnradius )
+		spawnorigin.y += RandomFloatRange( -spawnEvent.spawnradius, spawnEvent.spawnradius )
+		spawnorigin.z += 128 //Ensure we're above all playable geometry
+		spawnorigin = OriginToGround( spawnorigin )
+	}
+
+	#if SERVER && DEV
+	printt( "Spawning Slone at: " + spawnorigin )
+	#endif
+
+	thread Drop_Spawnpoint( spawnorigin, TEAM_IMC, 5 )
+
+	PingMinimap( spawnorigin.x, spawnorigin.y, 4, 600, 150, 0 )
+
+	entity npc = Spawn_Slone( spawnorigin, spawnEvent.angles, TEAM_IMC, spawnEvent.spawnType )
+	spawnedNPCs.append( npc )
+
+	AddMinimapForTitans( npc )
+    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
+	//GiveShieldByDifficulty( npc )
+	thread singleNav_thread( npc, spawnEvent.route )
+}
+
+void function SpawnBossTitan_Viper( WaveSpawnEvent ornull spawnEvent )
+{
+	if( !spawnEvent )
+		return
+
+	expect WaveSpawnEvent( spawnEvent )
+	vector spawnorigin = spawnEvent.origin
+	if( spawnEvent.spawnradius > 0 )
+	{
+		spawnorigin.x += RandomFloatRange( -spawnEvent.spawnradius, spawnEvent.spawnradius )
+		spawnorigin.y += RandomFloatRange( -spawnEvent.spawnradius, spawnEvent.spawnradius )
+		spawnorigin.z += 128 //Ensure we're above all playable geometry
+		spawnorigin = OriginToGround( spawnorigin )
+	}
+
+	#if SERVER && DEV
+	printt( "Spawning Viper at: " + spawnorigin )
+	#endif
+
+	thread Drop_Spawnpoint( spawnorigin, TEAM_IMC, 5 )
+
+	PingMinimap( spawnorigin.x, spawnorigin.y, 4, 600, 150, 0 )
+
+	entity npc = Spawn_Viper( spawnorigin, spawnEvent.angles, TEAM_IMC, spawnEvent.spawnType )
+	spawnedNPCs.append( npc )
+
+	AddMinimapForTitans( npc )
+    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
+	//GiveShieldByDifficulty( npc )
+	thread singleNav_thread( npc, spawnEvent.route )
+}
+
+void function SpawnBossTitan_Kane( WaveSpawnEvent ornull spawnEvent )
+{
+	if( !spawnEvent )
+		return
+
+	expect WaveSpawnEvent( spawnEvent )
+	vector spawnorigin = spawnEvent.origin
+	if( spawnEvent.spawnradius > 0 )
+	{
+		spawnorigin.x += RandomFloatRange( -spawnEvent.spawnradius, spawnEvent.spawnradius )
+		spawnorigin.y += RandomFloatRange( -spawnEvent.spawnradius, spawnEvent.spawnradius )
+		spawnorigin.z += 128 //Ensure we're above all playable geometry
+		spawnorigin = OriginToGround( spawnorigin )
+	}
+
+	#if SERVER && DEV
+	printt( "Spawning Kane at: " + spawnorigin )
+	#endif
+
+	thread Drop_Spawnpoint( spawnorigin, TEAM_IMC, 5 )
+
+	PingMinimap( spawnorigin.x, spawnorigin.y, 4, 600, 150, 0 )
+
+	entity npc = Spawn_Kane( spawnorigin, spawnEvent.angles, TEAM_IMC, spawnEvent.spawnType )
+	spawnedNPCs.append( npc )
+
+	AddMinimapForTitans( npc )
+    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
+	//GiveShieldByDifficulty( npc )
+	thread singleNav_thread( npc, spawnEvent.route )
+}
+
+void function SpawnBossTitan_Richter( WaveSpawnEvent ornull spawnEvent )
+{
+	if( !spawnEvent )
+		return
+
+	expect WaveSpawnEvent( spawnEvent )
+	vector spawnorigin = spawnEvent.origin
+	if( spawnEvent.spawnradius > 0 )
+	{
+		spawnorigin.x += RandomFloatRange( -spawnEvent.spawnradius, spawnEvent.spawnradius )
+		spawnorigin.y += RandomFloatRange( -spawnEvent.spawnradius, spawnEvent.spawnradius )
+		spawnorigin.z += 128 //Ensure we're above all playable geometry
+		spawnorigin = OriginToGround( spawnorigin )
+	}
+
+	#if SERVER && DEV
+	printt( "Spawning Richter at: " + spawnorigin )
+	#endif
+
+	thread Drop_Spawnpoint( spawnorigin, TEAM_IMC, 5 )
+
+	PingMinimap( spawnorigin.x, spawnorigin.y, 4, 600, 150, 0 )
+
+	entity npc = Spawn_Richter( spawnorigin, spawnEvent.angles, TEAM_IMC, spawnEvent.spawnType )
+	spawnedNPCs.append( npc )
+
+	AddMinimapForTitans( npc )
+    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
+	//GiveShieldByDifficulty( npc )
+	thread singleNav_thread( npc, spawnEvent.route )
+}
+
+void function SpawnBossTitan_Blisk( WaveSpawnEvent ornull spawnEvent )
+{
+	if( !spawnEvent )
+		return
+
+	expect WaveSpawnEvent( spawnEvent )
+	vector spawnorigin = spawnEvent.origin
+	if( spawnEvent.spawnradius > 0 )
+	{
+		spawnorigin.x += RandomFloatRange( -spawnEvent.spawnradius, spawnEvent.spawnradius )
+		spawnorigin.y += RandomFloatRange( -spawnEvent.spawnradius, spawnEvent.spawnradius )
+		spawnorigin.z += 128 //Ensure we're above all playable geometry
+		spawnorigin = OriginToGround( spawnorigin )
+	}
+
+	#if SERVER && DEV
+	printt( "Spawning Blisk at: " + spawnorigin )
+	#endif
+
+
+	thread Drop_Spawnpoint( spawnorigin, TEAM_IMC, 5 )
+
+	PingMinimap( spawnorigin.x, spawnorigin.y, 4, 600, 150, 0 )
+
+	entity npc = Spawn_Blisk( spawnorigin, spawnEvent.angles, TEAM_IMC, spawnEvent.spawnType )
+	spawnedNPCs.append( npc )
+
+	AddMinimapForTitans( npc )
+    npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
+	//GiveShieldByDifficulty( npc )
+	thread singleNav_thread( npc, spawnEvent.route )
+}

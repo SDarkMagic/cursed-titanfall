@@ -1,0 +1,9 @@
+WeaponData
+{
+    "reload_time" 									"0.0"
+
+	"reloadempty_time"								"0.0"
+	"reloadempty_time_late1"						"0.0"
+	"reloadempty_time_late2"						"0.0"
+	"reloadempty_time_late3"						"0.0"
+}
