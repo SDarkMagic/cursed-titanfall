@@ -49,7 +49,7 @@ void function FilterEnergyDamage( entity titan, var damageInfo )
         case eDamageSourceId.mp_titancore_laser_cannon:
         case eDamageSourceId.titanEmpField:
         case eDamageSourceId.mp_titanweapon_arc_wave:
-        case eDamageSourceId.mp_titanability_electric_smoke:
+        //case eDamageSourceId.mp_titanability_electric_smoke:
         case eDamageSourceId.mp_weapon_arc_launcher:
         case eDamageSourceId.mp_turretweapon_plasma:
         case eDamageSourceId.mp_weapon_arc_trap:
