@@ -64,7 +64,7 @@ void function FilterEnergyDamage( entity titan, var damageInfo )
         case eDamageSourceId.mp_weapon_super_spectre:
         case eDamageSourceId.mp_weapon_turretplasma:
         case eDamageSourceId.mp_weapon_turretplasma_mega:
-        case eDamageSourceId.mp_weapon_turretlaser_mega:
+        //case eDamageSourceId.mp_weapon_turretlaser_mega:
         case eDamageSourceId.mp_weapon_pulse_lmg:
             absorbDamage = true
         default:
@@ -105,7 +105,7 @@ void function RechargeEnergy_OnHit( entity target, var damageInfo )
     if ( mods.contains( "fd_split_shot_cost" ) )
     {
         float damage = DamageInfo_GetDamage( damageInfo )
-        attacker.AddSharedEnergy( int ( damage / 10 ) )
+        attacker.AddSharedEnergy( int ( damage / 20 ) )
     }
 }
 #endif
