@@ -65,6 +65,20 @@
             }
         },
         {
+            "Path": "_playerCloakDrone.nut",
+            "RunOn": "MP && SERVER",
+            "ServerCallback": {
+                "After": "Init_PlayerCloakDrone"
+            }
+        },
+        {
+            "Path": "_northstar.nut",
+            "RunOn": "MP && SERVER",
+            "ServerCallback": {
+                "After": "Init_Northstar"
+            }
+        },
+        {
             "Path": "_scorch.nut",
             "RunOn": "MP && SERVER",
             "ServerCallback": {
