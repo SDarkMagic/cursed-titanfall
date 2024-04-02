@@ -235,10 +235,6 @@ void function CloakedDronePathFollowPlayer( entity cloakedDrone, entity player )
 	path.goalValid = false
 	path.lastHeight = defaultHeight
 
-	//If drone is following titan wait for titan to leave bubble shield.
-	if ( player.IsTitan() )
-		WaitTillHotDropComplete( player )
-
 	while( player.GetTeam() == droneTeam )
 	{
 		if ( IsValid( GetRodeoPilot( player ) ) )
