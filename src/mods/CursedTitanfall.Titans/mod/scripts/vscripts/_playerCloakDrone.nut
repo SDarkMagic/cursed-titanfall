@@ -48,7 +48,7 @@ entity function SpawnPlayerCloakDrone( int team, vector origin, vector angles, e
 	EmitSoundOnEntity( cloakedDrone, CLOAKED_DRONE_LOOPING_SFX )
 	EmitSoundOnEntity( cloakedDrone, CLOAKED_DRONE_WARP_IN_SFX )
 
-	//cloakedDrone.s.fx = CreateDroneCloakBeam( cloakedDrone )
+	cloakedDrone.s.fx = CreateDroneCloakBeam( cloakedDrone )
 
 	SetVisibleEntitiesInConeQueriableEnabled( cloakedDrone, true )
 
@@ -109,7 +109,8 @@ void function CloakedDroneWarpOut( entity cloakedDrone, vector origin )
 
         if ( !IsValid( cloakedDrone ) )
             return
-		cloakedDrone.s.fx.Fire( "StopPlayEndCap" )
+		if ( cloakedDrone.s.fx != null )
+            cloakedDrone.s.fx.Fire( "StopPlayEndCap" )
 		cloakedDrone.SetTitle( "" )
 		cloakedDrone.s.isHidden = true
 		cloakedDrone.NotSolid()
@@ -148,7 +149,8 @@ void function CloakedDroneWarpIn( entity cloakedDrone, vector origin )
 	EmitSoundOnEntity( cloakedDrone, CLOAKED_DRONE_WARP_IN_SFX )
 
 	cloakedDrone.Show()
-	cloakedDrone.s.fx.Fire( "start" )
+    if ( cloakedDrone.s.fx != null )
+    	cloakedDrone.s.fx.Fire( "start" )
 	cloakedDrone.SetTitle( "#NPC_CLOAK_DRONE" )
 	cloakedDrone.s.isHidden = false
 	cloakedDrone.Solid()
