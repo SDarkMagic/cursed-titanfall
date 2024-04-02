@@ -107,6 +107,8 @@ void function CloakedDroneWarpOut( entity cloakedDrone, vector origin )
 		FadeOutSoundOnEntity( cloakedDrone, CLOAKED_DRONE_HOVER_LOOP_SFX, 0.5 )
 		EmitSoundOnEntity( cloakedDrone, CLOAKED_DRONE_WARP_OUT_SFX )
 
+        if ( !IsValid( cloakedDrone ) )
+            return
 		cloakedDrone.s.fx.Fire( "StopPlayEndCap" )
 		cloakedDrone.SetTitle( "" )
 		cloakedDrone.s.isHidden = true
