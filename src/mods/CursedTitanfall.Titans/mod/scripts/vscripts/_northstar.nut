@@ -35,6 +35,18 @@ void function CreateChildCloaker( entity player, entity titan )
     entity drone = SpawnPlayerCloakDrone( titan.GetTeam(), titan.GetOrigin(), titan.GetAngles(), player )
     file.playerCloakDrones[player] <- drone
     printt(drone)
+    thread RespawnDroneAfterDeath( drone, player, titan )
+}
+
+void function RespawnDroneAfterDeath( entity drone, entity player, entity titan )
+{
+    drone.EndSignal( "OnDestroy" )
+
+    drone.WaitSignal( "OnDeath" )
+    wait 10.0
+    if ( !IsAlive( drone ) )
+        CreateChildCloaker( player, titan )
+    return
 }
 
 void function CleanupChildCloaker( entity player, entity titan )
