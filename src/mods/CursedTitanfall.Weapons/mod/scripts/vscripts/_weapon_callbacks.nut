@@ -357,7 +357,7 @@ void function KillTargetThenExplode( entity target, entity attacker, int sourceI
 	vector origin= target.GetOrigin()
 	vector projectileOrigin = attacker.GetOrigin()
 	int damage = target.GetHealth()
-	target.TakeDamage(damage)
+	target.TakeDamage(damage, null, null, { weapon = null, damageSourceId = sourceId })
 	Explosion( origin, attacker, attacker, explosionDamage, explosionDamageArmor, innerRad, outerRad, damageFlags, projectileOrigin, force, damageFlags, sourceId, effectTable )
 }
 

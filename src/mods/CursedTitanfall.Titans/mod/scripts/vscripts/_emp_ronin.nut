@@ -10,7 +10,7 @@ void function Init_ArcTitan_Player()
 }
 
 #if SERVER
-void function ApplyEmpField( entity player, entity titan)
+void function ApplyEmpField( entity player, entity titan )
 {
     entity soul = player.GetTitanSoul()
     if ( !player.IsPlayer() || !IsValid(titan) )

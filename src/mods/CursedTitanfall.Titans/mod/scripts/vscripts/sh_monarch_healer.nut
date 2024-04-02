@@ -35,6 +35,7 @@ void function Init_Monarch_Healing_Shots( )
     AddCallback_OnPilotBecomesTitan( Healer_InitPlayer )
     AddCallback_OnTitanBecomesPilot( Healer_CleanupPlayer )
     AddCallback_OnPrimaryAttackPlayer_titancore_upgrade( UpgradeCore_ReInitPlayer )
+    //RegisterNetworkedVariable( "monarch_reserve_health", SNDC_PLAYER_GLOBAL, SNVT_FLOAT_RANGE, 0.0, 0.0, 20000.0 )
     #endif
     // TODO Implement a bar similar to Ion's energy bar for this to display available health pool.
     //AddCallback_OnRegisteringCustomNetworkVars( RegisterNetworkVars )
@@ -46,6 +47,7 @@ void function Init_Monarch_Healing_Shots( )
 
 void function RegisterNetworkVars()
 {
+
     Remote_RegisterFunction( "Server_UpdateClientHealthPool" )
 }
 
