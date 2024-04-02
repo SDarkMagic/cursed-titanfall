@@ -30,7 +30,7 @@ void function CreateChildCloaker( entity player, entity titan )
     if ( !IsValid( titan )  || !IsValid( player ) )
         return
     entity soul = player.GetTitanSoul()
-    if ( soul.IsDoomed() || GetTitanCharacterName( victim ) != "northstar")
+    if ( soul.IsDoomed() || GetTitanCharacterName( titan ) != "northstar")
         return
     entity drone = SpawnPlayerCloakDrone( titan.GetTeam(), titan.GetOrigin(), titan.GetAngles(), player )
     file.playerCloakDrones[player] <- drone
