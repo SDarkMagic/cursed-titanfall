@@ -43,6 +43,7 @@ void function CleanupChildCloaker( entity player, entity titan )
         return
     entity soul = player.GetTitanSoul()
     entity drone = file.playerCloakDrones[player]
-    drone.Destroy()
+    if ( IsValid( drone ) )
+        drone.Destroy()
 }
 #endif
