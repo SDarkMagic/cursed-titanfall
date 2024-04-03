@@ -150,6 +150,8 @@ void function GravitonHitTarget( entity target, var damageInfo )
 		int index = 0
 		if ( targets.len() > 1 )
 			index = RandomInt( targets.len() - 1 )
+		if ( index >= targets.len() - 1 )
+			continue
 		entity subTarget = targets.remove( index )
         attackParams.dir = Normalize( origin - subTarget.GetOrigin() )
         SmartAmmo_FireWeapon_HomingMissile( weapon, attackParams, damageFlags, damageFlags, false, subTarget )
