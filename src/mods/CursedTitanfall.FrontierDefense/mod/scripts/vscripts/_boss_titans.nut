@@ -521,19 +521,23 @@ void function BossTitan_TakesDamage_StageHandler( entity titan, var damageInfo )
     if ( !IsValid( titan ) || !titan.IsTitan() )
         return
     entity soul = titan.GetTitanSoul()
+    if ( !IsValid( soul ) )
+        return
     string bossTitanName = GetTitanCharacterName( titan )
     string bossName = titan.GetScriptName()
     int currentHealth = titan.GetHealth()
     float damage = DamageInfo_GetDamage( damageInfo )
     bool shouldReset = false
     bossStageTracker stageInfo = file.bosses[ bossName ].stageTracker
+
     if ( currentHealth - damage <= 1 && stageInfo.currentStage < stageInfo.maxStages) //Run this check when the boss has one cell or less of health remaining to hopefully avoid boss being doomed before entering health regen
     {
         array<string> retreatLines = file.bosses[ bossName ].diag.retreat
         string comm = retreatLines[ RandomInt( retreatLines.len() - 1 ) ]
         titan.SetInvulnerable( )
         DamageInfo_SetDamage( damageInfo, 0 )
-        titan.SetHealth( 1 )
+        //titan.SetHealth( 1 )
+        titan.SetDefaultSchedule( "SCHED_BACK_AWAY_FROM_ENEMY" )
         PlayBossCommsForAllPlayers( comm )
         // Do health regen stuff here
         file.bosses[ bossName ].stageTracker.currentStage++
@@ -586,6 +590,7 @@ void function ResetBossHealth( entity boss )
     //TitanCanStand( boss )
     PlayBossCommsForAllPlayers( comm )
     PlayMusic( bossTheme )
+    boss.SetDefaultSchedule( "SCHED_COMBAT_WALK" )
     return
 }
 
