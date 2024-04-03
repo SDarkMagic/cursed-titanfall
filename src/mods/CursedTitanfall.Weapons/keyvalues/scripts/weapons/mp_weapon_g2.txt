@@ -1,0 +1,22 @@
+WeaponData
+{
+	"OnWeaponActivate"								"OnWeaponActivate_weapon_g2"
+	// Ammo
+	"ammo_clip_size"   								"22"
+	"projectilemodel" 								"models/weapons/bullets/mgl_grenade.mdl"
+
+	// Behavior
+	"fire_rate"   									"7.5"
+	"burst_fire_count"								"2"
+	"burst_fire_delay"								"0.5"
+
+	Mods
+	{
+		extended_ammo
+		{
+			"ammo_stockpile_max"				"270"
+			"ammo_clip_size"   					"30"
+			"ammo_default_total"				"270"
+		}
+	}
+}

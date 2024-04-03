@@ -44,6 +44,16 @@
             "RunOn": "MP"
         },
         {
+            "Path": "sh_graviton_lance.nut",
+            "RunOn": "MP",
+            "ServerCallback": {
+                "After": "Init_GravitonLance"
+            },
+            "ClientCallback": {
+                "After": "Init_GravitonLance"
+            }
+        },
+        {
             "Path": "_rodeo_gives_turret.nut",
             "RunOn": "SERVER && MP",
             "ServerCallback": {
