@@ -193,6 +193,7 @@ void function ReaperLeeched( entity victim, entity attacker )
 	AddReaper( victim )
 	victim.kv.AccuracyMultiplier = 1.0
 	victim.kv.WeaponProficiency = eWeaponProficiency.AVERAGE
+	victim.kv.CollisionGroup = TRACE_COLLISION_GROUP_BLOCK_WEAPONS
 	victim.SetBehaviorSelector( "behavior_super_spectre" )
 	victim.Minimap_AlwaysShow( TEAM_MILITIA, null )
 }
