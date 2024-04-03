@@ -239,6 +239,12 @@ void function CloakedDronePathFollowPlayer( entity cloakedDrone, entity player )
 	path.goalValid = false
 	path.lastHeight = defaultHeight
 
+	if ( !IsValid( player ) )
+	{
+		cloakedDrone.Destroy()
+		return
+	}
+
 	while( player.GetTeam() == droneTeam )
 	{
 		if ( IsValid( GetRodeoPilot( player ) ) )

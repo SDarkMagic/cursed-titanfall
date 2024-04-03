@@ -54,7 +54,7 @@ void function CleanupChildCloaker( entity player, entity titan )
     if ( !IsValid( titan )  || !IsValid( player ) )
         return
     entity soul = player.GetTitanSoul()
-    if ( GetTitanCharacterName( titan ) != "northstar" )
+    if ( GetTitanCharacterName( titan ) != "northstar" ) // Add a check for the player entity in file here as well later
         return
     entity drone = file.playerCloakDrones[player]
     if ( IsValid( drone ) )
