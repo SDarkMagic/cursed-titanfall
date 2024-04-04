@@ -18,7 +18,8 @@ void function PlayerRodeoBegins( entity player, entity titan )
         return
 
     player.TakeWeaponNow( "mp_weapon_rspn101" )
-    player.GiveWeapon( "mp_titanweapon_flightcore_rockets" )
+    player.GiveWeapon( "mp_titanweapon_flightcore_rockets", "player_rodeo_weapon" )
+
 }
 
 void function PlayerRodeoEnds( entity player, entity titan )

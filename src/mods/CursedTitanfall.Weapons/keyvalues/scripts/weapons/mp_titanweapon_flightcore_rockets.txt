@@ -1,0 +1,17 @@
+WeaponData
+{
+	Mods
+	{
+		player_rodeo_weapon
+		{
+			// Deals half damage when being used by a pilot rodeoing a friendly titan
+			"damage_near_value"   							"150"
+			"damage_far_value"								"150"
+			"damage_near_value_titanarmor"					"150"
+			"damage_far_value_titanarmor" 					"150"
+			"explosion_damage"								"27" //"400"
+			"explosion_damage_heavy_armor"					"150"
+		}
+	}
+
+}
