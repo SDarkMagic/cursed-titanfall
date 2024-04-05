@@ -536,7 +536,7 @@ void function BossTitan_TakesDamage_StageHandler( entity titan, var damageInfo )
         string comm = retreatLines[ RandomInt( retreatLines.len() - 1 ) ]
         titan.SetInvulnerable( )
         DamageInfo_SetDamage( damageInfo, 0 )
-        //titan.SetHealth( 1 )
+        titan.SetHealth( 1 )
         titan.SetDefaultSchedule( "SCHED_BACK_AWAY_FROM_ENEMY" )
         PlayBossCommsForAllPlayers( comm )
         // Do health regen stuff here
