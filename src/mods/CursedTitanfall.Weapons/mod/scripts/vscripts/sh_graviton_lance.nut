@@ -18,7 +18,7 @@ void function Init_GravitonLance()
 {
     PrecacheModel( seekerModel )
     #if SERVER
-    AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_g2, GravitonHitTarget)
+    AddDamageCallbackSourceID( DAMAGE_SOURCEID, GravitonHitTarget)
     #endif
 }
 
@@ -29,13 +29,13 @@ void function OnWeaponActivate_weapon_g2( entity weapon )
 
 void function Init_SmartAmmoSettings( entity weapon )
 {
-    SmartAmmo_SetMissileSpeed( weapon, 120 )
-    SmartAmmo_SetMissileHomingSpeed( weapon, 125 )
+    SmartAmmo_SetMissileSpeed( weapon, 360 )
+    SmartAmmo_SetMissileHomingSpeed( weapon, 375 )
 
     if ( weapon.HasMod( "burn_mod_rocket_launcher" ) )
-        SmartAmmo_SetMissileSpeedLimit( weapon, 130 )
+        SmartAmmo_SetMissileSpeedLimit( weapon, 390 )
     else
-        SmartAmmo_SetMissileSpeedLimit( weapon, 140 )
+        SmartAmmo_SetMissileSpeedLimit( weapon, 420 )
 
     SmartAmmo_SetMissileShouldDropKick( weapon, false )  // TODO set to true to see drop kick behavior issues
     SmartAmmo_SetUnlockAfterBurst( weapon, true )
@@ -94,7 +94,7 @@ int function SmartAmmo_FireWeapon_HomingMissile( entity weapon, WeaponPrimaryAtt
 
 	foreach( missile in firedMissiles )
 	{
-		missile.kv.lifetime = 10
+		missile.kv.lifetime = 12
 
 		#if SERVER
 			missile.SetOwner( player )

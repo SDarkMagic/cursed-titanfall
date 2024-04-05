@@ -3,7 +3,7 @@ WeaponData
 	"OnWeaponActivate"								"OnWeaponActivate_weapon_g2"
 	// Ammo
 	"ammo_clip_size"   								"22"
-	"projectilemodel" 								"models/weapons/bullets/mgl_grenade.mdl"
+	"projectilemodel" 								"models/fx/energy_proj_round.mdl"
 
 	// Behavior
 	"fire_rate"   									"7.5"
