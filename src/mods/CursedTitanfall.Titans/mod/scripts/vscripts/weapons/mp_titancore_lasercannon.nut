@@ -107,7 +107,7 @@ bool function OnAbilityCharge_LaserCannon( entity weapon )
 	if ( soul == null )
 		soul = player
 
-	StatusEffect_AddTimed( soul, eStatusEffect.move_slow, SEVERITY_SLOWMOVE_LASERCORE, chargeTime, 0 )
+	//StatusEffect_AddTimed( soul, eStatusEffect.move_slow, SEVERITY_SLOWMOVE_LASERCORE, chargeTime, 0 )
 
 	weapon.w.laserWorldModel = CreatePropDynamic( LASER_MODEL )
 
