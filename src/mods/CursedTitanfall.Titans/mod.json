@@ -30,10 +30,10 @@
             }*/
         },
         {
-            "Path": "_emp_ronin.nut",
+            "Path": "_ronin.nut",
             "RunOn": "MP",
             "ServerCallback": {
-                "After": "Init_ArcTitan_Player"
+                "After": "Init_Ronin"
             }
         },
         {
