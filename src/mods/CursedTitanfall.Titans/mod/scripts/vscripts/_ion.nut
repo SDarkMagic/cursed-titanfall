@@ -101,11 +101,7 @@ void function RechargeEnergy_OnHit( entity target, var damageInfo )
 	entity soul = attacker.GetTitanSoul()
 	if ( !IsValid( soul ) )
 		return
-    array<string> mods = inflictor.ProjectileGetMods()
-    if ( mods.contains( "fd_split_shot_cost" ) )
-    {
-        float damage = DamageInfo_GetDamage( damageInfo )
-        attacker.AddSharedEnergy( int ( damage / 20 ) )
-    }
+    float damage = DamageInfo_GetDamage( damageInfo )
+    attacker.AddSharedEnergy( int ( damage / 20 ) )
 }
 #endif

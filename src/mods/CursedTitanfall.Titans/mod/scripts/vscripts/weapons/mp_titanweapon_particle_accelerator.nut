@@ -151,7 +151,7 @@ function FireWeaponPlayerAndNPC( entity weapon, WeaponPrimaryAttackParams attack
 		bool outOfEnergy = (currentEnergy < cost) || (currentEnergy == 0)
 		if ( !inADS || outOfEnergy )
 		{
-			weapon.SetWeaponEnergyCost( 10 )
+			weapon.SetWeaponEnergyCost( 5 )
 			shotCount = 1
 
 			if ( outOfEnergy )
