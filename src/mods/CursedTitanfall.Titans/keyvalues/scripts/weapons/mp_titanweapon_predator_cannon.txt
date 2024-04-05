@@ -1,0 +1,14 @@
+WeaponData
+{
+	MP_BASE
+	{
+		"ammo_clip_size"   								"140"
+	}
+	Mods
+	{
+		pas_legion_weapon
+		{
+			"ammo_clip_size"   								"200"
+		}
+	}
+}
