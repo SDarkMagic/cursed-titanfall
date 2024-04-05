@@ -1,6 +1,14 @@
 global function Init_Ronin
 
 const PARRY_WINDOW = 1.0
+array<string> invalidParryTargetScriptNames = [
+    "Ash",
+    "Viper",
+    "Kane",
+    "Blisk",
+    "Richter",
+    "Slone"
+]
 struct {
     table<entity, bool> inParryWindow
 } file
@@ -112,14 +120,95 @@ void function PerformParry( entity player, var damageInfo )
     printt("Initial checks passed for parry")
     if ( dmgFlags & DF_MELEE )
     {
+        // Always negate the damage when the player performs a parry regardless of core charge
         DamageInfo_SetDamage( damageInfo, 0 )
         entity attacker = DamageInfo_GetAttacker( damageInfo )
-        entity soul = attacker.GetTitanSoul()
-        if( !attacker.IsTitan() || !IsValid( soul ))
-            return
-        soul.EnableDoomed()
-        thread DoSyncedMelee( player, attacker )
+        ForceTermination( player, attacker )
     }
+}
+
+void function ForceTermination( entity player, entity target )
+{
+    entity soul = player.GetTitanSoul()
+    entity targetSoul = target.GetTitanSoul()
+
+    if( !IsValid( soul ) || !IsValid( targetSoul ) )
+        return
+
+    string targetScriptName = target.GetScriptName()
+    float coreChargeFrac = SoulTitanCore_GetNextAvailableTime( soul )
+    if( coreChargeFrac < 0.25 || invalidParryTargetScriptNames.find( targetScriptName ) != -1 ) // Second check prevents parries from working on the boss titans
+        return
+
+    targetSoul.EnableDoomed()
+    float coreFrac = 0.25 + GetCurrentPlaylistVarFloat( "battery_core_frac", 0.2 ) // Always remove 25% core from what the player had when performing the execution accounting for core regen from batt
+    RemoveCreditFromTitanCoreBuilder( player, coreFrac ) // Add a negative amount of core buildup to the player in order to perform the forced execution
+    thread DoSyncedMelee( player, target )
+}
+
+// Modified variant of the function AddCreditToTitanCoreBuilder found in titan/_titan_health.nut
+void function RemoveCreditFromTitanCoreBuilder( entity titan, float credit )
+{
+	Assert( TitanDamageRewardsTitanCoreTime() )
+
+	entity soul = titan.GetTitanSoul()
+	if ( !IsValid( soul ) )
+		return
+
+	entity bossPlayer = soul.GetBossPlayer()
+
+	if ( titan.IsPlayer() )
+	{
+		if ( !IsValid( bossPlayer ) )
+			return
+
+		if ( bossPlayer.IsTitan() && TitanCoreInUse( bossPlayer ) )
+			return
+	}
+	else
+	{
+		Assert( titan.IsNPC() )
+		if ( TitanCoreInUse( titan ) )
+			return
+	}
+
+	if ( !IsAlive( titan ) )
+		return
+
+	bool coreWasAvailable = false
+
+	if ( IsValid( bossPlayer ) )
+		coreWasAvailable = IsCoreChargeAvailable( bossPlayer, soul )
+
+	float oldTotalCredit = SoulTitanCore_GetNextAvailableTime( soul )
+	float newTotalCredit = (oldTotalCredit - credit > 0.0 ? oldTotalCredit - credit : 0.0)
+	if ( newTotalCredit >= 0.998 ) //JFS - the rui has a +0.001 for showing the meter as full. This fixes the case where the core meter displays 100 but can't be fired.
+		newTotalCredit = 1.0
+	SoulTitanCore_SetNextAvailableTime( soul, newTotalCredit )
+
+	if ( IsValid( bossPlayer ) && !coreWasAvailable && IsCoreChargeAvailable( bossPlayer, soul ) )
+	{
+		AddPlayerScore( bossPlayer, "TitanCoreEarned", bossPlayer ) // this will show the "Core Earned" callsign event
+		#if MP
+			UpdateTitanCoreEarnedStat( bossPlayer, titan )
+			PIN_PlayerAbilityReady( bossPlayer, "core" )
+		#endif
+	}
+
+	#if MP
+	if ( IsValid( bossPlayer ) )
+		JFS_PlayerEarnMeter_CoreRewardUpdate( titan, oldTotalCredit, newTotalCredit )
+	#endif
+
+	#if HAS_TITAN_TELEMETRY
+	if ( titan.IsPlayer() )
+	{
+		if ( IsCoreChargeAvailable( titan, soul ) )
+		{
+			TitanHints_TryShowHint( titan, [OFFHAND_EQUIPMENT] )
+		}
+	}
+	#endif
 }
 
 #endif
