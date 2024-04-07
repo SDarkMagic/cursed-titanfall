@@ -14,8 +14,11 @@ void function Init_UpgradeCore_Callbacks()
 #if SERVER
 void function ReaperJumpscare( entity weapon, WeaponPrimaryAttackParams attackParams )
 {
+    int reaperChance = 15
 	int currentUpgradeCount = GetCurrentUpgrade_FromWeapon( weapon )
 	entity owner = weapon.GetWeaponOwner()
+    if ( RandomInt( 100 ) > reaperChance ) // rearper chance is a percentage chance of whether or not we drop it. Doing it this way to try something different for rng
+        return
 	if (currentUpgradeCount >= 2){
 			entity reaper = CreateNPC( "npc_super_spectre", GetOtherTeam(owner.GetTeam()), owner.GetOrigin(), owner.GetAngles() )
 			DispatchSpawn(reaper)
