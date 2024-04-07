@@ -14,7 +14,7 @@ void function Init_Custom_Weapon_Callbacks()
     AddCallback_OnProjectileCollision_weapon_wingman(Wingman_Teleport)
 	AddCallback_OnProjectileCollision_weapon_smr( SpawnClusterMissile_smr )
 	AddCallback_OnProjectileCollision_weapon_wingman(DisplayPlayerCoords)
-    AddCallback_OnPrimaryAttackPlayer_weapon_sniper(Russian_Roulette)
+    AddCallback_OnPrimaryAttackPlayer_weapon_sniper( KraberExplosiveRound_Misfire )
 	AddCallback_OnProjectileCollision_weapon_mgl( SpawnTick )
     //AddCallback_OnPrimaryAttackPlayer_weapon_lmg(Thread_PreventCamping)
 
@@ -43,14 +43,14 @@ void function Weapon_Epg_Collision( ProjectileCollisionParams params )
 	    prowler.SetBossPlayer(player)
     SetTeam(prowler, team)
     DispatchSpawn(prowler)
+	prowler.kv.CollisionGroup = TRACE_COLLISION_GROUP_BLOCK_WEAPONS
     AddProwler(prowler)
     return
 }
 
 void function Dash_Player(entity weapon, WeaponPrimaryAttackParams attackParams)
 {
-	printt("Called Dash_Player function")
-	entity player = weapon.GetWeaponOwner()
+		entity player = weapon.GetWeaponOwner()
 	//if ( !player.IsPlayer() )
 	//	return
 	float speedModifier = -600
@@ -96,6 +96,25 @@ void function Russian_Roulette( entity weapon, WeaponPrimaryAttackParams attackP
     if (RandomInt(15) == 5)
 	{
 		player.TakeDamage( player.GetHealth(), null, null, { weapon = weapon, damageSourceId = eDamageSourceId.mp_weapon_sniper } )
+        Explosion_DamageDefSimple(
+            damagedef_titan_hotdrop,
+            weapon.GetOrigin(),
+            player,
+            null,
+            weapon.GetOrigin()
+        )
+	}
+}
+
+void function KraberExplosiveRound_Misfire( entity weapon, WeaponPrimaryAttackParams attackParams )
+{
+	entity player = weapon.GetWeaponOwner()
+	if ( !IsValid( player ) )
+		return
+	int probability = weapon.GetWeaponPrimaryClipCount() * 2
+    if ( RandomInt( probability ) == 1 )
+	{
+		player.TakeDamage( player.GetHealth(), null, null, { weapon = weapon, damageSourceId = weapon.GetDamageSourceID() } )
         Explosion_DamageDefSimple(
             damagedef_titan_hotdrop,
             weapon.GetOrigin(),
