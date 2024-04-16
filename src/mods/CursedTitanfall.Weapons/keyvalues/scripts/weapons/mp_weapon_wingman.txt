@@ -22,6 +22,15 @@ WeaponData
 	"bolt_hitsize_growfinal_size"					"3.0"
 	"bolt_speed"                                    "100"
 
+	"impact_effect_table" 							"titan_bullet"
+
+	"vortex_refire_behavior"  						"grenade"
+	"projectile_ignores_vortex"						"drop"
+	"vortex_impact_effect"							"P_impact_xo_shield_cp"
+	"projectile_trail_effect_0"						"P_grenade_thermite_trail"
+	"vortex_absorb_effect"							"wpn_vortex_projectile_star_FP"
+	"vortex_absorb_effect_third_person"				"wpn_vortex_projectile_star"
+
 	RUI_CrosshairData
 	{
 		DefaultArgs
