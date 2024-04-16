@@ -16,7 +16,7 @@ const int MAX_ENTITIES_PER_STACK = 10
 
 void function Init_TeamEntityStacks()
 {
-    tickStack.maxEntities = 25
+    tickStack.maxEntities = 20
     reaperStack.maxEntities = 4
 }
 
