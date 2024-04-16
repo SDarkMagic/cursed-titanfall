@@ -223,8 +223,8 @@ BossData function Init_Kane()
     BossData kane
 
     bossStageTracker stageData
-    stageData.regenTime = 15.0
-    stageData.maxStages = 2
+    stageData.regenTime = 17.0
+    stageData.maxStages = 3
 
     kane.stageTracker = stageData
 
