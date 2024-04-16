@@ -72,6 +72,9 @@ var function OnWeaponPrimaryAttack_weapon_sniper( entity weapon, WeaponPrimaryAt
 	}
 	weapon.EmitWeaponNpcSound( LOUD_WEAPON_AI_SOUND_RADIUS_MP, 0.2 )
 
+	if ( !IsValid( weapon ) || !IsValid( weapon.GetWeaponOwner() ) )
+		return
+
 	return FireWeaponPlayerAndNPC( weapon, attackParams, true )
 }
 
