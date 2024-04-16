@@ -243,9 +243,10 @@ void function Pistol_Callback( entity target, var damageInfo )
 			if ( enemy.IsTitan() )
 			{
 				entity soul = enemy.GetTitanSoul()
-				//if ( !soul.IsDoomed() )
-					//enemy.TakeDamage( enemy.GetHealth(), player, null, { weapon = weapon } )
+				if ( !soul.IsDoomed() )
+					soul.EnableDoomed()
 			}
+			//enemy.Die() // This will bypass any damage scaling, however the damagesourceid for the obituary could be weird to handle. Not implementing this method for now
 			enemy.TakeDamage( enemy.GetHealth(), player, null, { damageSourceId = DamageInfo_GetDamageSourceIdentifier( damageInfo ) } )
 		}
 	}
