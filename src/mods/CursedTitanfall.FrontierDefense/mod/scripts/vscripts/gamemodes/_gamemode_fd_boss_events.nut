@@ -155,7 +155,7 @@ void function SpawnBossTitan_Ash( WaveSpawnEvent ornull spawnEvent )
 	AddMinimapForTitans( npc )
     npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
 	//GiveShieldByDifficulty( npc )
-	thread singleNav_thread( npc, spawnEvent.route )
+	thread NPCNav_FD( npc, spawnEvent.route )
 }
 
 void function SpawnBossTitan_Slone( WaveSpawnEvent ornull spawnEvent )
@@ -187,7 +187,7 @@ void function SpawnBossTitan_Slone( WaveSpawnEvent ornull spawnEvent )
 	AddMinimapForTitans( npc )
     npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
 	//GiveShieldByDifficulty( npc )
-	thread singleNav_thread( npc, spawnEvent.route )
+	thread NPCNav_FD( npc, spawnEvent.route )
 }
 
 void function SpawnBossTitan_Viper( WaveSpawnEvent ornull spawnEvent )
@@ -219,7 +219,7 @@ void function SpawnBossTitan_Viper( WaveSpawnEvent ornull spawnEvent )
 	AddMinimapForTitans( npc )
     npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
 	//GiveShieldByDifficulty( npc )
-	thread singleNav_thread( npc, spawnEvent.route )
+	thread NPCNav_FD( npc, spawnEvent.route )
 }
 
 void function SpawnBossTitan_Kane( WaveSpawnEvent ornull spawnEvent )
@@ -251,7 +251,7 @@ void function SpawnBossTitan_Kane( WaveSpawnEvent ornull spawnEvent )
 	AddMinimapForTitans( npc )
     npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
 	//GiveShieldByDifficulty( npc )
-	thread singleNav_thread( npc, spawnEvent.route )
+	thread NPCNav_FD( npc, spawnEvent.route )
 }
 
 void function SpawnBossTitan_Richter( WaveSpawnEvent ornull spawnEvent )
@@ -283,7 +283,7 @@ void function SpawnBossTitan_Richter( WaveSpawnEvent ornull spawnEvent )
 	AddMinimapForTitans( npc )
     npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
 	//GiveShieldByDifficulty( npc )
-	thread singleNav_thread( npc, spawnEvent.route )
+	thread NPCNav_FD( npc, spawnEvent.route )
 }
 
 void function SpawnBossTitan_Blisk( WaveSpawnEvent ornull spawnEvent )
@@ -316,5 +316,5 @@ void function SpawnBossTitan_Blisk( WaveSpawnEvent ornull spawnEvent )
 	AddMinimapForTitans( npc )
     npc.GetTitanSoul().SetTitanSoulNetBool( "showOverheadIcon", true )
 	//GiveShieldByDifficulty( npc )
-	thread singleNav_thread( npc, spawnEvent.route )
+	thread NPCNav_FD( npc, spawnEvent.route )
 }
