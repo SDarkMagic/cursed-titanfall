@@ -138,7 +138,8 @@ void function FlyerHovers( entity player, HoverSounds soundInfo, float flightTim
 						EmitSoundOnEntity( player, soundInfo.landing_3p )
 				}
 				entity weapon = player.GetOffhandWeapon( OFFHAND_ANTIRODEO )
-				RemoveMod( weapon, "is_airborne" )
+				if ( IsValid( weapon ) )
+					RemoveMod( weapon, "is_airborne" )
 			}
 
 			foreach ( fx in activeFX )
