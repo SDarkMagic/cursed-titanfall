@@ -100,7 +100,9 @@ void function Healer_InitPlayer( entity player, entity titan )
 
 void function Healer_CleanupPlayer( entity player, entity titan )
 {
-    DeleteHealthPoolRui( player )
+    entity offhandWeapon = titan.GetOffhandWeapon( OFFHAND_LEFT )
+    if ( offhandWeapon.HasMod("energy_transfer") )
+        DeleteHealthPoolRui( player )
 }
 
 void function Charge_Meter( var damageInfo )
