@@ -112,7 +112,7 @@ void function KraberExplosiveRound_Misfire( entity weapon, WeaponPrimaryAttackPa
 	if ( !IsValid( player ) )
 		return
 	int probability = weapon.GetWeaponPrimaryClipCount() * 2
-    if ( RandomInt( probability ) == 1 )
+    if ( RandomInt( probability ) == 1 && weapon.GetWeaponPrimaryClipCount() < weapon.GetWeaponPrimaryClipCountMax() - 1 )
 	{
 		player.TakeDamage( player.GetHealth(), null, null, { weapon = weapon, damageSourceId = weapon.GetDamageSourceID() } )
         Explosion_DamageDefSimple(
@@ -226,6 +226,8 @@ void function Pistol_Callback( entity target, var damageInfo )
     array<entity> enemies = GetPlayerArrayOfEnemies(team)
 	entity weapon = DamageInfo_GetWeapon( damageInfo )
 	if ( !IsValid( weapon ) )
+		return
+	if ( player.IsNPC() && !target.IsPlayer() )
 		return
 	enemies.extend( GetNPCArrayOfEnemies(team) )
 	array<entity> titans = GetTitanArrayOfEnemies(team)
