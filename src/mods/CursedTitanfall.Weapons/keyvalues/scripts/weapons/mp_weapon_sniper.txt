@@ -16,6 +16,11 @@ WeaponData
 	{
 		"explosion_damage"								"175"
 		"explosion_damage_heavy_armor"					"700"
+
+		"damage_near_value"   							"450"
+		"damage_far_value"								"450"
+		"damage_near_value_titanarmor"					"900"
+		"damage_far_value_titanarmor" 					"900"
 	}
 
     Mods
@@ -25,7 +30,7 @@ WeaponData
 			"bolt_bounce_frac"								"0.7"
 			"projectile_damage_reduction_per_bounce"		"0.0"
 			"projectile_damages_owner"						"0"
-			"projectile_ricochet_max_count"					"20"
+			"projectile_ricochet_max_count"					"10"
 		}
 
 		extended_ammo
