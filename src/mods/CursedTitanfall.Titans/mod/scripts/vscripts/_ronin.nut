@@ -137,11 +137,21 @@ void function ForceTermination( entity player, entity target )
 
     string targetScriptName = target.GetScriptName()
     float coreChargeFrac = SoulTitanCore_GetNextAvailableTime( soul )
-    if( coreChargeFrac < 0.25 || invalidParryTargetScriptNames.find( targetScriptName ) != -1 ) // Second check prevents parries from working on the boss titans
+    float coreChargePerCell = 0.1
+    int targetHealth = target.GetHealth()
+    float cellCount = float( targetHealth / 2500 )
+    // Round the number of cells the target has remaing for health to determine how much core to drain from the user
+    if( cellCount - floor( cellCount ) >= 0.5 )
+        cellCount = ceil( cellCount )
+    else
+        cellCount = floor( cellCount )
+
+    float requiredCoreCharge = coreChargePerCell * cellCount
+    if( coreChargeFrac < requiredCoreCharge || invalidParryTargetScriptNames.find( targetScriptName ) != -1 ) // Second check prevents parries from working on the boss titans
         return
 
     targetSoul.EnableDoomed()
-    float coreFrac = 0.25 + GetCurrentPlaylistVarFloat( "battery_core_frac", 0.2 ) // Always remove 25% core from what the player had when performing the execution accounting for core regen from batt
+    float coreFrac = requiredCoreCharge + GetCurrentPlaylistVarFloat( "battery_core_frac", 0.2 ) // Always remove 25% core from what the player had when performing the execution accounting for core regen from batt
     RemoveCreditFromTitanCoreBuilder( player, coreFrac ) // Add a negative amount of core buildup to the player in order to perform the forced execution
     thread DoSyncedMelee( player, target )
 }
