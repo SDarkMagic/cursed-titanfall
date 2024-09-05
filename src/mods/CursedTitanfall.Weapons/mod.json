@@ -15,6 +15,13 @@
             }
         },
         {
+            "Path": "weapons/mp_weapon_hemlok_smg.nut",
+            "RunOn": "(CLIENT || SERVER) && MP",
+            "ServerCallback": {
+                "Before": "MpWeaponHemlokSmg_Init"
+            }
+        },
+        {
             "Path": "_weapon_callbacks.nut",
             "RunOn": "MP",
             "ServerCallback": {
