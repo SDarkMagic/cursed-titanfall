@@ -1,0 +1,10 @@
+WeaponData
+{
+	Mods
+	{
+		pas_northstar_optics
+		{
+			"critical_hit_damage_scale"						"*2.0"
+		}
+	}
+}
