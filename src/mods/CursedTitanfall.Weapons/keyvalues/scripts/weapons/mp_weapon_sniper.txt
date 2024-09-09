@@ -19,8 +19,10 @@ WeaponData
 
 		"damage_near_value"   							"450"
 		"damage_far_value"								"450"
-		"damage_near_value_titanarmor"					"900"
-		"damage_far_value_titanarmor" 					"900"
+		"damage_near_value_titanarmor"					"1000"
+		"damage_far_value_titanarmor" 					"1000"
+
+		"critical_hit_damage_scale"						"2.5"
 	}
 
     Mods
