@@ -57,7 +57,7 @@ void function PlayerEMPTitanThinkConstant( entity soul )
 	particleSystem.SetParent( titan, GetEMPAttachmentForTitan( titan ) )
 	particles.append( particleSystem )
 
-    AI_CreateDangerousArea(titan, titan, ARC_TITAN_EMP_FIELD_RADIUS, owner.GetTeam(), true, true)
+    AI_CreateDangerousArea(particleSystem, titan, ARC_TITAN_EMP_FIELD_RADIUS, owner.GetTeam(), true, true)
 	//titan.SetDangerousAreaRadius( ARC_TITAN_EMP_FIELD_RADIUS )
 
 	OnThreadEnd(
