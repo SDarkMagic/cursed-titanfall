@@ -86,8 +86,8 @@ void function CloakedDroneCloakThink( entity cloakedDrone )
 function CloakDroneShouldCloakGuy( cloakedDrone, guy )
 {
     expect entity( guy )
-	if ( IsValid( GetRodeoPilot( guy ) ) )
-		return false
+	//if ( IsValid( GetRodeoPilot( guy ) ) )
+	//	return false
 
 	if ( cloakedDrone.s.isHidden )
 		return false
