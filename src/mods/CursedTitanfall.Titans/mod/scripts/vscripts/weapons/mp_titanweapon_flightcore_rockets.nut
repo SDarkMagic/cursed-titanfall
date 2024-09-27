@@ -56,6 +56,8 @@ var function OnWeaponPrimaryAttack_titanweapon_flightcore_rockets( entity weapon
 void function OnProjectileCollision_titanweapon_flightcore_rockets( entity projectile, vector pos, vector normal, entity hitEnt, int hitbox, bool isCritical )
 {
 	entity owner = projectile.GetOwner()
+	if ( !IsAlive( owner ) || !IsValid( owner ) )
+		return
 	entity offHandWeapon = owner.GetOffhandWeapon( OFFHAND_ORDNANCE )
 	if ( !offHandWeapon.HasMod( "pas_northstar_cluster" ) )
 		return
@@ -64,8 +66,15 @@ void function OnProjectileCollision_titanweapon_flightcore_rockets( entity proje
 		float duration = PAS_NORTHSTAR_CLUSTER_ROCKET_DURATION
 		float explosionDelay = expect float( projectile.ProjectileGetWeaponInfoFileKeyField( "projectile_explosion_delay" ) )
 
-		ClusterRocket_Detonate( projectile, normal )
-		CreateNoSpawnArea( TEAM_INVALID, TEAM_INVALID, pos, ( duration + explosionDelay ) * 0.5 + 1.0, CLUSTER_ROCKET_BURST_RANGE + 100 )
+		ProjectileCollisionParams params
+		params.projectile = projectile
+		params.pos = pos
+		params.normal = normal
+		params.hitEnt = hitEnt
+		params.hitbox = hitbox
+		params.isCritical = isCritical
+
+		SpawnClusterMissile_flightcore_rocket( params )
 	#endif
 }
 
@@ -91,6 +100,45 @@ void function MissileThink( entity missile )
 
 	wait life
 }
+
+void function SpawnClusterMissile_flightcore_rocket( ProjectileCollisionParams params )
+{
+	entity rocket = params.projectile
+	vector normal = params.normal
+	vector pos = params.pos
+	float explosionDelay = expect float( rocket.ProjectileGetWeaponInfoFileKeyField( "projectile_explosion_delay" ) )
+
+	entity owner = rocket.GetOwner()
+	if ( !IsValid( owner ) )
+		return
+
+	int count
+	float duration
+	float range
+
+	array<string> mods = rocket.ProjectileGetMods()
+	count = CLUSTER_ROCKET_BURST_COUNT
+	duration = 0.75
+	range = CLUSTER_ROCKET_BURST_RANGE
+
+	PopcornInfo popcornInfo
+
+	popcornInfo.weaponName = "mp_titanweapon_flightcore_rockets"
+	popcornInfo.weaponMods = []
+	popcornInfo.damageSourceId = eDamageSourceId.mp_titanweapon_flightcore_rockets
+	popcornInfo.count = 5
+	popcornInfo.delay = 0.2
+	popcornInfo.offset = CLUSTER_ROCKET_BURST_OFFSET
+	popcornInfo.range = range
+	popcornInfo.normal = normal
+	popcornInfo.duration = duration
+	popcornInfo.groupSize = 3
+	popcornInfo.hasBase = true
+
+	thread StartClusterExplosions( rocket, owner, popcornInfo, CLUSTER_ROCKET_FX_TABLE )
+	CreateNoSpawnArea( TEAM_INVALID, TEAM_INVALID, pos, ( duration + explosionDelay ) * 0.5 + 1.0, CLUSTER_ROCKET_BURST_RANGE + 100 )
+}
+
 #endif // SERVER
 
 void function DelayedTrackingStart( entity missile, vector targetPos )
