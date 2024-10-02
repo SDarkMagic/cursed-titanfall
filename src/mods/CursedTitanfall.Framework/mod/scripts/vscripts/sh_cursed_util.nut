@@ -7,6 +7,11 @@ const EMP_DAMAGE_TICK_RATE = 0.3
 const FX_EMP_FIELD						= $"P_xo_emp_field"
 const FX_EMP_FIELD_1P					= $"P_body_emp_1P"
 
+void function Init_CursedUtil()
+{
+	LoadModule( "cs.framework" ) // Putting this here for now to avoid creating an enitrely new script just for module registration
+}
+
 #if SERVER
 void function PlayerEMPTitanThinkConstant( entity soul )
 {

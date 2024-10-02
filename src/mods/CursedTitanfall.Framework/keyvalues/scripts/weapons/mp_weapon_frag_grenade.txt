@@ -1,0 +1,7 @@
+WeaponData
+{
+	"OnProjectileIgnite"							"FragIgnite_RandomEvent_Callback"
+	//"OnProjectileCollision"                         ""
+	"grenade_fuse_time"								"3.25" // Keeping this here for reference
+	"max_cook_time"									"1.0" // By default this is equal to the fuse time in vanilla
+}

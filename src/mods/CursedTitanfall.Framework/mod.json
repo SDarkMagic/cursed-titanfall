@@ -16,8 +16,18 @@
             "RunOn": "MP"
         },
         {
+            "Path": "weapons/mp_weapon_frag_grenade.nut",
+            "RunOn":"MP"
+        },
+        {
             "Path": "sh_cursed_util.nut",
-            "RunOn": "MP"
+            "RunOn": "MP",
+            "ServerCallback": {
+                "Before": "Init_CursedUtil"
+            },
+            "ClientCallback": {
+                "Before": "Init_CursedUtil"
+            }
         }
     ],
     "Localisation":
