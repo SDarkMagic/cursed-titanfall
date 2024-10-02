@@ -79,12 +79,12 @@ void function BeginParryWindow( entity weapon )
     if ( !IsValid( owner ) || !owner.IsPlayer() || !owner.IsTitan() )
         return
     file.inParryWindow[ owner ] <- true
-    printt("Beginning parry window")
+    //printt("Beginning parry window")
     wait PARRY_WINDOW
     if ( !file.inParryWindow[ owner ] )
         return
     file.inParryWindow[ owner ] <- false
-    printt("Parry window closed due to timeout")
+    //printt("Parry window closed due to timeout")
 }
 
 void function EndParryWindow( entity weapon )
@@ -95,7 +95,7 @@ void function EndParryWindow( entity weapon )
     if ( !file.inParryWindow[ owner ] )
         return
     file.inParryWindow[ owner ] <- false
-    printt("Parry window force closed by user")
+    //printt("Parry window force closed by user")
 }
 
 bool function IsTerminationValid_While_InParry( entity attacker, entity target )
@@ -117,7 +117,7 @@ void function PerformParry( entity player, var damageInfo )
         return
     if( !player.e.blockActive || !file.inParryWindow[ player ] )
         return
-    printt("Initial checks passed for parry")
+    //printt("Initial checks passed for parry")
     if ( dmgFlags & DF_MELEE )
     {
         // Always negate the damage when the player performs a parry regardless of core charge
