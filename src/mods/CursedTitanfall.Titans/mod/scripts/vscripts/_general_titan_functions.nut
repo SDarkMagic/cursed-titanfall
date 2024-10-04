@@ -69,7 +69,7 @@ void function Enable_NuclearGravField( entity player, entity titan )
         return
     if ( GetSoulTitanSubClass( soul ) != "ogre" )
         return // Only run continue if the player is not running scorch or legion
-    if ( !( GetNuclearPayload > 0 ) )
+    if ( !( GetNuclearPayload( player ) > 0 ) )
         return // Make sure the player is also running nuclear payload
     thread EjectCallback( player, soul )
 }
