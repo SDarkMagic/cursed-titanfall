@@ -9,6 +9,8 @@ WeaponData
 	"projectile_launch_speed"						"10000"
 	"projectile_gravity_scale"						"0.0001"
 
+	"does_not_interrupt_cloak"							"1"
+
     "projectilemodel" 								"models/dev/empty_model.mdl"
     "projectile_adjust_to_gun_barrel"				"1"
     "damage_type" 									"projectile"
