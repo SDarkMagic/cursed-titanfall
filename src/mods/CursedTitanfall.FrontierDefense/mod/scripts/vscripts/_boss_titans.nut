@@ -61,6 +61,7 @@ BossData &blisk
 
 void function Init_BossTitanData()
 {
+    LoadModule( "cs.fd" )
     ash = Init_Ash()
     viper = Init_Viper()
     slone = Init_Slone()
@@ -500,6 +501,7 @@ entity function CreateBossTitan_Generic( BossData boss, vector origin, vector an
     npc.GetTitanSoul().soul.titanLoadout.titanExecution = boss.execution
     npc.ConnectOutput( "OnFoundPlayer", BossChangedTarget )
     npc.ConnectOutput( "OnDeath", BossDefeated )
+    npc.ConnectOutput( "OnDestroy", BossDefeated )
 
     printt("Connected outputs")
     npc.SetDangerousAreaReactionTime( 0 )
@@ -523,6 +525,8 @@ void function BossTitan_TakesDamage_StageHandler( entity titan, var damageInfo )
     entity soul = titan.GetTitanSoul()
     if ( !IsValid( soul ) )
         return
+    if ( GameRules_GetGameMode() != FD )
+        return //Disable multiple phases for any gamemode besides frontier defense
     string bossTitanName = GetTitanCharacterName( titan )
     string bossName = titan.GetScriptName()
     int currentHealth = titan.GetHealth()
