@@ -2,26 +2,28 @@ global function Init_Custom_Weapon_Callbacks
 
 #if SERVER
 global function KillTargetThenExplode
+global function DEV_TestLaserCore
 #endif
 
 void function Init_Custom_Weapon_Callbacks()
 {
     printt("Initializing Custom weapon callback functions...")
     #if SERVER
-    AddCallback_OnProjectileCollision_weapon_epg(Weapon_Epg_Collision)
-    AddCallback_OnPrimaryAttackPlayer_weapon_defender(Dash_Player)
-    AddCallback_OnProjectileCollision_weapon_softball(Softball_ESmoke)
-    AddCallback_OnProjectileCollision_weapon_wingman(Wingman_Teleport)
+    AddCallback_OnProjectileCollision_weapon_epg( Weapon_Epg_Collision )
+    AddCallback_OnPrimaryAttackPlayer_weapon_defender( Dash_Player )
+    AddCallback_OnProjectileCollision_weapon_softball( Softball_ESmoke )
+    AddCallback_OnProjectileCollision_weapon_wingman( Wingman_Teleport )
 	AddCallback_OnProjectileCollision_weapon_smr( SpawnClusterMissile_smr )
-	//AddCallback_OnProjectileCollision_weapon_wingman(DisplayPlayerCoords)
+	AddCallback_OnProjectileCollision_weapon_wingman(DisplayPlayerCoords)
     AddCallback_OnPrimaryAttackPlayer_weapon_sniper( KraberExplosiveRound_Misfire )
 	AddCallback_OnProjectileCollision_weapon_mgl( SpawnTick )
+	AddCallback_OnWeaponReload_weapon_alternator_smg( PhaseReload )
     //AddCallback_OnPrimaryAttackPlayer_weapon_lmg(Thread_PreventCamping)
 
 	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_grenade_emp, Grenade_Emp_Hack )
-	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_semipistol, Pistol_Callback )
 	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_car, PushEnt_WhenHit_Callback )
 	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_r97, DetonateOnDeath )
+	//AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_alternator_smg, RefundAmmoOnCrit )
 
 	AddCallback_NPCLeeched( ReaperLeeched )
     #endif
@@ -65,6 +67,9 @@ void function Softball_ESmoke( ProjectileCollisionParams params )
 {
     entity hitEnt = params.hitEnt
     entity projectile = params.projectile
+	array< string > mods = projectile.ProjectileGetMods()
+	if ( mods.contains( "full_auto" ) )
+		return
     if ( IsValid( hitEnt ) && ( hitEnt.IsPlayer() || hitEnt.IsTitan() || hitEnt.IsNPC() ) )
 		{
 			ElectricGrenadeSmokescreen( projectile, FX_ELECTRIC_SMOKESCREEN_PILOT_AIR )
@@ -352,6 +357,41 @@ void function SpawnTick( ProjectileCollisionParams params )
 	return
 }
 
+void function PhaseReload( entity weapon, int milestone )
+{
+	if( !IsValid( weapon ) )
+		return
+	entity owner = weapon.GetWeaponOwner()
+	float reloadDuration = weapon.GetWeaponSettingFloat( eWeaponVar.reload_time )
+	if( !IsValid( owner ) || !IsAlive( owner ) )
+		return
+	// Duration gets multiplied by the percent of the magazine used beforehand, and requires at least one kill before reloading to trigger
+	int ammoConsumed = weapon.GetWeaponPrimaryClipCountMax() - weapon.GetWeaponPrimaryClipCount()
+	float percentage = ammoConsumed / float( weapon.GetWeaponPrimaryClipCountMax() )
+	PhaseShift( owner, 0.0, reloadDuration * percentage )
+}
+
+void function RefundAmmoOnCrit( entity target, var damageInfo )
+{
+	entity weapon = DamageInfo_GetWeapon( damageInfo )
+	entity attacker = DamageInfo_GetAttacker( damageInfo )
+	int hitbox = DamageInfo_GetHitBox( damageInfo )
+	int damageType = DamageInfo_GetDamageType( damageInfo )
+	int mask = DF_CRITICAL | DF_HEADSHOT
+	float damage = DamageInfo_GetDamage( damageInfo )
+	printt( ( damageType & ( DF_CRITICAL | DF_HEADSHOT ) ) )
+	printt( ( damageType | DF_CRITICAL | DF_HEADSHOT ) )
+	if( !IsValid( weapon ) || !( damageType | DF_CRITICAL | DF_HEADSHOT ) )
+		return
+	int maxAmmo = weapon.GetWeaponPrimaryClipCountMax()
+	int currentAmmo = weapon.GetWeaponPrimaryClipCount()
+	int newAmmoCount = currentAmmo + 1
+	if ( newAmmoCount >= maxAmmo )
+		weapon.SetWeaponPrimaryClipCount( maxAmmo )
+	else
+		weapon.SetWeaponPrimaryClipCount( newAmmoCount )
+}
+
 void function DetonateOnDeath( entity target, var damageInfo )
 {
 	if ( !IsValid( target ) || !IsAlive( target ) )
@@ -380,8 +420,28 @@ void function KillTargetThenExplode( entity target, entity attacker, int sourceI
 	vector origin= target.GetOrigin()
 	vector projectileOrigin = attacker.GetOrigin()
 	int damage = target.GetHealth()
-	target.TakeDamage(damage, null, null, { weapon = null, damageSourceId = sourceId })
+	target.TakeDamage(damage, attacker, null, { weapon = null, damageSourceId = sourceId })
 	Explosion( origin, attacker, attacker, explosionDamage, explosionDamageArmor, innerRad, outerRad, damageFlags, projectileOrigin, force, damageFlags, sourceId, effectTable )
+}
+
+void function DEV_TestLaserCore( )
+{
+	entity basePlayer = GetPlayerArray()[0]
+    vector origin = basePlayer.GetOrigin()
+	int team = basePlayer.GetTeam()
+	vector beamOffset = origin + < 0, 0, 1000 >
+	vector angles = basePlayer.GetViewVector()
+	entity npc = CreateNPCTitan( "titan_atlas", team, beamOffset, angles )
+    SetSpawnOption_AISettings( npc, "npc_titan_atlas_stickybomb_boss_fd_elite" )
+    SetTitanAsElite( npc )
+
+	SetTeam( npc,  team )
+	DispatchSpawn( npc )
+
+	//entity weapon = npc.GetOffhandWeapon( OFFHAND_EQUIPMENT )
+	//int damageType = DF_BULLET | DF_STOPS_TITAN_REGEN | DF_GIB
+	//entity bullet = weapon.FireWeaponBullet( origin, angles, 1, damageType )
+    //testDummy.Destroy()
 }
 
 #endif

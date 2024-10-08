@@ -1,0 +1,5 @@
+WeaponData
+{
+	"OnWeaponReload"                                "OnWeaponReload_weapon_alternator_smg"
+	"critical_hit_damage_scale"						"1.1"
+}
