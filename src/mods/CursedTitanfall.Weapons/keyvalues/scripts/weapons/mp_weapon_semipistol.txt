@@ -1,4 +1,13 @@
 WeaponData
 {
    "titanarmor_critical_hit_required"              "0"
+   Mods
+    {
+        guarantee_wipe
+        {
+            "ammo_default_total"							         "3"
+		      "ammo_stockpile_max"							         "5"
+            "ammo_no_remove_from_stockpile"                 "0"
+        }
+    }
 }
