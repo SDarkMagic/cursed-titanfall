@@ -1,6 +1,8 @@
 untyped
 global function SpawnPlayerCloakDrone
 global function Init_PlayerCloakDrone
+global function PlayerCloakedDrone_WarpOut
+global function PlayerCloakedDrone_WarpIn
 const FX_DRONE_CLOAK_BEAM = $"P_drone_cloak_beam"
 
 struct CloakDronePath
@@ -98,6 +100,13 @@ function CloakDroneShouldCloakGuy( cloakedDrone, guy )
 	return true
 }
 
+void function PlayerCloakedDrone_WarpOut( entity cloakedDrone )
+{
+	if( !IsAlive( cloakedDrone ) || !IsValid( cloakedDrone ) )
+		return
+	CloakedDroneWarpOut( cloakedDrone, cloakedDrone.GetOrigin() )
+}
+
 void function CloakedDroneWarpOut( entity cloakedDrone, vector origin )
 {
 	if ( cloakedDrone.s.isHidden == false )
@@ -132,9 +141,18 @@ void function CloakedDroneWarpOut( entity cloakedDrone, vector origin )
 
 	wait 2.0
 
+	if ( !IsValid( cloakedDrone ) )
+		return
 	cloakedDrone.DisableBehavior( "Follow" )
 	thread AssaultOrigin( cloakedDrone, origin )
 	cloakedDrone.SetOrigin( origin )
+}
+
+void function PlayerCloakedDrone_WarpIn( entity cloakedDrone )
+{
+	if( !IsAlive( cloakedDrone ) || !IsValid( cloakedDrone ) )
+		return
+	CloakedDroneWarpIn( cloakedDrone, cloakedDrone.GetOrigin() )
 }
 
 void function CloakedDroneWarpIn( entity cloakedDrone, vector origin )
