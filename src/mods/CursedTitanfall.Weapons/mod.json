@@ -66,6 +66,30 @@
             "ServerCallback": {
                 "After": "Init_RodeoWeaponSwap"
             }
+        },
+        {
+            "Path": "sh_frag_events.nut",
+            "RunOn": "(CLIENT || SERVER) && MP",
+            "ServerCallback": {
+                "After": "FragEvents_Init"
+            },
+            "ClientCallback": {
+                "After": "FragEvents_Init"
+            }
+        },
+        {
+            "Path": "_pistol_gambling.nut",
+            "RunOn": "SERVER && MP",
+            "ServerCallback": {
+                "Before": "Init_Pistol_Gambling_Callbacks"
+            }
+        },
+        {
+            "Path": "_weapon_factory.nut",
+            "RunOn": "SERVER && MP",
+            "ServerCallback": {
+                "Before": "Init_WeaponGenerators"
+            }
         }
     ],
     "Localisation":

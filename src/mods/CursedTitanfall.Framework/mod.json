@@ -28,6 +28,10 @@
             "ClientCallback": {
                 "Before": "Init_CursedUtil"
             }
+        },
+        {
+            "Path": "_nuclear_explosion.nut",
+            "RunOn": "MP && SERVER"
         }
     ],
     "Localisation":

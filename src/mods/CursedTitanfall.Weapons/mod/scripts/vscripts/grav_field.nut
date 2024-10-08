@@ -15,11 +15,6 @@ const float PUSH_STRENGTH_MAX = 125.0
 const float EXPLOSION_DELAY = 0.1
 const float FX_END_CAP_TIME = 1.5
 
-struct
-{
-	int cockpitFxHandle = -1
-} file
-
 const asset GRAVITY_VORTEX_FX = $"P_wpn_grenade_gravity"
 const asset GRAVITY_SCREEN_FX = $"P_gravity_mine_FP"
 
@@ -79,7 +74,7 @@ bool function GravityGrenadeTriggerThink( entity gravityMine )
 	return trig.IsTouched()
 }
 
-void function CreateGravFieldOnEnt( entity projectile)
+void function CreateGravFieldOnEnt( entity projectile )
 {
 	projectile.EndSignal( "OnDestroy" )
 	WaitFrame()
