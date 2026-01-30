@@ -1,5 +1,9 @@
 global function FragEvents_Init
 
+#if SERVER
+global function DEV_TestLaser
+#endif
+
 const float PULL_RANGE = 250.0
 const float PULL_STRENGTH_MAX = 1000.0
 const float PULL_VERT_VEL = 440
@@ -27,28 +31,32 @@ void function FragEvents_Init( )
 	PrecacheParticleSystem( FX_LASERCANNON_MUZZLEFLASH )
 
 	PrecacheModel( LASER_MODEL )
+	PrecacheModel( $"models/weapons/softball_at/w_softball_at.mdl" )
+	PrecacheModel( $"models/robots/super_spectre/super_spectre_v1.mdl" )
+	PrecacheModel( $"models/robots/drone_frag/frag_drone_proj.mdl" )
+	PrecacheWeapon( "mp_weapon_super_spectre" )
 
     AddRandomEventCallback_FragGrenade( PullAll_To_Singularity )
     AddRandomEventCallback_FragGrenade( CreateRandomQuantity_Decoys )
 	AddRandomEventCallback_FragGrenade( CreateClusterExplosion )
 	AddRandomEventCallback_FragGrenade( SpawnTurretTick_Frag )
-	if ( GameRules_GetGameMode() != FD )
-		AddRandomEventCallback_FragGrenade( TempFreeze )
+	//if ( GameRules_GetGameMode() != FD )
+		//AddRandomEventCallback_FragGrenade( TempFreeze )
 	AddRandomEventCallback_FragGrenade( SpawnReaper_ForPlayer )
 	AddRandomEventCallback_FragGrenade( CreateRandomQuantity_Batteries )
 	AddRandomEventCallback_FragGrenade( Rocket_Smite )
+	AddRandomEventCallback_FragGrenade( Laser_Smite )
 	AddRandomEventCallback_FragGrenade( NuclearDetonation )
 	AddRandomEventCallback_FragGrenade( CreateRandomWeapon )
+	AddRandomEventCallback_FragGrenade( CreateDomeShield )
 	//if ( IsModuleLoaded( "cs.fd" ) )
 	//	AddRandomEventCallback_FragGrenade( SpawnBoss_ForCallback )
 	//AddRandomEventCallback_FragGrenade( CombatMRVN )
-	// Trigger a nuke eject
 	// If CursedTitanfall.FrontierDefense is enabled, spawn a random boss titan
 	// Scorch gas trap ignition?
 	// Combat MRVN
 	// Spawn spectre squad
 	// Smite a random player (Use arc cannon effect, spawn it vertically above a player in the skybox)
-	// Smite with aerial laser core
 	// Dome shield/titan bubble
 	// swap team for ent in blast radiusw
 }
@@ -159,6 +167,19 @@ void function TempFreeze( entity weapon )
 	thread TempDisableControls_Threaded( enemies, RandomFloatRange( 2.5,7.5 ) )
 	#endif
 }
+
+void function CreateDomeShield( entity weapon )
+{
+	#if SERVER
+	vector origin = OriginToGround( weapon.GetOrigin() )
+	vector angles = < 0, 90, 0 >
+	entity owner = weapon.GetOwner()
+	int team = owner.GetTeam()
+	float duration = RandomFloatRange( 10.0, 25.5 )
+	entity shield = CreateBubbleShieldWithSettings( team, origin, angles, owner, duration )
+	#endif
+}
+
 /*
 void function CombatMRVN( entity weapon )
 {
@@ -168,6 +189,7 @@ void function CombatMRVN( entity weapon )
 }
 */
 
+/*
 void function SpawnBoss_ForCallback( entity weapon )
 {
 	#if SERVER
@@ -209,17 +231,7 @@ void function SpawnBoss_ForCallback( entity weapon )
 
 	#endif
 }
-
-void function Smite_Nade( entity weapon )
-{
-	vector target = weapon.GetOrigin()
-	vector spawnOffset = target + < 0, 300, 0 >
-	entity player = weapon.GetOwner()
-	int team = player.GetTeam()
-	#if SERVER
-	CreateLaser( target, team )
-	#endif
-}
+*/
 
 // Taken from Karma's Mod abuse mod
 void function SpawnTurretTick_Frag( entity weapon )
@@ -323,9 +335,23 @@ void function Rocket_Smite( entity weapon )
 	vector origin = weapon.GetOrigin()
 	entity owner = weapon.GetOwner()
 #if SERVER
-	//thread CreateLaser( origin, team )
 	int numRockets = RandomIntRange( 12, 45 )
 	thread OrbitalStrike( owner, origin, numRockets, numRockets * 5.0 )
+#endif
+}
+
+void function Laser_Smite( entity weapon )
+{
+	entity player = weapon.GetOwner()
+	vector origin = weapon.GetOrigin()
+	RadiusDamageData radiusDamage
+
+	radiusDamage.explosionDamage = 325
+	radiusDamage.explosionDamageHeavyArmor = 325
+	radiusDamage.explosionInnerRadius = 100.0
+	radiusDamage.explosionRadius = 200.0
+#if SERVER
+	thread OrbitalStrike_Laser( player, origin, radiusDamage, eDamageSourceId.mp_weapon_frag_grenade )
 #endif
 }
 
@@ -368,37 +394,18 @@ void function SpawnCombatMRVN( entity weapon )
 }
 */
 
-void function CreateLaser( vector origin, int team )
+void function DEV_TestLaser()
 {
-	entity bullseye = SpawnBullseye( team )
-	bullseye.SetOrigin( origin )
-	vector beamOffset = origin + < 0, 0, 1000 >
-	vector angles = CalcRelativeAngles( beamOffset, origin )
-	entity npc = CreateNPCTitan( "titan_atlas", team, beamOffset, angles )
-	npc.EndSignal( "CoreEnd" )
-    SetSpawnOption_AISettings( npc, "npc_titan_atlas_stickybomb_boss_fd_elite" )
-    SetTitanAsElite( npc )
+	entity player = GetPlayerArray()[0]
+	vector origin = player.GetOrigin()
+	RadiusDamageData radiusDamage
 
-	SetTeam( npc, GetOtherTeam( team ) )
-	DispatchSpawn( npc )
+	radiusDamage.explosionDamage = 325
+	radiusDamage.explosionDamageHeavyArmor = 325
+	radiusDamage.explosionInnerRadius = 100.0
+	radiusDamage.explosionRadius = 200.0
 
-	//npc.Hide()
-	npc.LockEnemy( bullseye )
-	entity soul = npc.GetTitanSoul()
-	SoulTitanCore_SetNextAvailableTime( soul, 1.0 )
-	npc.kv.gravity = 0.0
-
-	/*
-	OnThreadEnd(
-	function() : ( bullseye, npc )
-		{
-			if ( IsValid( npc ) )
-				npc.Destroy()
-			if ( IsValid( bullseye ) )
-				bullseye.Destroy()
-		}
-	)
-	*/
+	thread OrbitalStrike_Laser( player, origin, radiusDamage )
 }
 
 array<entity> function GetEnemiesForSingularityEvent( entity projectile )
@@ -473,7 +480,7 @@ void function SpawnClusterMissile_frag( ProjectileCollisionParams params )
 	popcornInfo.range = range
 	popcornInfo.normal = normal
 	popcornInfo.duration = duration
-	popcornInfo.groupSize = 4
+	popcornInfo.groupSize = CLUSTER_ROCKET_BURST_GROUP_SIZE
 	popcornInfo.hasBase = true
 
 	thread StartClusterExplosions( rocket, owner, popcornInfo, CLUSTER_ROCKET_FX_TABLE )
