@@ -2,7 +2,7 @@ global function Init_Custom_Weapon_Callbacks
 
 #if SERVER
 global function KillTargetThenExplode
-global function DEV_TestLaserCore
+//global function DEV_TestLaserCore
 #endif
 
 void function Init_Custom_Weapon_Callbacks()
@@ -23,6 +23,7 @@ void function Init_Custom_Weapon_Callbacks()
 	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_grenade_emp, Grenade_Emp_Hack )
 	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_car, PushEnt_WhenHit_Callback )
 	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_r97, DetonateOnDeath )
+	AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_vinson, HealAttackerOnKill )
 	//AddDamageCallbackSourceID( eDamageSourceId.mp_weapon_alternator_smg, RefundAmmoOnCrit )
 
 	AddCallback_NPCLeeched( ReaperLeeched )
@@ -202,18 +203,6 @@ void function ReaperLeeched( entity victim, entity attacker )
 {
 	if ( !victim.IsNPC() || victim.GetClassName() != "npc_super_spectre" )
 		return
-	switch ( GameRules_GetGameMode() )
-	{
-		case "fd_easy":
-		case "fd_normal":
-		case "fd_hard":
-		case "fd_master":
-		case "fd_insane":
-		case "fd":
-			attacker.AddToPlayerGameStat( PGS_ASSAULT_SCORE, FD_SCORE_SPECTRE )
-			AddMoneyToPlayer( attacker, 20 )
-
-	}
 	AddReaper( victim )
 	victim.kv.AccuracyMultiplier = 1.0
 	victim.kv.WeaponProficiency = eWeaponProficiency.AVERAGE
@@ -379,10 +368,13 @@ void function RefundAmmoOnCrit( entity target, var damageInfo )
 	int damageType = DamageInfo_GetDamageType( damageInfo )
 	int mask = DF_CRITICAL | DF_HEADSHOT
 	float damage = DamageInfo_GetDamage( damageInfo )
-	printt( ( damageType & ( DF_CRITICAL | DF_HEADSHOT ) ) )
-	printt( ( damageType | DF_CRITICAL | DF_HEADSHOT ) )
-	if( !IsValid( weapon ) || !( damageType | DF_CRITICAL | DF_HEADSHOT ) )
+	printt( IsCriticalHit( DamageInfo_GetAttacker( damageInfo ), target, DamageInfo_GetHitBox( damageInfo ), damage, DamageInfo_GetDamageType( damageInfo ) ) )
+	printt( ( damageType & DF_CRITICAL ) )
+	printt( ( damageType & DF_HEADSHOT ) )
+	printt( ( damageType & DF_CRITICAL | DF_HEADSHOT ) )
+	if( !IsValid( weapon ) || !( damageType & DF_CRITICAL | DF_HEADSHOT ) )
 		return
+	printt( "Refunding ammo for crit" )
 	int maxAmmo = weapon.GetWeaponPrimaryClipCountMax()
 	int currentAmmo = weapon.GetWeaponPrimaryClipCount()
 	int newAmmoCount = currentAmmo + 1
@@ -424,6 +416,41 @@ void function KillTargetThenExplode( entity target, entity attacker, int sourceI
 	Explosion( origin, attacker, attacker, explosionDamage, explosionDamageArmor, innerRad, outerRad, damageFlags, projectileOrigin, force, damageFlags, sourceId, effectTable )
 }
 
+void function HealAttackerOnKill( entity target, var damageInfo )
+{
+	if ( !IsValid( target ) || !IsAlive( target ) )
+		return
+	float damage = DamageInfo_GetDamage( damageInfo )
+	int damageFlags = DamageInfo_GetDamageFlags( damageInfo )
+    int targetHealth = target.GetHealth()
+	int targetMaxHealth = target.GetMaxHealth()
+    if ( ( targetHealth - damage > 0 && targetHealth > 0 ) || target.IsTitan() )
+        return
+
+	int dmgSourceId = DamageInfo_GetDamageSourceIdentifier( damageInfo )
+    entity attacker = DamageInfo_GetAttacker( damageInfo )
+	//target.TakeDamage(damage, attacker, null, { weapon = null, damageSourceId = DamageInfo_GetDamageSourceIdentifier( damageInfo ) })
+	if ( !IsValid( attacker ) || !IsAlive( attacker ) )
+		return
+
+	int healAmount = targetMaxHealth / 2
+	int attackerMaxHealth = attacker.GetMaxHealth()
+	int attackerHealth = attacker.GetHealth()
+	int attackerNewHealth = 0
+	if ( healAmount >= attackerMaxHealth )
+		healAmount = attackerMaxHealth
+
+	if ( attackerHealth + healAmount < attackerMaxHealth )
+		attackerNewHealth = attackerHealth + healAmount
+	else
+		attackerNewHealth = attackerMaxHealth
+
+	attacker.SetHealth( attackerNewHealth )
+	printt( "Healed player for " + healAmount + " health" )
+}
+
+/*
+
 void function DEV_TestLaserCore( )
 {
 	entity basePlayer = GetPlayerArray()[0]
@@ -443,5 +470,5 @@ void function DEV_TestLaserCore( )
 	//entity bullet = weapon.FireWeaponBullet( origin, angles, 1, damageType )
     //testDummy.Destroy()
 }
-
+*/
 #endif
