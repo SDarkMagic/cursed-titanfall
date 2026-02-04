@@ -43,7 +43,7 @@ void function WarnNorthstarBug( entity player, entity titan )
         return
     if ( !SoulHasPassive( soul, ePassives.PAS_NORTHSTAR_FLIGHTCORE) )
         return
-    NSSendAnnouncementMessageToPlayer( player, "Warning", bugWarning, <1,1,0>, 1, 1 )
+    //NSSendAnnouncementMessageToPlayer( player, "Warning", bugWarning, <1,1,0>, 1, 1 )
 }
 
 void function GiveDevSword( entity player, entity titan )

@@ -7,9 +7,17 @@ const DRONE_TIMEOUT = 30.0
 void function Init_Northstar()
 {
     #if SERVER
-    //AddCallback_OnPilotBecomesTitan( CreateChildCloaker )
-    //AddCallback_OnTitanBecomesPilot( CleanupChildCloaker )
-    AddCallback_OnWeaponPrimaryAttack_titanability_smoke( CreateCloakDrone_For_Callback )
+    string aegisEnabled = Code_GetCurrentPlaylistVarOrUseValue( "aegis_upgrades", "0" )
+    if ( aegisEnabled == "1" )
+    {
+        AddCallback_OnPilotBecomesTitan( CreateChildCloaker )
+        AddCallback_OnTitanBecomesPilot( CleanupChildCloaker )
+        printt( "Drones enabled by default" )
+    }
+    else{
+        AddCallback_OnWeaponPrimaryAttack_titanability_smoke( CreateCloakDrone_For_Callback )
+        printt( "Drones require smoke" )
+    }
     #endif
 }
 
@@ -26,25 +34,36 @@ void function ApplyPassiveOnLoadoutUpdate( entity titan, TitanLoadoutDef loadout
 
 void function CreateChildCloaker( entity player, entity titan )
 {
-    if ( !IsValid( titan )  || !IsValid( player ) )
-        return
-    entity soul = player.GetTitanSoul()
-    if ( GetTitanCharacterName( titan ) != "northstar" )
-        return
-    entity drone = SpawnPlayerCloakDrone( titan.GetTeam(), titan.GetOrigin(), titan.GetAngles(), player )
-    SetPlayerCloakedDrone( player, drone )
-    printt(drone)
+    var playerDrone = GetPlayerCloakedDrone( player )
+    if( playerDrone == null )
+    {
+        if ( !IsValid( titan )  || !IsValid( player ) )
+            return
+        if ( GetTitanCharacterName( titan ) != "northstar" )
+            return
+        entity drone = SpawnPlayerCloakDrone( titan.GetTeam(), titan.GetOrigin(), titan.GetAngles(), player )
+        SetPlayerCloakedDrone( player, drone )
+        printt("Creating untimed cloaker drone")
+        PlayerCloakedDrone_WarpIn( drone )
+        thread RespawnDroneAfterDeath( drone, player, titan )
+    }
+
+}
+
+void function RespawnDroneAfterDeath( entity drone, entity player, entity titan )
+{
+    drone.EndSignal( "OnDestroy" )
+
+    drone.WaitSignal( "OnDeath" )
+    wait 10.0
+    if ( !IsAlive( drone ) )
+        CreateChildCloaker( player, titan )
+    return
 }
 
 void function CleanupChildCloaker( entity player, entity titan )
 {
-    if ( !IsValid( titan )  || !IsValid( player ) )
-        return
-    if ( !( "cloakedDrone" in player.s ) )
-        return
-    entity drone = expect entity( GetPlayerCloakedDrone( player ) )
-    if ( IsValid( drone ) )
-        drone.Destroy()
+    thread KillChildCloaker( player )
 }
 
 void function CreateCloakDrone_For_Callback( entity weapon, WeaponPrimaryAttackParams attackParams )
@@ -73,7 +92,6 @@ void function CreateChildCloaker_Timed( entity player, entity titan, float timeo
             return
         entity drone = SpawnPlayerCloakDrone( titan.GetTeam(), titan.GetOrigin(), titan.GetAngles(), player )
         SetPlayerCloakedDrone( player, drone )
-        printt(drone)
         printt("Creating timed cloaker drone")
         PlayerCloakedDrone_WarpIn( drone )
     }

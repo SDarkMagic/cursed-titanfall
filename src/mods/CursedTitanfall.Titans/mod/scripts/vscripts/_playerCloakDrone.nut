@@ -136,6 +136,8 @@ void function CloakedDroneWarpOut( entity cloakedDrone, vector origin )
 		UntrackAllToneMarks( cloakedDrone )
 
 		wait 0.3	// wait a bit before hidding the done so that the fx looks better
+		if ( !IsValid(cloakedDrone) )
+			return // Recheck entity validity in case it died somewhere in this process
 		cloakedDrone.Hide()
 	}
 
