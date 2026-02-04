@@ -31,7 +31,7 @@
         },
         {
             "Path": "_ronin.nut",
-            "RunOn": "MP",
+            "RunOn": "(MP || SP) && SERVER",
             "ServerCallback": {
                 "After": "Init_Ronin"
             }
@@ -51,15 +51,15 @@
             }
         },
         {
-            "Path": "_legion_ammo_absorb.nut",
+            "Path": "_legion.nut",
             "RunOn": "MP && SERVER",
             "ServerCallback": {
-                "After": "Init_LegionAmmoAbsorber"
+                "After": "Init_Legion"
             }
         },
         {
             "Path": "_tone.nut",
-            "RunOn": "MP && SERVER",
+            "RunOn": "(MP) && SERVER",
             "ServerCallback": {
                 "After": "Init_Tone"
             }
@@ -80,14 +80,14 @@
         },
         {
             "Path": "_scorch.nut",
-            "RunOn": "MP && SERVER",
+            "RunOn": "(MP || SP) && SERVER",
             "ServerCallback": {
                 "After": "Init_Scorch"
             }
         },
         {
             "Path":"_ion.nut",
-            "RunOn": "MP && SERVER",
+            "RunOn": "(MP || SP) && SERVER",
             "ServerCallback": {
                 "After": "Init_Ion"
             }
