@@ -1,0 +1,5 @@
+WeaponData
+{
+    "OnWeaponActivate"                                "OnWeaponActivate_weapon_autopistol"
+    "OnWeaponDeactivate"                              "OnWeaponDeactivate_weapon_autopistol"
+}
