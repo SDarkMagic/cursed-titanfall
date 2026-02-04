@@ -1,4 +1,12 @@
-globalize_all_functions
+global function Init_CursedUtil
+
+#if SERVER
+global function PlayerEMPTitanThinkConstant
+global function ProjectileEMPFieldThinkConstant
+global function GetEMPAttachmentForTitan
+global function GetEMPAttachmentForProjectile
+global function IsPlayerAdmin
+#endif
 
 const DAMAGE_AGAINST_TITANS 			= 150
 const DAMAGE_AGAINST_PILOTS 			= 40
