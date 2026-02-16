@@ -9,46 +9,46 @@
     [
         {
             "Path": "weapons/mp_weapon_esaw.nut",
-            "RunOn": "(CLIENT || SERVER) && MP",
+            "RunOn": "(CLIENT || SERVER) && (MP || SP)",
             "ServerCallback": {
                 "Before": "MpWeaponEsaw_Init"
             }
         },
         {
             "Path": "weapons/mp_weapon_hemlok_smg.nut",
-            "RunOn": "(CLIENT || SERVER) && MP",
+            "RunOn": "(CLIENT || SERVER) && (MP || SP)",
             "ServerCallback": {
                 "Before": "MpWeaponHemlokSmg_Init"
             }
         },
         {
             "Path": "_weapon_callbacks.nut",
-            "RunOn": "MP",
+            "RunOn": "MP || SP",
             "ServerCallback": {
                 "Before": "Init_Custom_Weapon_Callbacks"
             }
         },
         {
             "Path": "_spitfire_projectile_callback.nut",
-            "RunOn": "MP",
+            "RunOn": "MP || SP",
             "ServerCallback": {
                 "Before": "Init_SpitfireProjectileCollison_Callback"
             }
         },
         {
             "Path": "_team_theft.nut",
-            "RunOn": "SERVER && MP"
+            "RunOn": "SERVER && (MP || SP)"
         },
         {
             "Path": "grav_field.nut",
-            "RunOn": "MP",
+            "RunOn": "MP || SP",
             "ServerCallback": {
                 "Before": "GravField_Init"
             }
         },
         {
             "Path": "sh_fire_functions.nut",
-            "RunOn": "MP"
+            "RunOn": "MP || SP"
         },
         {
             "Path": "sh_graviton_lance.nut",
@@ -62,14 +62,14 @@
         },
         {
             "Path": "_rodeo_gives_turret.nut",
-            "RunOn": "SERVER && MP",
+            "RunOn": "SERVER && (MP || SP)",
             "ServerCallback": {
                 "After": "Init_RodeoWeaponSwap"
             }
         },
         {
             "Path": "sh_frag_events.nut",
-            "RunOn": "(CLIENT || SERVER) && MP",
+            "RunOn": "(CLIENT || SERVER) && (SP || MP)",
             "ServerCallback": {
                 "After": "FragEvents_Init"
             },
@@ -79,16 +79,23 @@
         },
         {
             "Path": "_pistol_gambling.nut",
-            "RunOn": "SERVER && MP",
+            "RunOn": "SERVER && (MP || SP)",
             "ServerCallback": {
                 "Before": "Init_Pistol_Gambling_Callbacks"
             }
         },
         {
             "Path": "_weapon_factory.nut",
-            "RunOn": "SERVER && MP",
+            "RunOn": "SERVER && (MP || SP)",
             "ServerCallback": {
                 "Before": "Init_WeaponGenerators"
+            }
+        },
+        {
+            "Path": "weapons/mp_weapon_autopistol.nut",
+            "RunOn": "(CLIENT || SERVER) && (MP || SP)",
+            "ServerCallback": {
+                "Before": "MpWeaponAutpistol_Init"
             }
         }
     ],
