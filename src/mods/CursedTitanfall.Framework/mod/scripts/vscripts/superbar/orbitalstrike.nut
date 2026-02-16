@@ -6,6 +6,7 @@ global function Orbitalstrike_Init
 
 global function OrbitalStrike
 global function CalculateStrikeDelay
+global function OrbitalStrike_Laser
 
 const STRIKE_MODEL = $"models/containers/can_red_soda.mdl"
 const ROCKET_START_HEIGHT = 6000
@@ -14,6 +15,19 @@ const LASER_TIME_LENGTH = 7 // Must match charge length in the weapon
 const LASER_DAMAGE = 300
 const LASER_DAMAGE_RADIUS = 300
 const SPAWN_DELAY = 0.2
+
+const FX_LASERCANNON_AIM = $"P_wpn_lasercannon_aim"
+const FX_LASERCANNON_CORE = $"P_lasercannon_core"
+const FX_LASERCANNON = $"P_wpn_lasercannon"
+const FX_LASERCANNON_MUZZLEFLASH = $"P_handlaser_charge"
+
+const LASER_MODEL = $"models/weapons/empty_handed/w_laser_cannon.mdl"
+
+#if SP
+const LASER_FIRE_SOUND_1P = "Titan_Core_Laser_FireBeam_1P_extended"
+#else
+const LASER_FIRE_SOUND_1P = "Titan_Core_Laser_FireBeam_1P"
+#endif
 
 const string STRIKE_CLASSNAME = "mp_titanweapon_orbital_strike"
 const string STRIKE_IMPACT_TABLE = "40mm_splasher_rounds"
@@ -26,6 +40,13 @@ table file =
 
 function Orbitalstrike_Init()
 {
+	PrecacheParticleSystem( FX_LASERCANNON_AIM )
+	PrecacheParticleSystem( FX_LASERCANNON_CORE )
+	PrecacheParticleSystem( FX_LASERCANNON_MUZZLEFLASH )
+	PrecacheParticleSystem( FX_LASERCANNON )
+
+	PrecacheModel( LASER_MODEL )
+
 	PrecacheParticleSystem( $"ar_rocket_strike_small_friend" )
 	PrecacheParticleSystem( $"ar_rocket_strike_small_foe" )
 	PrecacheParticleSystem( $"ar_rocket_strike_large_friend" )
@@ -178,4 +199,89 @@ entity function SpawnRocket( vector spawnPos, vector spawnAng, entity owner, int
 	rocket.SetVelocity( < 0,0,-12000 > )
 
 	return rocket
+}
+
+function OrbitalStrike_Laser( entity player, vector targetPos, RadiusDamageData radiusDamage, int damageSourceId = eDamageSourceId.mp_titanweapon_orbital_strike, float duration = 5.0, float delay = 1.0 )
+{
+	int team = player.GetTeam()
+	CreateNoSpawnArea( TEAM_INVALID, TEAM_INVALID, targetPos, duration, radiusDamage.explosionRadius )
+
+	vector origin = GetRocketSpawnOrigin( targetPos )
+
+	entity beam = CreatePropDynamic( LASER_MODEL )
+	beam.SetOrigin( origin )
+	beam.SetAngles( < 90, 0, 0 > )
+#if SERVER
+
+	PlayFXOnEntity( FX_LASERCANNON_AIM, beam, "muzzle_flash", null, null, 6 )
+	PlayFXOnEntity( FX_LASERCANNON_AIM, beam, "laser_canon_1", null, null, 6 )
+	PlayFXOnEntity( FX_LASERCANNON_AIM, beam, "laser_canon_2", null, null, 6 )
+	PlayFXOnEntity( FX_LASERCANNON_AIM, beam, "laser_canon_3", null, null, 6 )
+	PlayFXOnEntity( FX_LASERCANNON_AIM, beam, "laser_canon_4", null, null, 6 )
+
+	beam.Anim_Play( "charge_seq" )
+
+#endif // #if SERVER
+	entity inflictor = CreateEntity( "script_ref" )
+	inflictor.SetOrigin( targetPos )
+	inflictor.kv.spawnflags = SF_INFOTARGET_ALWAYS_TRANSMIT_TO_CLIENT
+	DispatchSpawn( inflictor )
+
+	EmitSoundOnEntity( inflictor, "Titan_Core_Laser_ChargeUp_3P" )
+
+	wait delay
+
+#if SERVER
+	beam.Hide()
+	entity effect = PlayFXOnEntity( FX_LASERCANNON, beam, "", null, null, 6, null )
+	EffectSetControlPointVector( effect, 1, inflictor.GetOrigin() )
+	thread CreateDamageArea( player, inflictor, targetPos, radiusDamage, damageSourceId )
+	wait duration
+
+	inflictor.Signal( "CoreEnd" )
+	beam.Destroy()
+#endif
+}
+
+function CreateDamageArea( entity player, entity inflictor, vector origin, RadiusDamageData radiusDamage, int damageSourceId )
+{
+	inflictor.EndSignal( "CoreEnd" )
+
+	int normalDamage = radiusDamage.explosionDamage
+	int titanDamage = radiusDamage.explosionDamageHeavyArmor
+	float innerRadius = radiusDamage.explosionInnerRadius
+	float outerRadius = radiusDamage.explosionRadius
+
+	EmitSoundOnEntity( inflictor, "Titan_Core_Laser_FireStart_3P" )
+	EmitSoundOnEntity( inflictor, "Titan_Core_Laser_FireBeam_3P" )
+
+
+	OnThreadEnd( function() : ( inflictor ) {
+			if ( IsValid( inflictor ) )
+			{
+				inflictor.Destroy()
+			}
+		}
+	)
+
+	while( true )
+	{
+		printt( "Dealing Radius damage at ", Time() )
+		RadiusDamage(
+			origin,												// origin
+			player,												// owner
+			inflictor,		 									// inflictor
+			normalDamage,										// normal damage
+			titanDamage,										// heavy armor damage
+			innerRadius,										// inner radius
+			outerRadius,										// outer radius
+			SF_ENVEXPLOSION_NO_DAMAGEOWNER,					// explosion flags
+			0, 													// distanceFromAttacker
+			0, 													// explosionForce
+			DF_ELECTRICAL,													// damage flags
+			damageSourceId								// damage source id
+		)
+		WaitFrame()
+	}
+
 }
