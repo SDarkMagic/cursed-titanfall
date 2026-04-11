@@ -505,17 +505,22 @@ entity function CreateBossTitan_Generic( BossData boss, vector origin, vector an
 
     printt("Connected outputs")
     npc.SetDangerousAreaReactionTime( 0 )
-
     file.bossEnts[ boss.name ] <- npc
-    //RegisterBossTitan( npc )
-
-    printt("Finished titan setup")
-    string introLine = boss.diag.intro
-    PlayBossCommsForAllPlayers( boss.diag.intro )
-    PlayMusic( boss.theme )
     WarnAllPlayers_BossMechanics()
-    printt("Succesfully dropped titan")
+    printt("Finished titan setup")
+    thread BossTitan_FightIntro( npc, boss )
+    PlayMusic( boss.theme, GetOtherTeam( team ) )
     return npc
+}
+
+void function BossTitan_FightIntro( entity titan, BossData boss )
+{
+    if ( !IsValid( titan ) )
+        return
+    int team = titan.GetTeam()
+    WaitTillHotDropComplete( titan )
+    PlayBossCommsForAllPlayers( boss.diag.intro, GetOtherTeam( team ) )
+    printt("Succesfully dropped boss titan and played intro")
 }
 
 void function BossTitan_TakesDamage_StageHandler( entity titan, var damageInfo )
@@ -542,7 +547,7 @@ void function BossTitan_TakesDamage_StageHandler( entity titan, var damageInfo )
         DamageInfo_SetDamage( damageInfo, 0 )
         titan.SetHealth( 2500 )
         titan.SetDefaultSchedule( "SCHED_BACK_AWAY_FROM_ENEMY" )
-        PlayBossCommsForAllPlayers( comm )
+        PlayBossCommsForAllPlayers( comm, GetOtherTeam( titan.GetTeam() ) )
         // Do health regen stuff here
         file.bosses[ bossName ].stageTracker.currentStage++
         thread ResetBossHealth( titan )
@@ -566,15 +571,16 @@ void function ResetBossHealth( entity boss )
 
     if ( stageInfo.currentStage >= stageInfo.maxStages )
     {
+        boss.ai.nukeCore = 0 // Re-enable the elite titan logic for nuke eject when doomed (Change this later so it only does this for Richter. Other bosses won't nuke eject)
         boss.SetHealth( boss.GetMaxHealth() )
         boss.ClearInvulnerable()
-        soul.EnableDoomed()
+        //soul.EnableDoomed()
         return
         //titan.SetMaxHealth( 5000 )
     }
     //if ( boss.ContextAction_IsActive() || boss.ContextAction_IsActive() )
     //    boss.ContextAction_ClearBusy()
-    StopMusicTrack( bossTheme, regenTime )
+    StopMusicTrack( bossTheme, regenTime, GetOtherTeam( boss.GetTeam() ) )
     //SetStanceKneel( boss.GetTitanSoul() )
     UndoomBossTitan( boss )
     while ( currentHealth < maxHealth)
@@ -592,8 +598,8 @@ void function ResetBossHealth( entity boss )
     boss.SetHealth( boss.GetMaxHealth() )
     boss.ClearInvulnerable()
     //TitanCanStand( boss )
-    PlayBossCommsForAllPlayers( comm )
-    PlayMusic( bossTheme )
+    PlayBossCommsForAllPlayers( comm, GetOtherTeam( boss.GetTeam() ) )
+    PlayMusic( bossTheme, GetOtherTeam( boss.GetTeam() ) )
     boss.SetDefaultSchedule( "SCHED_COMBAT_WALK" )
     return
 }
@@ -629,8 +635,8 @@ void function BossChangedTarget( entity trigger, entity activator, entity caller
         return
     printt("Boss target changed; ", trigger, activator, caller, value)
     array<string> targetLines = file.bosses[ trigger.GetScriptName() ].diag.changeTarget
-    string line = targetLines[ RandomInt( targetLines.len() - 1 ) ]
-    if ( RandomInt( 100 ) > 70 )
+    string line = targetLines[ RandomInt( targetLines.len() ) ]
+    if ( RandomInt( 100 ) > 75 ) // 25% chance to play a voiceline when changing target to a different player
         EmitSoundOnEntityOnlyToPlayer( value, value, line )
 }
 
@@ -650,16 +656,16 @@ void function SetBossTitanPostSpawn( entity npc, BossData bossData )
 		npc.SetDefaultSchedule( "SCHED_COMBAT_WALK" )
 		npc.kv.AccuracyMultiplier = 5.0
 		npc.kv.WeaponProficiency = eWeaponProficiency.PERFECT
+        npc.ai.nukeCore = 1 // Register one nuke explosion to try and circumvent the elite titan logic to auto nuke eject since bosses have multiple phases
 		npc.SetTargetInfoIcon( GetTitanCoreIcon( GetTitanCharacterName( npc ) ) )
 		npc.AssaultSetFightRadius( 2000 )
 		npc.SetEngagementDistVsWeak( 0, 800 )
 		npc.SetEngagementDistVsStrong( 0, 800 )
 		SetTitanWeaponSkin( npc )
-        //Rodeo_Disallow( npc )
+        HideCrit( npc )
+		npc.SetTitle( bossData.title )
         npc.SetSkin( bossData.skinIndex )
         npc.SetDecal( bossData.decalIndex )
-		HideCrit( npc )
-		npc.SetTitle( bossData.title )
 		ShowName( npc )
 
 		entity soul = npc.GetTitanSoul()
@@ -675,6 +681,8 @@ void function SetBossTitanPostSpawn( entity npc, BossData bossData )
 			return
 		else
 			thread MonitorBossTitanCore( npc )
+        if ( GetTitanCharacterName( npc ) == "northstar" )
+            thread MonitorViperHover( npc )
 	}
 }
 
@@ -701,28 +709,33 @@ void function MonitorBossTitanCore( entity npc )
 		soul.SetShieldHealth( soul.GetShieldHealthMax() / 2 )
 
 
-        voiceLine = coreLines[ RandomInt( coreLines.len() - 1 ) ]
+        voiceLine = coreLines[ RandomInt( coreLines.len() ) ]
         PlayBossCommsForAllPlayers( voiceLine )
+        if ( GetTitanCharacterName( npc ) == "northstar" )
+            EmitSoundOnEntity( npc, "northstar_rocket_warning" )
 
 		entity meleeWeapon = npc.GetMeleeWeapon()
 		if( meleeWeapon.HasMod( "super_charged" ) || meleeWeapon.HasMod( "super_charged_SP" ) ) //Hack for Elite Ronin
 			npc.SetAISettings( "npc_titan_stryder_leadwall_shift_core_elite" )
 
 		npc.WaitSignal( "CoreEnd" )
-
-		switch ( difficultyLevel )
-		{
-			case eFDDifficultyLevel.EASY:
-			case eFDDifficultyLevel.NORMAL:
-			case eFDDifficultyLevel.HARD:
-				wait RandomFloatRange( 20.0, 40.0 )
-				break
-			case eFDDifficultyLevel.MASTER:
-			case eFDDifficultyLevel.INSANE:
-				wait RandomFloatRange( 40.0, 60.0 )
-				break
-		}
+		wait RandomFloatRange( 30.0, 50.0 )
 	}
+}
+
+void function MonitorViperHover( entity npc )
+{
+    Assert( IsValid( npc ) && npc.IsTitan(), "Entity is not a valid titan: " + npc )
+    entity hover = npc.GetOffhandWeapon( OFFHAND_ANTIRODEO )
+    entity soul = npc.GetTitanSoul()
+	if ( !IsValid( soul ) )
+		return
+
+	soul.EndSignal( "OnDestroy" )
+	soul.EndSignal( "OnDeath" )
+
+    //hover.WaitSignal( "Fire" )
+    //printt( "Hover activated" )
 }
 
 /*

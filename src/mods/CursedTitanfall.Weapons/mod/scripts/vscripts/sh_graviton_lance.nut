@@ -134,7 +134,7 @@ void function GravitonHitTarget( entity target, var damageInfo )
     entity weapon = DamageInfo_GetWeapon( damageInfo )
 	vector projectileOrigin = attacker.GetOrigin()
 	//target.TakeDamage( damage, attacker, attacker, { damageSourceId = DamageInfo_GetDamageSourceIdentifier( damageInfo ) } )
-    Explosion( origin, attacker, attacker, damage, damage, DETONATION_RAD_INNER, DETONATION_RAD_OUTER, damageFlags, projectileOrigin, DETONATION_IMPULSE_FORCE, damageFlags, DAMAGE_SOURCEID, "exp_emp" )
+    Explosion( origin, attacker, attacker, damage, damage, DETONATION_RAD_INNER, DETONATION_RAD_OUTER, damageFlags, projectileOrigin, DETONATION_IMPULSE_FORCE, damageFlags, eDamageSourceId.mp_weapon_autopistol, "exp_emp" )
 
     if ( !IsValid( weapon ) )
         return

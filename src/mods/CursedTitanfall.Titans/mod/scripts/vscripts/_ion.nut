@@ -7,6 +7,7 @@ void function Init_Ion()
     AddCallback_OnPilotBecomesTitan( Apply_IonEnergyAbsorber )
     AddCallback_OnTitanBecomesPilot( Cleanup_IonEnergyAbsorber )
     AddDamageCallbackSourceID( eDamageSourceId.mp_titanweapon_particle_accelerator, RechargeEnergy_OnHit )
+    AddDamageCallbackSourceID( eDamageSourceId.mp_titanweapon_laser_lite, RefundEnergy_OnCrit )
     #endif
 }
 
@@ -38,6 +39,7 @@ void function Cleanup_IonEnergyAbsorber( entity player, entity titan )
 
 void function FilterEnergyDamage( entity titan, var damageInfo )
 {
+    // TODO: This entire function might be broken?
     int damageSourceId = DamageInfo_GetDamageSourceIdentifier( damageInfo )
     int damageFlags = DamageInfo_GetDamageFlags( damageInfo )
     int damageType = DamageInfo_GetDamageType( damageInfo )
@@ -72,11 +74,38 @@ void function FilterEnergyDamage( entity titan, var damageInfo )
     }
     if ( absorbDamage )
     {
+        printt( "absorbing damage" )
         float damage = DamageInfo_GetDamage( damageInfo )
         titan.AddSharedEnergy( int( damage / 10 ) )
         DamageInfo_ScaleDamage( damageInfo, 0.4 )
     }
 
+}
+
+void function RefundEnergy_OnCrit( entity target, var damageInfo )
+{
+    entity attacker = DamageInfo_GetAttacker( damageInfo )
+
+	if ( !IsValid( attacker ) )
+		return
+
+    if ( !IsCriticalHit( attacker, target, DamageInfo_GetHitBox( damageInfo ), DamageInfo_GetDamage( damageInfo ), DamageInfo_GetDamageType( damageInfo ) ) )
+        return
+
+	if ( attacker.GetTeam() == target.GetTeam() )
+		return
+
+	entity soul = attacker.GetTitanSoul()
+	if ( !IsValid( soul ) )
+		return
+
+    entity weapon = DamageInfo_GetWeapon( damageInfo )
+    if( !IsValid( weapon ) )
+        return
+
+    int cost = weapon.GetWeaponCurrentEnergyCost()
+    int refundAmount = cost / 2
+    attacker.AddSharedEnergy(  refundAmount  )
 }
 
 void function RechargeEnergy_OnHit( entity target, var damageInfo )
@@ -102,6 +131,8 @@ void function RechargeEnergy_OnHit( entity target, var damageInfo )
 	if ( !IsValid( soul ) )
 		return
     float damage = DamageInfo_GetDamage( damageInfo )
+    if ( damage <= 0 )
+        return
     attacker.AddSharedEnergy( int ( damage / 20 ) )
 }
 #endif
