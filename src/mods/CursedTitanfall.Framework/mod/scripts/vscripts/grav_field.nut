@@ -1,6 +1,7 @@
 global function GravField_Init
 #if SERVER
 global function CreateGravFieldOnEnt
+global function CreateGravFieldAtPos
 #endif
 
 const float MAX_WAIT_TIME = 6.0
@@ -82,7 +83,6 @@ void function CreateGravFieldOnEnt( entity projectile, GravFieldParams params )
 	projectile.EndSignal( "OnDestroy" )
 	WaitFrame()
 	array<entity> nearbyEnemies
-	vector pullPosition = projectile.GetOrigin()
 
 	EmitSoundOnEntity( projectile, "default_gravitystar_impact_3p" )
 	entity FX = StartParticleEffectOnEntity_ReturnEntity( projectile, GetParticleSystemIndex( GRAVITY_VORTEX_FX ), FX_PATTACH_ABSORIGIN_FOLLOW, -1 )
@@ -101,14 +101,49 @@ void function CreateGravFieldOnEnt( entity projectile, GravFieldParams params )
     AI_CreateDangerousArea( projectile, projectile, params.pull_range * 2.0, TEAM_INVALID, true, false )
     while ( true )
     {
-		nearbyEnemies = GetNearbyEnemiesForGravGrenade( projectile, params )
+		nearbyEnemies = GetNearbyEnemiesForGravGrenade_FromPosition( projectile.GetOrigin(), params )
+		entity owner = projectile.GetOwner()
+		if ( params.pull_owner == true && IsValid( owner ) )
+			nearbyEnemies.append( owner )
+
 		foreach ( enemy in nearbyEnemies )
 		{
 			Proto_SetEnemyVelocity_Pull( enemy, projectile.GetOrigin(), params )
 		}
-        pullPosition = projectile.GetOrigin()
         WaitFrame()
     }
+}
+
+void function CreateGravFieldAtPos( vector pos, GravFieldParams params )
+{
+	float end_time = Time() + params.duration
+	array<entity> nearbyEnemies
+
+	EmitSoundAtPosition( TEAM_UNASSIGNED, pos, "default_gravitystar_impact_3p" )
+	entity FX = StartParticleEffectInWorld_ReturnEntity( GetParticleSystemIndex( GRAVITY_VORTEX_FX ), pos, < 0, 0, 0 > )
+    //	EmitSoundOnEntity( projectile, "gravitystar_vortex" )
+
+	OnThreadEnd(
+		function() : ( FX )
+			{
+				if ( IsValid( FX ) )
+					EntFireByHandle( FX, "kill", "", FX_END_CAP_TIME, null, null )
+			}
+	)
+
+	EmitSoundAtPosition( TEAM_UNASSIGNED, pos, "weapon_gravitystar_preexplo" )
+    // AI_CreateDangerousArea( projectile, projectile, params.pull_range * 2.0, TEAM_INVALID, true, false ) // This requires a lifetime ent to work, which is specifically being excluded from this function. Ideally we would create a dummy ent at the position in the world that expires at the end of the duration and use it as a handle for everything in this function
+    while ( Time() <= end_time )
+    {
+		nearbyEnemies = GetNearbyEnemiesForGravGrenade_FromPosition( pos, params )
+		foreach ( enemy in nearbyEnemies )
+		{
+			Proto_SetEnemyVelocity_Pull( enemy, pos, params )
+		}
+        WaitFrame()
+    }
+
+
 }
 
 void function OnGravGrenadeTrigEnter( entity trigger, entity ent )
@@ -162,16 +197,11 @@ void function Proto_SetEnemyVelocity_Pull( entity enemy, vector projOrigin, Grav
 	enemy.SetVelocity( newVelocity )
 }
 
-array<entity> function GetNearbyEnemiesForGravGrenade( entity projectile, GravFieldParams params )
+array<entity> function GetNearbyEnemiesForGravGrenade_FromPosition( vector origin, GravFieldParams params )
 {
-	int team = projectile.GetTeam()
-	entity owner = projectile.GetOwner()
-	vector origin = projectile.GetOrigin()
+	int team = params.team
 	array<entity> nearbyEnemies
 	array<entity> guys = GetPlayerArrayEx( "any", TEAM_ANY, TEAM_ANY, origin, params.pull_range )
-
-	if ( params.pull_owner == true && IsValid( owner ) )
-		nearbyEnemies.append( owner )
 
 	foreach ( guy in guys )
 	{

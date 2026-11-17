@@ -1,5 +1,7 @@
 global function OnWeaponPrimaryAttack_weapon_arc_launcher
 const ARC_LAUNCHER_ZAP_DAMAGE = 350
+const float PULL_RANGE = 250.0
+const float PULL_STRENGTH_MAX = 500.0
 
 var function OnWeaponPrimaryAttack_weapon_arc_launcher( entity weapon, WeaponPrimaryAttackParams attackParams )
 {
@@ -37,7 +39,14 @@ var function OnWeaponPrimaryAttack_weapon_arc_launcher( entity weapon, WeaponPri
 	entity arcBall = FireArcBall( weapon, attackPos, attackDir, shouldPredict, ARC_LAUNCHER_ZAP_DAMAGE )
 	#if SERVER
 	//thread ProjectileEMPFieldThinkConstant( arcBall )
-	thread CreateGravFieldOnEnt( arcBall )
+	GravFieldParams params
+	params.pull_range = PULL_RANGE
+	params.pull_strength_max = PULL_STRENGTH_MAX
+	array<string> mods = weapon.GetMods()
+	if ( mods.find( "pro_screen" ) >= 0 )
+		params.pull_owner = true
+
+	thread CreateGravFieldOnEnt( arcBall, params )
 	#endif
 	weapon.EmitWeaponSound_1p3p( "Weapon_ArcLauncher_Fire_1P", "Weapon_ArcLauncher_Fire_3P" )
 	weapon.EmitWeaponNpcSound( LOUD_WEAPON_AI_SOUND_RADIUS_MP, 0.2 )
