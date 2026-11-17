@@ -67,7 +67,7 @@ void function Enable_NuclearGravField( entity player, entity titan )
     entity soul = player.GetTitanSoul()
     if ( !IsValid( soul ) )
         return
-    if ( GetSoulTitanSubClass( soul ) != "ogre" )
+    if ( GetSoulTitanSubClass( soul ) != "ogre" && !SoulHasPassive( soul, ePassives.PAS_RONIN_AUTOSHIFT ) )
         return // Only run continue if the player is not running scorch or legion
     if ( !( GetNuclearPayload( player ) > 0 ) )
         return // Make sure the player is also running nuclear payload

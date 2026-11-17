@@ -5,8 +5,8 @@ WeaponData
     {
         guarantee_wipe
         {
-            "ammo_default_total"							         "3"
-		      "ammo_stockpile_max"							         "5"
+            "ammo_default_total"							         "2"
+		    "ammo_stockpile_max"							         "3"
             "ammo_no_remove_from_stockpile"                 "0"
         }
     }
