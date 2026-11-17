@@ -1,7 +1,7 @@
 global function Init_Scorch
 
 const asset DAMAGE_AREA_MODEL = $"models/fx/xo_shield.mdl"
-const float SLOW_TRAP_RADIUS = 440
+const float SLOW_TRAP_RADIUS = 660
 const asset TOXIC_FUMES_FX 	= $"P_meteor_trap_gas"
 const asset TOXIC_FUMES_S2S_FX 	= $"P_meteor_trap_gas_s2s"
 const asset FIRE_CENTER_FX = $"P_meteor_trap_center"
@@ -66,7 +66,13 @@ void function WaitUndoom( entity titan, int cells )
             break
         }
     }
+	float wait_duration = FLAME_WALL_THERMITE_DURATION
+	if ( GAMETYPE == GAMEMODE_SP )
+		wait_duration *= SP_FLAME_WALL_DURATION_SCALE
+
+	wait_duration += 0.5
     soul.SetShieldHealth( soul.GetShieldHealthMax() )
+	wait wait_duration
     titan.ClearInvulnerable()
 }
 

@@ -3,6 +3,7 @@ untyped
 global function Init_Northstar
 
 const DRONE_TIMEOUT = 30.0
+const DRONE_RESPAWN_DELAY = 10.0
 
 void function Init_Northstar()
 {
@@ -35,9 +36,14 @@ void function ApplyPassiveOnLoadoutUpdate( entity titan, TitanLoadoutDef loadout
 void function CreateChildCloaker( entity player, entity titan )
 {
     var playerDrone = GetPlayerCloakedDrone( player )
-    if( playerDrone == null )
+    if( playerDrone != null )
     {
-        if ( !IsValid( titan )  || !IsValid( player ) )
+        entity drone = expect entity( playerDrone )
+        if  ( IsAlive( drone ) && IsValid( drone ) )
+            return
+    }
+
+    if ( !IsValid( titan )  || !IsValid( player ) )
             return
         if ( GetTitanCharacterName( titan ) != "northstar" )
             return
@@ -46,8 +52,6 @@ void function CreateChildCloaker( entity player, entity titan )
         printt("Creating untimed cloaker drone")
         PlayerCloakedDrone_WarpIn( drone )
         thread RespawnDroneAfterDeath( drone, player, titan )
-    }
-
 }
 
 void function RespawnDroneAfterDeath( entity drone, entity player, entity titan )
@@ -55,9 +59,11 @@ void function RespawnDroneAfterDeath( entity drone, entity player, entity titan 
     drone.EndSignal( "OnDestroy" )
 
     drone.WaitSignal( "OnDeath" )
-    wait 10.0
+    player.s.cloakedDrone = null
+    wait DRONE_RESPAWN_DELAY
     if ( !IsAlive( drone ) )
         CreateChildCloaker( player, titan )
+        drone.Destroy()
     return
 }
 
@@ -113,12 +119,10 @@ void function KillChildCloaker( entity player )
         return
 
     entity drone = expect entity( GetPlayerCloakedDrone( player ) )
-    if( !IsAlive( drone ) || !IsValid( drone ) )
-        return
-    PlayerCloakedDrone_WarpOut( drone )
-    if( !IsAlive( drone ) || !IsValid( drone ) )
-        return // Drone can be killed during the warpout sequence
-    drone.Destroy()
+    if( IsAlive( drone ) && IsValid( drone ) )
+        PlayerCloakedDrone_WarpOut( drone )
+    if( IsAlive( drone ) && IsValid( drone ) )
+        drone.Destroy() // Drone can be killed during the warpout sequence
     player.s.cloakedDrone = null
 }
 

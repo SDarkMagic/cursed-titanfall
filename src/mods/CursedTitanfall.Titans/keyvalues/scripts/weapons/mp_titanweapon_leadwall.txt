@@ -1,0 +1,13 @@
+WeaponData
+{
+    Mods
+    {
+        pas_ronin_weapon
+		{
+			"fire_mode"   									"auto"
+            "fire_rate"   									"3.5"
+            "projectile_ricochet_max_count"					"2"
+            "ammo_clip_size"   								"8"
+		}
+    }
+}

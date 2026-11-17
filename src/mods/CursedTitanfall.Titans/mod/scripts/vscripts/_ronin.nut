@@ -138,6 +138,8 @@ void function ForceTermination( entity player, entity target )
     string targetScriptName = target.GetScriptName()
     float coreChargeFrac = SoulTitanCore_GetNextAvailableTime( soul )
     float coreChargePerCell = 0.1
+    if ( target.IsPlayer() )
+        coreChargePerCell *= 2
     int targetHealth = target.GetHealth()
     float cellCount = float( targetHealth / 2500 )
     // Round the number of cells the target has remaing for health to determine how much core to drain from the user

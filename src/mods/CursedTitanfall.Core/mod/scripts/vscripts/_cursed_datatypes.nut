@@ -10,5 +10,7 @@ global struct ProjectileCollisionParams {
 global struct GravFieldParams {
     float pull_range
     float pull_strength_max
+    int team
+    float duration = -1.0
     bool pull_owner = false
 }
