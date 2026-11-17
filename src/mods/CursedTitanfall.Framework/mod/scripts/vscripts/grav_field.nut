@@ -8,8 +8,9 @@ const float POP_DELAY = 0.8
 const float PULL_DELAY = 2.0
 const float PUSH_DELAY = 0.2
 const float POP_HEIGHT = 60
-const float PULL_RANGE = 250.0
-const float PULL_STRENGTH_MAX = 500.0
+// Following two consts got abstracted out into GravFieldParams struct fields
+//const float PULL_RANGE = 250.0
+//const float PULL_STRENGTH_MAX = 500.0
 const float PULL_VERT_VEL = 220
 const float PUSH_STRENGTH_MAX = 125.0
 const float EXPLOSION_DELAY = 0.1
@@ -47,14 +48,16 @@ void function SetGravityGrenadeTriggerFilters( entity gravityMine, entity trig )
 	trig.kv.triggerFilterNonCharacter = "0"
 }
 
-bool function GravityGrenadeTriggerThink( entity gravityMine )
+bool function GravityGrenadeTriggerThink( entity gravityMine, GravFieldParams params )
 {
 	// EmitSoundOnEntity( gravityMine, "SonarGrenade_On" )
 
+	float pull_range = params.pull_range
+
 	entity trig = CreateEntity( "trigger_cylinder" )
-	trig.SetRadius( PULL_RANGE )
-	trig.SetAboveHeight( PULL_RANGE )
-	trig.SetBelowHeight( PULL_RANGE )
+	trig.SetRadius( pull_range )
+	trig.SetAboveHeight( pull_range )
+	trig.SetBelowHeight( pull_range )
 	trig.SetAbsOrigin( gravityMine.GetOrigin() )
 
 	SetGravityGrenadeTriggerFilters( gravityMine, trig )
@@ -74,7 +77,7 @@ bool function GravityGrenadeTriggerThink( entity gravityMine )
 	return trig.IsTouched()
 }
 
-void function CreateGravFieldOnEnt( entity projectile )
+void function CreateGravFieldOnEnt( entity projectile, GravFieldParams params )
 {
 	projectile.EndSignal( "OnDestroy" )
 	WaitFrame()
@@ -84,11 +87,6 @@ void function CreateGravFieldOnEnt( entity projectile )
 	EmitSoundOnEntity( projectile, "default_gravitystar_impact_3p" )
 	entity FX = StartParticleEffectOnEntity_ReturnEntity( projectile, GetParticleSystemIndex( GRAVITY_VORTEX_FX ), FX_PATTACH_ABSORIGIN_FOLLOW, -1 )
     //	EmitSoundOnEntity( projectile, "gravitystar_vortex" )
-	bool hasProScreen = false
-
-	array<string> mods = projectile.ProjectileGetMods()
-	if ( mods.find( "pro_screen" ) >= 0 )
-		hasProScreen = true
 
 	OnThreadEnd(
 		function() : ( FX )
@@ -100,13 +98,13 @@ void function CreateGravFieldOnEnt( entity projectile )
 	)
 
 	EmitSoundOnEntity( projectile, "weapon_gravitystar_preexplo" )
-    AI_CreateDangerousArea( projectile, projectile, PULL_RANGE * 2.0, TEAM_INVALID, true, false )
+    AI_CreateDangerousArea( projectile, projectile, params.pull_range * 2.0, TEAM_INVALID, true, false )
     while ( true )
     {
-		nearbyEnemies = GetNearbyEnemiesForGravGrenade( projectile, hasProScreen )
+		nearbyEnemies = GetNearbyEnemiesForGravGrenade( projectile, params )
 		foreach ( enemy in nearbyEnemies )
 		{
-			Proto_SetEnemyVelocity_Pull( enemy, projectile.GetOrigin() )
+			Proto_SetEnemyVelocity_Pull( enemy, projectile.GetOrigin(), params )
 		}
         pullPosition = projectile.GetOrigin()
         WaitFrame()
@@ -150,7 +148,7 @@ void function EndNPCGravGrenadeAnim( entity ent )
 	ent.Anim_Stop()
 }
 
-void function Proto_SetEnemyVelocity_Pull( entity enemy, vector projOrigin )
+void function Proto_SetEnemyVelocity_Pull( entity enemy, vector projOrigin, GravFieldParams params )
 {
 	if ( enemy.IsPhaseShifted() )
 		return
@@ -158,21 +156,21 @@ void function Proto_SetEnemyVelocity_Pull( entity enemy, vector projOrigin )
 	vector dir = Normalize( projOrigin - enemy.GetOrigin() )
 	float dist = Distance( enemyOrigin, projOrigin )
 	float distZ = enemyOrigin.z - projOrigin.z
-	vector newVelocity = enemy.GetVelocity() * GraphCapped( dist, 50, PULL_RANGE, 0, 1 ) + dir * GraphCapped( dist, 50, PULL_RANGE, 0, PULL_STRENGTH_MAX ) + < 0, 0, GraphCapped( distZ, -50, 0, PULL_VERT_VEL, 0 )>
+	vector newVelocity = enemy.GetVelocity() * GraphCapped( dist, 50, params.pull_range, 0, 1 ) + dir * GraphCapped( dist, 50, params.pull_range, 0, params.pull_strength_max ) + < 0, 0, GraphCapped( distZ, -50, 0, PULL_VERT_VEL, 0 )>
 	if ( enemy.IsTitan() )
 		newVelocity.z = 0
 	enemy.SetVelocity( newVelocity )
 }
 
-array<entity> function GetNearbyEnemiesForGravGrenade( entity projectile, bool includeUser = false )
+array<entity> function GetNearbyEnemiesForGravGrenade( entity projectile, GravFieldParams params )
 {
 	int team = projectile.GetTeam()
 	entity owner = projectile.GetOwner()
 	vector origin = projectile.GetOrigin()
 	array<entity> nearbyEnemies
-	array<entity> guys = GetPlayerArrayEx( "any", TEAM_ANY, TEAM_ANY, origin, PULL_RANGE )
+	array<entity> guys = GetPlayerArrayEx( "any", TEAM_ANY, TEAM_ANY, origin, params.pull_range )
 
-	if ( includeUser == true && IsValid( owner ) )
+	if ( params.pull_owner == true && IsValid( owner ) )
 		nearbyEnemies.append( owner )
 
 	foreach ( guy in guys )
@@ -184,7 +182,7 @@ array<entity> function GetNearbyEnemiesForGravGrenade( entity projectile, bool i
 			nearbyEnemies.append( guy )
 	}
 
-	array<entity> ai = GetNPCArrayEx( "any", TEAM_ANY, team, origin, PULL_RANGE )
+	array<entity> ai = GetNPCArrayEx( "any", TEAM_ANY, team, origin, params.pull_range )
 	foreach ( guy in ai )
 	{
 		if ( IsAlive( guy ) )
@@ -194,13 +192,13 @@ array<entity> function GetNearbyEnemiesForGravGrenade( entity projectile, bool i
 	return nearbyEnemies
 }
 
-array<entity> function GetNearbyProjectilesForGravGrenade( entity gravGrenade )
+array<entity> function GetNearbyProjectilesForGravGrenade( entity gravGrenade, GravFieldParams params )
 {
 	int team = gravGrenade.GetTeam()
 	entity owner = gravGrenade.GetOwner()
 	vector origin = gravGrenade.GetOrigin()
 
-	array<entity> projectiles = GetProjectileArrayEx( "any", TEAM_ANY, TEAM_ANY, origin, PULL_RANGE )
+	array<entity> projectiles = GetProjectileArrayEx( "any", TEAM_ANY, TEAM_ANY, origin, params.pull_range )
 
 	array<entity> affectedProjectiles
 

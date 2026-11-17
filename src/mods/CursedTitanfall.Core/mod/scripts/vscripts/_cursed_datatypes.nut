@@ -6,3 +6,9 @@ global struct ProjectileCollisionParams {
     int hitbox
     bool isCritical
 }
+
+global struct GravFieldParams {
+    float pull_range
+    float pull_strength_max
+    bool pull_owner = false
+}

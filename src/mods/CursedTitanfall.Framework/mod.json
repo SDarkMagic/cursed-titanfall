@@ -30,6 +30,13 @@
             }
         },
         {
+            "Path": "grav_field.nut",
+            "RunOn": "MP || SP",
+            "ServerCallback": {
+                "Before": "GravField_Init"
+            }
+        },
+        {
             "Path": "_nuclear_explosion.nut",
             "RunOn": "MP && SERVER"
         }
